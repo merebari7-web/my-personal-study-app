@@ -824,6 +824,58 @@ footer b{color:var(--green-d)}
 }
 @page{margin:14mm}
 
+/* ================= ADAPTIVE ENGINE ================= */
+.plan-grid{display:grid;grid-template-columns:200px 1fr;gap:18px;margin:20px 0 4px}
+.plan-gauge{background:var(--panel);border:1px solid var(--card-border);border-radius:16px;padding:16px 14px;text-align:center}
+.plan-gauge h2.step{margin:0 0 8px;justify-content:center}
+.plan-gauge h2.step::after{display:none}
+.plan-num{font-size:2.1rem;font-weight:900;color:var(--green-d);line-height:1;font-variant-numeric:tabular-nums}
+[data-theme="dark"] .plan-num{color:#7dffc4}
+.plan-bar{height:9px;border-radius:99px;background:var(--bar-track);overflow:hidden;margin:10px 0 10px}
+.plan-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--green-2));border-radius:99px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.plan-hint{display:block;margin-top:9px;font-size:.66rem;color:var(--mut);line-height:1.4}
+.plan-items{background:var(--panel);border:1px solid var(--card-border);border-radius:16px;padding:16px}
+.plan-items h2.step{margin:0 0 10px}
+.plan-item{display:flex;align-items:center;gap:12px;padding:9px 4px;border-bottom:1px dashed var(--card-border)}
+.plan-item:last-child{border-bottom:none}
+.plan-item .p-ico{font-size:1.25rem;flex:none}
+.plan-item .p-txt{flex:1;min-width:0}
+.plan-item .p-txt b{display:block;font-size:.86rem;line-height:1.3}
+.plan-item .p-txt small{font-size:.7rem;color:var(--mut)}
+.plan-item .btn{flex:none;padding:8px 14px;font-size:.78rem}
+@media (max-width:640px){
+  .plan-grid{grid-template-columns:1fr}
+  .plan-gauge{display:grid;grid-template-columns:auto 1fr;column-gap:14px;text-align:left;align-items:center}
+  .plan-gauge h2.step{grid-column:1/-1;margin-bottom:4px}
+  .plan-num{grid-row:2/4}
+  .plan-bar{grid-column:2;margin:6px 0}
+  .plan-gauge .pill{grid-column:2;justify-self:start}
+  .plan-hint{grid-column:1/-1;margin-top:6px}
+  .plan-item .btn{padding:7px 10px;font-size:.72rem}
+}
+/* mastery map */
+.map-legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.7rem;color:var(--mut);font-weight:700;margin:6px 0 12px}
+.map-legend .ml{border-radius:6px;padding:2px 8px;border:1px solid var(--chip-border)}
+.map-list{display:flex;flex-direction:column;gap:10px;max-height:56vh;overflow:auto;padding-right:4px}
+.map-row{background:var(--panel);border:1px solid var(--card-border);border-radius:14px;padding:11px 13px}
+.map-rowhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.m-sub{font-weight:900;font-size:.9rem;color:var(--green-d)}
+[data-theme="dark"] .m-sub{color:#7dffc4}
+.m-avg{font-size:.72rem;font-weight:800;color:var(--mut);letter-spacing:.04em}
+.map-chips{display:flex;flex-wrap:wrap;gap:6px}
+.map-chip{border:1px solid var(--chip-border);border-radius:999px;padding:4px 10px;font-size:.7rem;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink);background:var(--chip-bg);transition:.15s;touch-action:manipulation}
+.map-chip:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.map-chip.m-hi{background:rgba(15,107,79,.14);border-color:rgba(15,107,79,.45);color:var(--green-d)}
+[data-theme="dark"] .map-chip.m-hi{color:#7dffc4}
+.map-chip.m-mid{background:rgba(201,162,39,.16);border-color:rgba(201,162,39,.5);color:#8a6100}
+[data-theme="dark"] .map-chip.m-mid{color:#ffd27d}
+.map-chip.m-lo{background:rgba(139,47,47,.13);border-color:rgba(139,47,47,.45);color:var(--red)}
+.map-chip.m-none{opacity:.62;font-style:italic}
+@media (max-width:640px){
+  .map-list{max-height:50vh}
+  .map-chip{font-size:.66rem;padding:3px 8px}
+}
+
 </style>
 </head>
 <body>
@@ -965,7 +1017,10 @@ footer b{color:var(--green-d)}
   <button class="lab-tile" onclick="openLab('rapid')"><b class="li">⚡</b><span class="lt">Rapid Fire</span><small class="lc">30–90 s sprints · beat your best streak</small></button>
   <button class="lab-tile" onclick="openLab('spell')"><b class="li">⌨️</b><span class="lt">Spelling Lab</span><small class="lc">Type the answer · spelling counts</small></button>
   <button class="lab-tile" onclick="openLab('report')"><b class="li">🧾</b><span class="lt">Report Card</span><small class="lc">Printable progress · for parents &amp; teachers</small></button>
+  <button class="lab-tile" onclick="openLab('map')"><b class="li">🗺️</b><span class="lt">Mastery Map</span><small class="lc">Topic heat-map · tap to drill weak spots</small></button>
 </div>
+
+    <div class="plan-card" id="planCard"></div>
 
     <div class="tabs" id="classTabs"></div>
   </div>
@@ -983,6 +1038,10 @@ footer b{color:var(--green-d)}
     <label class="toggle-row">
       <span><b>Examination mode</b><small>Timed paper (36 s per question) · answers marked only at submission · flag questions to revisit</small></span>
       <input type="checkbox" id="examToggle"><span class="tog"></span>
+    </label>
+    <label class="toggle-row" style="border-top:1px dashed var(--card-border);padding-top:14px;margin-top:14px">
+      <span><b>🎯 Smart selection</b><small>Adaptive engine prioritises your weakest subjects and topics (needs a little history first)</small></span>
+      <input type="checkbox" id="smartToggle"><span class="tog"></span>
     </label>
     <div class="row" style="margin-top:22px">
       <button class="btn btn-ghost" onclick="resetToClass()">← Change paper</button>
@@ -1524,7 +1583,9 @@ function renderCounts(){
 function startQuiz(){
   if (!CLASSES.length) { showBankStatus(); toast("The question bank is still loading", "⏳"); return; }
   const qs = CLASSES[state.cls].questions.filter(q => state.subject===null || q.s===state.subject);
-  state.quiz = shuffle(qs).slice(0, state.count);
+  let qz = shuffle(qs);
+  if ($("smartToggle") && $("smartToggle").checked && !state.daily && !state.reviewing) qz = smartShuffle(qs);
+  state.quiz = qz.slice(0, state.count);
   state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false;
   submitting = false;
   state.mode = $("examToggle") && $("examToggle").checked ? "exam" : "study";
@@ -1670,6 +1731,7 @@ function showResults(){
   setCard("result"); stopTimer();
   fireConfetti(pct);
   recordAttempt(); fillCert(); recordMistakes(); finishReviews(); checkBadges(); clearSession();
+  recordTopicStats(); renderPlan();
   buildReview(false);
   $("reviewCard").classList.add("hidden");
 }
@@ -2977,7 +3039,7 @@ function cardForState(){
 function boot(){
   const ready = applyBank();
   document.body.dataset.booted = "1";
-  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderAccountChip(); renderSeal(); initGoogle();
+  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle();
   mascotSay("Welcome. Choose your level, then begin with a paper — every answer builds your record.", "🦉");
   if (ready) {
     hideBankStatus(); setCard(cardForState());
@@ -3037,6 +3099,7 @@ function labRender(){
   else if (LAB.sec === "rapid") labRapidSetup();
   else if (LAB.sec === "spell") labSpellSetup();
   else if (LAB.sec === "report") labReportRender();
+  else if (LAB.sec === "map") labMapRender();
 }
 function labClassTabs(id, cur, fn){
   return CLASSES.map(function(cc, i){
@@ -3471,6 +3534,189 @@ function printReport(){
   const done = function(){ document.body.classList.remove("report-print"); window.removeEventListener("afterprint", done); };
   window.addEventListener("afterprint", done);
   try { if (window.print) window.print(); } catch (e) { done(); }
+}
+
+/* ================= ADAPTIVE LEARNING ENGINE =================
+   Topic performance tracking · weakness detection · exam readiness ·
+   smart paper · today's plan · mastery map.  Fully offline. */
+function topicStats(){ return store.get("nssc_topics_" + uid(), {}); }
+function recordTopicStats(){
+  if (!state.quiz || !state.quiz.length) return;
+  const st = topicStats();
+  state.quiz.forEach(function(q, i){
+    const t = q.t || "General";
+    const k = q.s + "||" + t;
+    const v = st[k] || { s: q.s, t: t, c: 0, n: 0 };
+    v.n++;
+    if (state.answers[i] === q.a) v.c++;
+    st[k] = v;
+  });
+  store.set("nssc_topics_" + uid(), st);
+}
+function topicAcc(s, t){
+  const v = topicStats()[s + "||" + t];
+  return (v && v.n) ? Math.round(v.c / v.n * 100) : null;
+}
+function weakSubjects(limit){
+  const st = topicStats(); const agg = {};
+  Object.keys(st).forEach(function(k){
+    const v = st[k]; if (!v || !v.n) return;
+    agg[v.s] = agg[v.s] || { c: 0, n: 0 };
+    agg[v.s].c += v.c; agg[v.s].n += v.n;
+  });
+  return Object.keys(agg).map(function(s){
+    return { s: s, acc: Math.round(agg[s].c / agg[s].n * 100), n: agg[s].n };
+  }).filter(function(r){ return r.acc < 65; }).sort(function(a, b){ return a.acc - b.acc; }).slice(0, limit || 3);
+}
+function weakTopics(limit){
+  const st = topicStats();
+  return Object.keys(st).map(function(k){
+    const v = st[k]; if (!v || !v.n) return null;
+    const acc = Math.round(v.c / v.n * 100);
+    if (acc >= 75) return null;
+    return { s: v.s, t: v.t, acc: acc, n: v.n };
+  }).filter(Boolean).sort(function(a, b){ return a.acc - b.acc || b.n - a.n; }).slice(0, limit || 5);
+}
+function readinessScore(){
+  const st = topicStats(); const keys = Object.keys(st);
+  if (!keys.length && !attempts().length) return null;
+  let tc = 0, tt = 0, stable = 0, total = 0;
+  keys.forEach(function(k){
+    const v = st[k]; if (!v || !v.n) return;
+    total++; if (v.n >= 2) stable++;
+    tc += v.c; tt += v.n;
+  });
+  const ta = tt ? Math.round(tc / tt * 100) : null;
+  const subs = {};
+  attempts().forEach(function(a){
+    if (a && a.sp) Object.keys(a.sp).forEach(function(s){ subs[s] = 1; });
+  });
+  const ms = [];
+  Object.keys(subs).forEach(function(s){
+    const m = subjectMastery(s);
+    if (m !== null) ms.push(m);
+  });
+  const ma = ms.length ? Math.round(ms.reduce(function(x, y){ return x + y; }, 0) / ms.length) : null;
+  const cov = total ? Math.round(stable / total * 100) : null;
+  const parts = []; let wsum = 0;
+  if (ma !== null){ parts.push(ma * 0.5); wsum += 0.5; }
+  if (ta !== null){ parts.push(ta * 0.3); wsum += 0.3; }
+  if (cov !== null){ parts.push(cov * 0.2); wsum += 0.2; }
+  if (!wsum) return null;
+  return Math.round(parts.reduce(function(x, y){ return x + y; }, 0) / wsum);
+}
+function readinessTier(r){
+  if (r === null) return { t: "Awaiting your first paper", cls: "r" };
+  if (r >= 80) return { t: "EXAM-READY", cls: "g" };
+  if (r >= 65) return { t: "Nearly there", cls: "g" };
+  if (r >= 50) return { t: "Progressing", cls: "o" };
+  return { t: "Keep revising", cls: "r" };
+}
+function smartShuffle(qs){
+  const weak = weakSubjects(3);
+  if (!weak.length) return shuffle(qs);
+  const set = {};
+  weak.forEach(function(w){ set[w.s] = 1; });
+  const weakQ = shuffle(qs.filter(function(q){ return set[q.s]; }));
+  const rest = shuffle(qs.filter(function(q){ return !set[q.s]; }));
+  return weakQ.concat(rest);
+}
+function smartPaper(n){
+  n = n || 10;
+  if (!CLASSES.length){ toast("The question bank is still loading", "⏳"); return; }
+  const weak = weakSubjects(3);
+  let best = 0, bestN = -1;
+  CLASSES.forEach(function(c, i){
+    const m = weak.length ? c.questions.filter(function(q){ return weak.some(function(w){ return w.s === q.s; }); }).length : c.questions.length;
+    if (m > bestN){ bestN = m; best = i; }
+  });
+  state.cls = best; state.subject = null; state.count = n;
+  state.quiz = smartShuffle(CLASSES[best].questions).slice(0, n);
+  submitting = false;
+  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mode = "study";
+  state.started = Date.now(); state.deadline = 0;
+  $("examNote").classList.add("hidden"); $("qTimer").classList.add("hidden");
+  setCard("quiz"); renderQ(); stopTimer(); saveSession();
+  toast(weak.length ? "Smart paper — targeted at your weak areas" : "Smart paper — fresh questions", "🎯");
+}
+function labDrillTopic(subj, topic){
+  if (!topic || !CLASSES.length){ toast("No questions for that topic", "🗂"); return; }
+  let best = -1, bestN = 0;
+  CLASSES.forEach(function(c, i){
+    const n = c.questions.filter(function(q){ return q.s === subj && q.t === topic; }).length;
+    if (n > bestN){ bestN = n; best = i; }
+  });
+  if (best < 0 || !bestN){ toast("No questions for " + topic + " in this bank", "🗂"); return; }
+  state.cls = best;
+  drillTopic(topic, subj);
+  closeLab();
+}
+/* ---- today's plan + readiness gauge (home screen) ---- */
+function renderPlan(){
+  const el = $("planCard"); if (!el) return;
+  const r = readinessScore(); const tier = readinessTier(r);
+  const due = dueReviews().length;
+  const wt = weakTopics(1)[0];
+  const items = [];
+  if (due) items.push({ ico: "🧠", txt: due + " mistake" + (due > 1 ? "s" : "") + " due for review today", sub: "Spaced revision — lock them in", btn: "Review now", fn: "startReviews()" });
+  if (wt) items.push({ ico: "🎯", txt: wt.s + " · " + wt.t, sub: "Weakest topic · " + wt.acc + "% accuracy", btn: "Drill", fn: "labDrillTopic('" + wt.s.replace(/'/g, "\\'") + "','" + wt.t.replace(/'/g, "\\'") + "')" });
+  items.push({ ico: "🎓", txt: "Smart paper", sub: weakSubjects(1).length ? "10 questions aimed at your weak areas" : "10 mixed questions to map your level", btn: "Start", fn: "smartPaper(10)" });
+  if (!attempts().length) items.unshift({ ico: "🌱", txt: "Sit your first paper to unlock your adaptive plan", sub: "Every answer tunes the engine", btn: "Begin", fn: "bootGoPaper()" });
+  const barW = r === null ? 2 : Math.max(4, r);
+  el.innerHTML =
+    '<div class="plan-grid">' +
+      '<div class="plan-gauge">' +
+        '<h2 class="step">Adaptive engine</h2>' +
+        '<div class="plan-num">' + (r === null ? "—" : r + "%") + '</div>' +
+        '<div class="plan-bar"><i style="width:' + barW + '%"></i></div>' +
+        '<span class="pill ' + tier.cls + '">' + tier.t + '</span>' +
+        '<small class="plan-hint">Exam readiness · topics + mastery + consistency</small>' +
+      '</div>' +
+      '<div class="plan-items">' +
+        '<h2 class="step">Today\u2019s plan</h2>' +
+        items.map(function(it){
+          return '<div class="plan-item"><span class="p-ico">' + it.ico + '</span><div class="p-txt"><b>' + esc(it.txt) + '</b><small>' + esc(it.sub) + '</small></div><button class="btn btn-gold" onclick="' + it.fn + '">' + esc(it.btn) + '</button></div>';
+        }).join("") +
+      '</div>' +
+    '</div>';
+}
+function bootGoPaper(){
+  if (!CLASSES.length){ showBankStatus(); return; }
+  state.cls = 0; state.subject = null;
+  renderClasses(); renderSubjects(); setCard("subject");
+  toast("Choose your class, then any subject to begin", "📘");
+}
+/* ---- mastery map ---- */
+function labMapRender(){
+  const st = topicStats();
+  const rows = Object.keys(TOPICS).map(function(s){
+    const cols = TOPICS[s].map(function(t){
+      const v = st[s + "||" + t[0]];
+      return { name: t[0], acc: (v && v.n) ? Math.round(v.c / v.n * 100) : null, n: v ? v.n : 0 };
+    });
+    const tested = cols.filter(function(c){ return c.acc !== null; });
+    const avg = tested.length ? Math.round(tested.reduce(function(x, c){ return x + c.acc; }, 0) / tested.length) : null;
+    return { s: s, cols: cols, avg: avg };
+  }).sort(function(a, b){
+    return (a.avg === null ? 999 : a.avg) - (b.avg === null ? 999 : b.avg);
+  });
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">🗺️</span><h3>Mastery Map</h3><span class="lab-sub">Every subject, every topic — tap a weak spot to drill it</span></div>' +
+    '<div class="map-legend"><span>Tap a topic to jump into a practice drill</span>' +
+      '<span class="ml m-hi">≥70%</span><span class="ml m-mid">50–69%</span><span class="ml m-lo">&lt;50%</span><span class="ml m-none">unseen</span></div>' +
+    '<div class="map-list">' +
+      rows.map(function(r){
+        const g = r.avg === null ? { letter: "—", txt: "unseen" } : waecGrade(r.avg);
+        return '<div class="map-row">' +
+          '<div class="map-rowhead"><span class="m-sub">' + esc(r.s) + '</span><span class="m-avg">' + (r.avg === null ? "no data" : r.avg + "% · " + g.letter) + '</span></div>' +
+          '<div class="map-chips">' + r.cols.map(function(c){
+            const cls = c.acc === null ? "m-none" : c.acc >= 70 ? "m-hi" : c.acc >= 50 ? "m-mid" : "m-lo";
+            const lbl = c.acc === null ? c.name + " · —" : c.name + " · " + c.acc + "%";
+            return '<button class="map-chip ' + cls + '" onclick="labDrillTopic(\'' + esc(r.s).replace(/'/g, "\\'") + '\',\'' + esc(c.name).replace(/'/g, "\\'") + '\')">' + esc(lbl) + '</button>';
+          }).join("") + '</div></div>';
+      }).join("") +
+    '</div>' +
+    '<div class="lab-cta"><button class="btn btn-primary" onclick="smartPaper(10)">🎯 Smart paper · 10</button><button class="btn btn-ghost" onclick="closeLab()">Close</button></div>';
 }
 
 try { boot(); } catch (e) { showFatal("Something went wrong while starting: " + String((e && e.message) || e)); }
