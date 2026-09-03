@@ -35,21 +35,15 @@ Just open `index.html` in any modern browser (Chrome, Edge, Firefox, Safari). Th
 
 ## Host it on GitHub Pages
 
-This repo is ready for GitHub Pages. Either way works:
+This repo deploys to GitHub Pages straight from its `main` branch — the site is a single self-contained file, so no build step is needed.
 
-**Option A — GitHub Actions (recommended)**
-1. Push this repository to GitHub (any repo name, e.g. `my-personal-study-app`).
-2. Go to **Settings → Pages → Source: GitHub Actions**.
-3. The included workflow (`.github/workflows/deploy.yml`) builds and publishes the site automatically. Done.
-
-**Option B — Deploy from branch**
-1. Push to GitHub.
+1. Push this repository to GitHub.
 2. Go to **Settings → Pages → Source: Deploy from a branch** → `main` / `/ (root)`.
 3. Save. Your site appears at `https://<username>.github.io/<repo>/` within a minute or two.
 
-**Very quick manual path:** create a repo, click *Add file → Upload files*, drop `index.html` in, commit — then follow Option B.
-
 > **Note on sign-in:** the app works fully as a guest. If you want Google sign-in to work on the Pages origin, add `https://<username>.github.io` to your Google OAuth client's authorised JavaScript origins. Guests work out of the box.
+
+**Updating the live site:** edit `index.html` locally, then `git add index.html && git commit -m "update" && git push` — GitHub Pages re-deploys automatically within a minute.
 
 ---
 
