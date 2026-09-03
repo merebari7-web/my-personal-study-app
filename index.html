@@ -1148,7 +1148,7 @@ footer b{color:var(--green-d)}
    at https://console.cloud.google.com/apis/credentials and paste it below.
    Add your site's origin to "Authorized JavaScript origins".
    Until then (or offline), a guest sign-up fallback is used.        */
-const GOOGLE_CLIENT_ID = "";
+const GOOGLE_CLIENT_ID = "648029341991-3onmssrflm9jqvmjbjtsl1ebag4k9afi.apps.googleusercontent.com";
 
 /* ================= SAFE STORAGE (works even in sandboxed previews) ================= */
 const store = (() => {
@@ -1673,7 +1673,11 @@ function renderGoogleBtn(){
 }
 function initGoogle(){
   if(!GOOGLE_CLIENT_ID){
-    $("gsiNote").textContent = "Tip: add your Google OAuth Client ID at the top of this file to enable one-click Google sign-in. You can continue as a guest for now.";
+    $("gsiNote").textContent = "Tip: add your Google OAuth Client ID to enable one-click Google sign-in. You can continue as a guest for now.";
+    return;
+  }
+  if(!/^https:/.test(location.protocol)){
+    $("gsiNote").textContent = "One-click Google sign-in works on the hosted web version — continue as a guest here; progress is still saved on this device.";
     return;
   }
   if(typeof google !== "undefined" && google.accounts && google.accounts.id){ renderGoogleBtn(); }
