@@ -41,7 +41,7 @@ This repo deploys to GitHub Pages straight from its `main` branch — the site i
 2. Go to **Settings → Pages → Source: Deploy from a branch** → `main` / `/ (root)`.
 3. Save. Your site appears at `https://<username>.github.io/<repo>/` within a minute or two.
 
-> **Note on sign-in:** the app works fully as a guest. If you want Google sign-in to work on the Pages origin, add `https://<username>.github.io` to your Google OAuth client's authorised JavaScript origins. Guests work out of the box.
+> **Sign-in:** Google sign-in is enabled on this deployment (OAuth Client ID configured for the `https://<username>.github.io` origin). The app also works fully as a guest — no account needed. If you ever move the site to a different domain, add that origin to the OAuth client's *Authorised JavaScript origins* in Google Cloud Console.
 
 **Updating the live site:** edit `index.html` locally, then `git add index.html && git commit -m "update" && git push` — GitHub Pages re-deploys automatically within a minute.
 
