@@ -56,6 +56,8 @@ This repo deploys to GitHub Pages straight from its `main` branch — the site i
 
 **Updating the live site:** edit `index.html` locally, then `git add index.html && git commit -m "update" && git push` — GitHub Pages re-deploys automatically within a minute.
 
+**Google Search Console:** the `google-site-verification` meta tag is embedded in the page head, so the site can be verified with the Google Search Console html-tag method.
+
 ---
 
 ## Desktop app
