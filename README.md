@@ -18,6 +18,7 @@ Copyright © merebari web · All rights reserved.
 | ⚡ Daily challenge | A deterministic 10-question mixed paper, new every day |
 | 🎯 Study goals | Questions-per-day target, 7-day calendar, streaks |
 | 🏆 Progression | Study points, scholar levels, 🎖 merits, badges, mastery rings per subject |
+| 📖 Study Hall | **Flashcard decks** (whole bank or your mistakes) with flip-recall · **Rapid Fire** sprints (30–90 s) with streaks · **Spelling Lab** (type the answer, typo-tolerant) · **Progress Report Card** — printable PDF/print for parents & teachers |
 | 📜 Revision wheel | A prize wheel on every paper result (merits & study points) |
 | 🖼 Certificate | Gilded certificate PNG export with serial number & signature |
 | 🔒 Integrity | SHA-256 hash check of the question bank at load time |

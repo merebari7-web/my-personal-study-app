@@ -715,6 +715,115 @@ h2.step{letter-spacing:.2em}
 .badge-grid .badge-chip{background:var(--panel);border:1px solid var(--card-border);border-radius:10px}
 footer b{color:var(--green-d)}
 @media (max-width:640px){.qtext{font-size:1.05rem}}
+/* ================= STUDY HALL: flashcards · rapid fire · spelling · report ================= */
+.lab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px;margin:0 0 20px}
+.lab-tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;border:2px solid var(--chip-border);background:var(--chip-bg);border-radius:16px;padding:13px 14px;cursor:pointer;transition:.2s;color:var(--ink);font-family:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.lab-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow-sm);border-color:var(--gold)}
+.lab-tile .li{font-size:1.45rem;line-height:1}
+.lab-tile .lt{font-weight:900;font-size:.9rem;color:var(--green-d)}
+[data-theme="dark"] .lab-tile .lt{color:#4fd391}
+.lab-tile .lc{font-size:.68rem;color:var(--mut);line-height:1.35}
+.lab-modal{position:relative;max-width:860px}
+.lab-modal .x{position:absolute;top:14px;right:14px;z-index:5}
+.lab-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:6px}
+.lab-head .lab-ico{font-size:1.7rem;line-height:1}
+.lab-head h3{margin:0;font-size:1.22rem;font-weight:900}
+.lab-head .lab-sub{color:var(--mut);font-size:.78rem;font-weight:700;width:100%;padding-left:2px}
+.lab-row{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+.lab-lbl{font-size:.68rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.lab-tabs{display:flex;flex-wrap:wrap;gap:7px}
+.lab-tab{border:2px solid var(--chip-border);background:var(--chip-bg);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.8rem;font-weight:800;cursor:pointer;transition:.18s;font-family:inherit;touch-action:manipulation}
+.lab-tab:hover{border-color:var(--green)}
+.lab-tab.on{background:linear-gradient(135deg,var(--green),var(--green-2));border-color:var(--green);color:#fff}
+.lab-cta{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px;justify-content:center}
+.lab-cta .btn{min-width:0}
+.lab-note{color:var(--ink-2);font-size:.88rem;text-align:center;margin:14px 0 0}
+/* flashcards */
+.fc-prog{display:flex;align-items:center;gap:12px;margin:14px 0 10px}
+.fc-track{flex:1;height:8px;border-radius:99px;background:var(--bar-track);overflow:hidden}
+.fc-track i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--green-2));border-radius:99px;transition:width .35s}
+.fc-pill{font-size:.72rem;font-weight:900;color:var(--mut);white-space:nowrap}
+.fc-stage{perspective:1500px;margin:14px auto 4px;max-width:640px}
+.fc-card{position:relative;width:100%;height:min(320px,44vh);transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.8,.3,1);cursor:pointer;border:none;background:none;padding:0;font-family:inherit}
+.fc-card.flip{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;border:1px solid var(--card-border);border-radius:18px;background:var(--card-solid);box-shadow:var(--shadow-sm);padding:20px 22px;display:flex;flex-direction:column;overflow:hidden}
+.fc-b{transform:rotateY(180deg);background:linear-gradient(165deg,var(--card-solid),var(--panel))}
+.fc-tag{align-self:flex-start;font-size:.62rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;background:var(--green-l,#e6f4ee);color:var(--green-d);border-radius:999px;padding:3px 10px;margin-bottom:12px}
+[data-theme="dark"] .fc-tag{background:rgba(0,135,81,.25);color:#7dffc4}
+.fc-tag.ok{background:var(--gold-l);color:#8a6100}
+[data-theme="dark"] .fc-tag.ok{background:rgba(245,163,0,.15);color:#ffd27d}
+.fc-q{font-size:1.06rem;line-height:1.55;flex:1;overflow:auto;overflow-wrap:anywhere}
+.fc-a{font-size:1.15rem;font-weight:900;color:var(--green-d);line-height:1.45;overflow:auto;overflow-wrap:anywhere}
+[data-theme="dark"] .fc-a{color:#7dffc4}
+.fc-ex{color:#6b5c2e;background:var(--gold-l);border-radius:10px;padding:10px 12px;font-size:.84rem;line-height:1.5;margin-top:11px;overflow:auto}
+[data-theme="dark"] .fc-ex{color:#e8d9a8;background:rgba(245,163,0,.10)}
+.fc-tap{text-align:center;color:var(--mut);font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-top:12px}
+.fc-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.fc-actions .btn{min-width:0;padding:10px 16px;font-size:.84rem}
+/* rapid fire */
+.rap-time{font-size:2.7rem;font-weight:900;font-variant-numeric:tabular-nums;text-align:center;line-height:1;margin:8px 0 2px;color:var(--green-d)}
+[data-theme="dark"] .rap-time{color:#7dffc4}
+.rap-time.low{color:var(--red);animation:pulse 1s infinite}
+.rap-bar{height:9px;border-radius:99px;background:var(--bar-track);overflow:hidden;margin:10px 0 14px}
+.rap-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--green-2));border-radius:99px;transition:width .2s linear}
+.rap-sc{display:flex;justify-content:space-between;align-items:center;color:var(--mut);font-size:.78rem;font-weight:900;margin-bottom:8px}
+.rap-sc b{color:var(--ink);font-size:.95rem}
+.rap-q{font-size:1.02rem;line-height:1.5;margin:6px 0 12px;overflow-wrap:anywhere}
+/* spelling lab */
+.spell-box{max-width:600px;margin:0 auto}
+.spell-q{font-size:1.04rem;line-height:1.55;text-align:center;margin:12px 0;overflow-wrap:anywhere}
+.spell-hint{text-align:center;color:var(--mut);font-size:.8rem;font-weight:700;margin-bottom:10px;min-height:1.2em}
+.spell-in{font-size:1.14rem;text-align:center;letter-spacing:.03em}
+.spell-fb{margin-top:14px;text-align:center;font-size:.92rem;line-height:1.5}
+.spell-fb.ok{color:var(--green-d)}
+[data-theme="dark"] .spell-fb.ok{color:#7dffc4}
+.spell-fb.no{color:var(--red)}
+/* report card */
+.rep-card{background:#fffdf6;color:#332c1c;border:1px solid #d8d2c0;border-radius:16px;padding:26px 28px;font-family:Georgia,'Times New Roman',Times,serif;box-shadow:var(--shadow-sm);margin-top:4px}
+.rep-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:3px double #c9a227;padding-bottom:10px}
+.rep-brand{font-size:1.05rem;font-weight:900;letter-spacing:.04em;color:#332c1c}
+.rep-doc{font-size:.72rem;font-weight:900;letter-spacing:.28em;color:#a07818}
+.rep-sub{font-size:.76rem;color:#6b6046;margin:8px 0 2px}
+.rep-id{display:flex;gap:8px 22px;flex-wrap:wrap;font-size:.86rem;margin:10px 0 2px}
+.rep-id b{color:#332c1c}
+.rep-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin:14px 0}
+.rep-stat{border:1px solid #e2dcc8;border-radius:10px;padding:9px 8px;text-align:center;background:#fff}
+.rep-stat b{display:block;font-size:1.18rem;color:#332c1c}
+.rep-stat small{font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:#8a815f}
+.rep-line{font-size:.9rem;background:#faf4e3;border:1px solid #e8ddb8;border-radius:10px;padding:10px 13px;margin:4px 0 12px}
+.rep-line b{color:#8a6100}
+.rep-tbl{width:100%;border-collapse:collapse;margin-top:4px}
+.rep-tbl th{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;text-align:left;border-bottom:2px solid #c9a227;padding:6px 8px;color:#6b6046}
+.rep-tbl td{padding:7px 8px;border-bottom:1px solid #eee6cf;font-size:.87rem}
+.rep-tbl tr:nth-child(even) td{background:#faf6ea}
+.rep-sec{margin-top:16px}
+.rep-sec h4{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:#a07818;margin:0 0 8px;border-bottom:1px solid #e8ddb8;padding-bottom:5px}
+.rep-focus{font-size:.88rem;padding:3px 0}
+.rep-focus b{color:#332c1c}
+.rep-note{font-size:.85rem;color:#8a815f}
+.rep-sig{display:flex;gap:26px;margin-top:30px}
+.rep-sig div{flex:1;border-top:1.5px solid #9a916f;padding-top:6px;font-size:.72rem;color:#6b6046;text-align:center;letter-spacing:.06em}
+.rep-foot{margin-top:20px;text-align:center;font-size:.7rem;color:#8a815f;border-top:1px dashed #d8d2c0;padding-top:10px;letter-spacing:.04em}
+.lab-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin:16px 0 4px}
+@media (max-width:640px){
+  .lab-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .lab-tile{padding:11px 12px;border-radius:14px}
+  .fc-card{height:min(300px,40vh)}
+  .rep-card{padding:18px 14px}
+  .rep-stats{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:380px){.lab-grid{grid-template-columns:1fr 1fr}.lab-tile .lc{font-size:.62rem}}
+/* print: only the report card escapes to paper */
+@media print{
+  body.report-print > *:not(#labOverlay){display:none !important}
+  #labOverlay{position:static !important;display:block !important;background:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;padding:0 !important;animation:none !important}
+  #labOverlay .modal{position:static !important;max-width:100% !important;max-height:none !important;overflow:visible !important;box-shadow:none !important;border:none !important;border-radius:0 !important;padding:0 !important;background:#fff !important;animation:none !important}
+  .lab-printhide{display:none !important}
+  .rep-card{box-shadow:none !important;border:none !important}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+}
+@page{margin:14mm}
+
 </style>
 </head>
 <body>
@@ -851,6 +960,13 @@ footer b{color:var(--green-d)}
     <div class="daily-banner rev hidden" id="reviewBanner"></div>
     <div class="bank-banner hidden" id="bankStatus"></div>
     <div class="game-dash" id="gameDash"></div>
+<div class="lab-grid" id="labGrid">
+  <button class="lab-tile" onclick="openLab('flash')"><b class="li">📇</b><span class="lt">Flashcards</span><small class="lc">Flip cards · recall &amp; lock in · mistake decks</small></button>
+  <button class="lab-tile" onclick="openLab('rapid')"><b class="li">⚡</b><span class="lt">Rapid Fire</span><small class="lc">30–90 s sprints · beat your best streak</small></button>
+  <button class="lab-tile" onclick="openLab('spell')"><b class="li">⌨️</b><span class="lt">Spelling Lab</span><small class="lc">Type the answer · spelling counts</small></button>
+  <button class="lab-tile" onclick="openLab('report')"><b class="li">🧾</b><span class="lt">Report Card</span><small class="lc">Printable progress · for parents &amp; teachers</small></button>
+</div>
+
     <div class="tabs" id="classTabs"></div>
   </div>
 
@@ -985,6 +1101,14 @@ footer b{color:var(--green-d)}
   <span class="note">Styled after the traditional university examination paper · Not affiliated with the University of Oxford.</span><br>
   <span class="note hidden" id="fsev">🔒 Question bank verified · 3,900 questions · SHA-256 ✓</span>
 </footer>
+
+<!-- ============ STUDY HALL: flashcards · rapid fire · spelling · report card ============ -->
+<div class="overlay hidden" id="labOverlay" onclick="if(event.target===this)closeLab()">
+  <div class="modal lab-modal">
+    <button class="btn btn-ghost x lab-printhide" onclick="closeLab()">✕</button>
+    <div id="labBody"></div>
+  </div>
+</div>
 
 <!-- ============ ACCOUNT MODAL ============ -->
 <div class="overlay hidden" id="libraryOverlay" onclick="if(event.target===this)closeLibrary()">
@@ -2874,6 +2998,481 @@ window.addEventListener("error", function (ev) {
 });
 window.addEventListener("quizbank-updated", boot);
 document.addEventListener("DOMContentLoaded", boot);
+/* ================= STUDY HALL =================
+   Flashcards · Rapid Fire · Spelling Lab · Report Card
+   Fully offline; rewards flow into the same XP / merits economy. */
+const LAB = {
+  sec: null,
+  __subs: [],
+  fc: { cls: 0, sub: null, src: "all", cnt: 20, deck: [], idx: 0, known: 0, seen: 0, rounds: 0, flipped: false },
+  rap: { cls: 0, sub: null, dur: 60, deck: [], idx: 0, score: 0, tries: 0, streak: 0, bestStreak: 0, end: 0, timer: 0, locked: false, over: false },
+  spell: { cls: 0, sub: null, deck: [], idx: 0, score: 0, tries: 0, streak: 0, over: false, revealed: false }
+};
+
+function labKey(){ return "nssc_lab_" + uid(); }
+function labStats(){
+  const s = store.get(labKey(), null);
+  return s || { cards: { seen: 0, known: 0 }, rapid: { played: 0, best: 0, bestStreak: 0 }, spell: { played: 0, best: 0 } };
+}
+function labSave(s){ store.set(labKey(), s); }
+function labSubs(i){
+  const c = CLASSES[i] || CLASSES[0];
+  if (!c) return [];
+  return [...new Set(c.questions.map(function(q){ return q.s; }))].sort();
+}
+function openLab(sec){
+  const ov = $("labOverlay"); if (!ov) return;
+  ov.classList.remove("hidden"); document.body.style.overflow = "hidden";
+  LAB.sec = sec; labRender();
+}
+function closeLab(){
+  const ov = $("labOverlay"); if (!ov) return;
+  if (LAB.rap.timer) { clearInterval(LAB.rap.timer); LAB.rap.timer = 0; }
+  ov.classList.add("hidden"); document.body.style.overflow = "";
+}
+function labRender(){
+  const b = $("labBody"); if (!b) return;
+  if (!CLASSES.length){ b.innerHTML = '<div class="center" style="color:var(--mut);padding:30px 0">The question bank is still loading…</div>'; return; }
+  if (LAB.sec === "flash") labFlashSetup();
+  else if (LAB.sec === "rapid") labRapidSetup();
+  else if (LAB.sec === "spell") labSpellSetup();
+  else if (LAB.sec === "report") labReportRender();
+}
+function labClassTabs(id, cur, fn){
+  return CLASSES.map(function(cc, i){
+    return '<button class="lab-tab' + (i === cur ? " on" : "") + '" onclick="LAB.' + id + '.cls=' + i + ";LAB." + id + ".sub=null;" + fn + "()\">" + esc(cc.class) + "</button>";
+  }).join("");
+}
+function labSubTabs(id, cur, fn){
+  const subs = LAB.__subs = [null].concat(labSubs(LAB[id].cls));
+  return subs.map(function(s, i){
+    const on = (s === null ? LAB[id].sub === null : LAB[id].sub === s);
+    return '<button class="lab-tab' + (on ? " on" : "") + '" onclick="LAB.' + id + '.sub=LAB.__subs[' + i + "];" + fn + "()\">" + (s === null ? "All subjects" : esc(s)) + "</button>";
+  }).join("");
+}
+
+/* ---------- flashcards ---------- */
+function labFlashSetup(){
+  const c = CLASSES[LAB.fc.cls] || CLASSES[0];
+  const wrong = store.get("nssc_mistakes", []).filter(function(m){ return m.cls === (c && c.class); });
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">📇</span><h3>Flashcard drill</h3><span class="lab-sub">Read the card, recall the answer, then flip to check</span></div>' +
+    '<div class="lab-row"><span class="lab-lbl">Class</span><div class="lab-tabs">' + labClassTabs("fc", LAB.fc.cls, "labFlashSetup") + "</div></div>" +
+    '<div class="lab-row"><span class="lab-lbl">Subject</span><div class="lab-tabs">' + labSubTabs("fc", LAB.fc.sub, "labFlashSetup") + "</div></div>" +
+    '<div class="lab-row"><span class="lab-lbl">Deck</span><div class="lab-tabs">' +
+      '<button class="lab-tab' + (LAB.fc.src === "all" ? " on" : "") + '" onclick="LAB.fc.src=\'all\';labFlashSetup()">Whole bank</button>' +
+      '<button class="lab-tab' + (LAB.fc.src === "mistakes" ? " on" : "") + '" onclick="LAB.fc.src=\'mistakes\';labFlashSetup()">My mistakes' + (wrong.length ? " · " + wrong.length : "") + "</button>" +
+      [10, 20, 40].map(function(n){ return '<button class="lab-tab' + (LAB.fc.cnt === n ? " on" : "") + '" onclick="LAB.fc.cnt=' + n + ";labFlashSetup()\">" + n + " cards</button>"; }).join("") +
+    "</div></div>" +
+    '<div class="lab-cta"><button class="btn btn-primary" onclick="fcStart()">▶ Deal a deck</button></div>';
+}
+function fcStart(){
+  const c = CLASSES[LAB.fc.cls]; if (!c){ toast("The question bank is still loading", "⏳"); return; }
+  let pool;
+  if (LAB.fc.src === "mistakes"){
+    pool = store.get("nssc_mistakes", []).filter(function(m){ return m.cls === c.class && (LAB.fc.sub === null || m.s === LAB.fc.sub); });
+    if (!pool.length){ toast("No stored mistakes in this subject yet", "🗂"); return; }
+  } else {
+    pool = c.questions.filter(function(q){ return LAB.fc.sub === null || q.s === LAB.fc.sub; });
+  }
+  LAB.fc.deck = shuffle(pool).slice(0, LAB.fc.cnt);
+  LAB.fc.idx = 0; LAB.fc.known = 0; LAB.fc.seen = 0; LAB.fc.rounds = 0; LAB.fc.flipped = false;
+  fcShow();
+}
+function fcShow(){
+  const d = LAB.fc.deck, b = $("labBody");
+  if (!d.length) return;
+  const q = d[LAB.fc.idx % d.length];
+  b.innerHTML =
+    '<div class="lab-head"><span class="lab-ico">📇</span><h3>Flashcards</h3><span class="lab-sub">' + esc(q.s) + " · card " + ((LAB.fc.idx % d.length) + 1) + " of " + d.length + "</span></div>" +
+    '<div class="fc-prog"><div class="fc-track"><i style="width:' + Math.round(LAB.fc.idx / d.length * 100) + '%"></i></div><span class="fc-pill">' + LAB.fc.seen + " seen · " + LAB.fc.known + " known</span></div>" +
+    '<div class="fc-stage"><button class="fc-card' + (LAB.fc.flipped ? " flip" : "") + '" id="fcCard" onclick="fcFlip()" aria-label="Flashcard — tap to flip">' +
+      '<span class="fc-face fc-f"><span class="fc-tag">' + esc(q.s) + '</span><span class="fc-q">' + escRich(q.q) + '</span><span class="fc-tap">Tap to reveal the answer ↻</span></span>' +
+      '<span class="fc-face fc-b"><span class="fc-tag ok">ANSWER · ' + LETTERS[q.a] + '</span><span class="fc-a">' + escRich(q.o[q.a]) + '</span><span class="fc-ex">' + esc(q.e) + '</span><span class="fc-tap">Tap to flip back</span></span>' +
+    "</button></div>" +
+    '<div class="fc-actions">' +
+      '<button class="btn btn-ghost" onclick="fcFlip()">' + (LAB.fc.flipped ? "🙈 Hide" : "↻ Reveal") + "</button>" +
+      '<button class="btn btn-ghost" onclick="fcQueue()">🔁 Revise later</button>' +
+      '<button class="btn btn-primary" onclick="fcKnow()">✓ I knew it</button>' +
+    "</div>" +
+    '<div class="lab-cta"><button class="btn btn-ghost" onclick="fcEnd()">⏹ End session</button></div>';
+}
+function fcMarkSeen(q){
+  if (q && !q._s){ q._s = 1; LAB.fc.seen++; }
+}
+function fcFlip(){
+  LAB.fc.flipped = !LAB.fc.flipped;
+  fcMarkSeen(LAB.fc.deck[LAB.fc.idx % LAB.fc.deck.length]);
+  fcShow();
+}
+function fcQueue(){
+  const d = LAB.fc.deck; if (!d.length) return;
+  const q = d[LAB.fc.idx % d.length];
+  fcMarkSeen(q); LAB.fc.flipped = false;
+  d.push(d.splice(LAB.fc.idx % d.length, 1)[0]);
+  LAB.fc.rounds++;
+  if (LAB.fc.rounds > d.length * 2){ fcEnd(); return; }
+  fcShow();
+}
+function fcKnow(){
+  const d = LAB.fc.deck; if (!d.length) return;
+  const q = d[LAB.fc.idx % d.length];
+  fcMarkSeen(q);
+  q._done = 1; LAB.fc.known++;
+  LAB.fc.idx++; LAB.fc.flipped = false;
+  if (LAB.fc.idx >= d.length){ fcEnd(); return; }
+  fcShow();
+}
+function fcEnd(){
+  const seen = LAB.fc.seen, known = LAB.fc.known, total = LAB.fc.deck.length || 1;
+  const pct = Math.round(known / total * 100);
+  const xp = known * 5, merits = 2 + Math.floor(known / 3);
+  if (xp) xpAdd(xp);
+  if (merits) coinsAdd(merits);
+  const st = labStats();
+  st.cards.seen += seen; st.cards.known += known;
+  labSave(st);
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">🏁</span><h3>Deck complete</h3><span class="lab-sub">' + seen + " cards reviewed · " + known + " knew it</span></div>" +
+    '<div class="lab-sum">' +
+      '<div class="rep-stat"><b>' + known + "</b><small>Knew it</small></div>" +
+      '<div class="rep-stat"><b>' + Math.max(0, seen - known) + "</b><small>Still learning</small></div>" +
+      '<div class="rep-stat"><b>' + pct + "%</b><small>Recall rate</small></div>" +
+      '<div class="rep-stat"><b>+' + xp + "</b><small>Study points</small></div>" +
+      '<div class="rep-stat"><b>+' + merits + "</b><small>Merits</small></div>" +
+    "</div>" +
+    (pct >= 70 ? '<p class="lab-note">🎉 Strong recall — that deck is settling in.</p>' : pct >= 40 ? '<p class="lab-note">📈 Good session — the cards you missed will come back stronger.</p>' : '<p class="lab-note">🌱 A little more time with these cards and they will stick.</p>') +
+    '<div class="lab-cta"><button class="btn btn-primary" onclick="fcStart()">▶ New deck</button><button class="btn btn-ghost" onclick="openLab(\'flash\')">⚙ Settings</button><button class="btn btn-ghost" onclick="closeLab()">Done</button></div>';
+}
+
+/* ---------- rapid fire ---------- */
+function labRapidSetup(){
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">⚡</span><h3>Rapid Fire</h3><span class="lab-sub">Answer as many as you can before the clock runs out — accuracy on the move</span></div>' +
+    '<div class="lab-row"><span class="lab-lbl">Class</span><div class="lab-tabs">' + labClassTabs("rap", LAB.rap.cls, "labRapidSetup") + "</div></div>" +
+    '<div class="lab-row"><span class="lab-lbl">Subject</span><div class="lab-tabs">' + labSubTabs("rap", LAB.rap.sub, "labRapidSetup") + "</div></div>" +
+    '<div class="lab-row"><span class="lab-lbl">Sprint length</span><div class="lab-tabs">' + [30, 60, 90].map(function(n){ return '<button class="lab-tab' + (LAB.rap.dur === n ? " on" : "") + '" onclick="LAB.rap.dur=' + n + ";labRapidSetup()\">" + n + "s</button>"; }).join("") + "</div></div>" +
+    '<div class="lab-cta"><button class="btn btn-primary" onclick="rapStart()">▶ Start sprint</button></div>';
+}
+function rapStart(){
+  const c = CLASSES[LAB.rap.cls]; if (!c){ toast("The question bank is still loading", "⏳"); return; }
+  const pool = c.questions.filter(function(q){ return LAB.rap.sub === null || q.s === LAB.rap.sub; });
+  if (!pool.length) return;
+  LAB.rap.deck = shuffle(pool);
+  LAB.rap.idx = 0; LAB.rap.score = 0; LAB.rap.tries = 0; LAB.rap.streak = 0; LAB.rap.bestStreak = 0;
+  LAB.rap.locked = false; LAB.rap.over = false;
+  LAB.rap.end = Date.now() + LAB.rap.dur * 1000;
+  rapShow();
+  if (LAB.rap.timer) clearInterval(LAB.rap.timer);
+  LAB.rap.timer = setInterval(rapTick, 200);
+}
+function rapShow(){
+  const q = LAB.rap.deck[LAB.rap.idx % LAB.rap.deck.length];
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">⚡</span><h3>Rapid Fire</h3><span class="lab-sub">' + esc(q.s) + " · question " + ((LAB.rap.idx % LAB.rap.deck.length) + 1) + "</span></div>" +
+    '<div class="rap-time" id="rapTime">' + LAB.rap.dur + "</div>" +
+    '<div class="rap-bar"><i id="rapBar" style="width:100%"></i></div>' +
+    '<div class="rap-sc"><span>Score <b id="rapScore">' + LAB.rap.score + '</b></span><span>Streak <b id="rapStreak">' + LAB.rap.streak + "</b></span><span>Best <b>" + LabSafeBest() + "</b></span></div>" +
+    '<div class="rap-q">' + escRich(q.q) + "</div>" +
+    '<div class="opts" id="rapOpts">' + q.o.map(function(o, i){
+      return '<button class="opt" onclick="rapPick(' + i + ')"><span class="letter">' + LETTERS[i] + "</span><span>" + escRich(o) + "</span></button>";
+    }).join("") + "</div>" +
+    '<div class="lab-cta"><button class="btn btn-ghost" onclick="rapEnd()">⏹ End sprint</button></div>';
+}
+function LabSafeBest(){
+  const st = labStats();
+  return st && st.rapid ? st.rapid.best : 0;
+}
+function rapTick(){
+  if (LAB.rap.over) return;
+  const left = Math.max(0, LAB.rap.end - Date.now());
+  const t = $("rapTime"), b = $("rapBar");
+  if (t){ const s = Math.ceil(left / 1000); t.textContent = s; t.classList.toggle("low", s <= 10); }
+  if (b) b.style.width = Math.max(0, Math.min(100, left / (LAB.rap.dur * 1000) * 100)) + "%";
+  if (left <= 0) rapEnd();
+}
+function rapPick(i){
+  if (LAB.rap.locked || LAB.rap.over || !LAB.rap.deck.length) return;
+  const q = LAB.rap.deck[LAB.rap.idx % LAB.rap.deck.length];
+  LAB.rap.locked = true; LAB.rap.tries++;
+  const ok = i === q.a;
+  if (ok){ LAB.rap.score++; LAB.rap.streak++; if (LAB.rap.streak > LAB.rap.bestStreak) LAB.rap.bestStreak = LAB.rap.streak; }
+  else LAB.rap.streak = 0;
+  sfx(ok ? "ok" : "no");
+  const box = $("rapOpts");
+  if (box) [...box.children].forEach(function(bb, bi){
+    bb.disabled = true;
+    if (bi === q.a) bb.classList.add("correct");
+    else if (bi === i) bb.classList.add("wrong");
+    else bb.classList.add("dim");
+  });
+  setTimeout(function(){
+    if (LAB.rap.over) return;
+    LAB.rap.idx++; LAB.rap.locked = false;
+    rapShow();
+  }, 420);
+}
+function rapEnd(){
+  if (LAB.rap.over) return;
+  LAB.rap.over = true;
+  if (LAB.rap.timer) { clearInterval(LAB.rap.timer); LAB.rap.timer = 0; }
+  const score = LAB.rap.score, tries = LAB.rap.tries;
+  const acc = tries ? Math.round(score / tries * 100) : 0;
+  const xp = score * 2, merits = 1 + Math.floor(score / 6);
+  if (xp) xpAdd(xp);
+  if (merits) coinsAdd(merits);
+  const st = labStats();
+  st.rapid.played++; st.rapid.best = Math.max(st.rapid.best, score); st.rapid.bestStreak = Math.max(st.rapid.bestStreak, LAB.rap.bestStreak);
+  labSave(st);
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">🏁</span><h3>Sprint ended</h3><span class="lab-sub">' + LAB.rap.dur + " seconds of Rapid Fire</span></div>" +
+    '<div class="lab-sum">' +
+      '<div class="rep-stat"><b>' + score + "</b><small>Correct</small></div>" +
+      '<div class="rep-stat"><b>' + LAB.rap.bestStreak + "</b><small>Best streak</small></div>" +
+      '<div class="rep-stat"><b>' + acc + "%</b><small>Accuracy</small></div>" +
+      '<div class="rep-stat"><b>+' + xp + "</b><small>Study points</small></div>" +
+      '<div class="rep-stat"><b>+' + merits + "</b><small>Merits</small></div>" +
+    "</div>" +
+    (acc >= 80 ? '<p class="lab-note">⚡ Blistering pace! That is examination speed.</p>' : acc >= 50 ? '<p class="lab-note">⚡ Solid pace — push for accuracy on the next sprint.</p>' : '<p class="lab-note">⚡ Every sprint sharpens your recall. Go again!</p>') +
+    '<div class="lab-cta"><button class="btn btn-primary" onclick="rapStart()">▶ Sprint again</button><button class="btn btn-ghost" onclick="openLab(\'rapid\')">⚙ Settings</button><button class="btn btn-ghost" onclick="closeLab()">Done</button></div>';
+}
+
+/* ---------- spelling lab ---------- */
+function labSpellSetup(){
+  const c = CLASSES[LAB.spell.cls] || CLASSES[0];
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">⌨️</span><h3>Spelling Lab</h3><span class="lab-sub">Spell the correct answer — spelling counts, and so does recall</span></div>' +
+    '<div class="lab-row"><span class="lab-lbl">Class</span><div class="lab-tabs">' + labClassTabs("spell", LAB.spell.cls, "labSpellSetup") + "</div></div>" +
+    '<div class="lab-row"><span class="lab-lbl">Subject</span><div class="lab-tabs">' + labSubTabs("spell", LAB.spell.sub, "labSpellSetup") + "</div></div>" +
+    '<p class="lab-note" style="color:var(--mut);font-size:.8rem">Type-friendly answers only (short words &amp; terms). Slight typos still count — one wrong letter in long words is forgiven.</p>' +
+    '<div class="lab-cta"><button class="btn btn-primary" onclick="spellStart()">▶ Begin</button></div>';
+  if (!c) return;
+}
+function spellNorm(t){
+  return String(t == null ? "" : t).toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+}
+function spellDist(a, b){
+  a = String(a); b = String(b);
+  const m = a.length, n = b.length;
+  if (!m) return n;
+  if (!n) return m;
+  let prev = [], cur = [];
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++){
+    cur[0] = i;
+    for (let j = 1; j <= n; j++){
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1));
+    }
+    prev = cur.slice();
+  }
+  return prev[n];
+}
+function spellOk(ans, typed){
+  const a = spellNorm(ans), t = spellNorm(typed);
+  if (!t) return false;
+  if (a === t) return true;
+  const tol = a.length > 12 ? 3 : a.length > 7 ? 2 : 1;
+  return spellDist(a, t) <= tol;
+}
+function spellDeck(pool, n){
+  return shuffle(pool).filter(function(q){
+    const a = String(q.o[q.a] == null ? "" : q.o[q.a]).trim();
+    const letters = (a.match(/[A-Za-z]/g) || []).length;
+    return a.length >= 3 && a.length <= 45 && letters >= 3;
+  }).slice(0, n || 15);
+}
+function spellStart(){
+  const c = CLASSES[LAB.spell.cls]; if (!c){ toast("The question bank is still loading", "⏳"); return; }
+  const pool = c.questions.filter(function(q){ return LAB.spell.sub === null || q.s === LAB.spell.sub; });
+  LAB.spell.deck = spellDeck(pool, 15);
+  if (!LAB.spell.deck.length){ toast("No type-friendly answers in this selection — try another", "⌨️"); return; }
+  LAB.spell.idx = 0; LAB.spell.score = 0; LAB.spell.tries = 0; LAB.spell.streak = 0; LAB.spell.over = false; LAB.spell.revealed = false;
+  spellShow();
+}
+function spellShow(){
+  const q = LAB.spell.deck[LAB.spell.idx];
+  if (!q){ spellEnd(); return; }
+  const ans = String(q.o[q.a] == null ? "" : q.o[q.a]).trim();
+  const letters = (ans.match(/[A-Za-z]/g) || []).length;
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">⌨️</span><h3>Spelling Lab</h3><span class="lab-sub">' + esc(q.s) + " · word " + (LAB.spell.idx + 1) + " of " + LAB.spell.deck.length + " · streak " + LAB.spell.streak + "</span></div>" +
+    '<div class="spell-box">' +
+      '<div class="spell-q">' + escRich(q.q) + "</div>" +
+      '<div class="spell-hint" id="spellHint">' + (LAB.spell.revealed ? 'It starts with "<b>' + esc(ans.charAt(0).toUpperCase()) + "</b>\" and has " + letters + " letters" : "The answer has " + letters + " letter" + (letters === 1 ? "" : "s")) + "</div>" +
+      '<input class="input spell-in" id="spellIn" placeholder="Type the answer…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type the answer">' +
+      '<div class="fc-actions"><button class="btn btn-ghost" onclick="spellHint()">💡 Hint</button><button class="btn btn-primary" onclick="spellCheck()">✓ Check</button></div>' +
+      '<div id="spellFb"></div>' +
+    "</div>" +
+    '<div class="lab-cta"><button class="btn btn-ghost" onclick="spellEnd()">⏹ End session</button></div>';
+  const inp = $("spellIn");
+  if (inp){
+    inp.focus();
+    inp.onkeydown = function(ev){ if (ev && ev.key === "Enter"){ ev.preventDefault(); spellCheck(); } };
+  }
+}
+function spellHint(){ LAB.spell.revealed = true; spellShow(); }
+function spellCheck(){
+  const q = LAB.spell.deck[LAB.spell.idx]; if (!q) return;
+  const ans = String(q.o[q.a] == null ? "" : q.o[q.a]).trim();
+  const inp = $("spellIn"); const typed = inp ? inp.value : "";
+  const ok = spellOk(ans, typed);
+  LAB.spell.tries++;
+  const fb = $("spellFb");
+  if (ok){
+    LAB.spell.score++; LAB.spell.streak++;
+    sfx("ok");
+    fb.innerHTML = '<div class="spell-fb ok">✅ Correct spelling — <b>' + esc(ans) + "</b></div>" +
+      '<div class="fc-actions"><button class="btn btn-primary" onclick="spellNext()">Next →</button></div>';
+  } else {
+    LAB.spell.streak = 0;
+    sfx("no");
+    fb.innerHTML = '<div class="spell-fb no">❌ Not quite — the answer is <b>' + esc(ans) + "</b>" +
+      (q.e ? '<div class="fc-ex">' + esc(q.e) + "</div>" : "") + "</div>" +
+      '<div class="fc-actions"><button class="btn btn-primary" onclick="spellNext()">Next →</button></div>';
+  }
+}
+function spellNext(){
+  LAB.spell.idx++;
+  if (LAB.spell.idx >= LAB.spell.deck.length){ spellEnd(); return; }
+  spellShow();
+}
+function spellEnd(){
+  if (LAB.spell.over) return;
+  LAB.spell.over = true;
+  const score = LAB.spell.score, tries = LAB.spell.tries;
+  const acc = tries ? Math.round(score / tries * 100) : 0;
+  const xp = score * 5, merits = 2 + Math.floor(score / 4);
+  if (xp) xpAdd(xp);
+  if (merits) coinsAdd(merits);
+  const st = labStats();
+  st.spell.played++; st.spell.best = Math.max(st.spell.best, acc);
+  labSave(st);
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">🏁</span><h3>Spelling round complete</h3><span class="lab-sub">' + tries + " words attempted</span></div>" +
+    '<div class="lab-sum">' +
+      '<div class="rep-stat"><b>' + score + "</b><small>Correct</small></div>" +
+      '<div class="rep-stat"><b>' + acc + "%</b><small>Spelling accuracy</small></div>" +
+      '<div class="rep-stat"><b>+' + xp + "</b><small>Study points</small></div>" +
+      '<div class="rep-stat"><b>+' + merits + "</b><small>Merits</small></div>" +
+    "</div>" +
+    (acc >= 80 ? '<p class="lab-note">🖋 Champion speller — examiners love that handwriting!</p>' : acc >= 50 ? '<p class="lab-note">🖋 Good wordsmithing — one more round to sharpen the tricky words.</p>' : '<p class="lab-note">🖋 Spellings stick with practice — read each answer aloud as you go.</p>') +
+    '<div class="lab-cta"><button class="btn btn-primary" onclick="spellStart()">▶ New round</button><button class="btn btn-ghost" onclick="openLab(\'spell\')">⚙ Settings</button><button class="btn btn-ghost" onclick="closeLab()">Done</button></div>';
+}
+
+/* ---------- progress report card ---------- */
+function repData(){
+  const att = attempts();
+  const labels = { "All subjects": 1, "Mixed syllabus": 1, "Spaced revision": 1 };
+  const by = {};
+  att.forEach(function(a){
+    if (!a.subj || labels[a.subj]) return;
+    const row = by[a.subj] = by[a.subj] || { t: 0, c: 0, best: 0, last: -1, tms: 0 };
+    row.t += a.total || 0; row.c += a.correct || 0;
+    const p = Math.round((a.correct || 0) / Math.max(1, a.total || 1) * 100);
+    if (p > row.best) row.best = p;
+    if ((a.tms || 0) >= row.tms){ row.tms = a.tms || 0; row.last = p; }
+  });
+  const rows = Object.keys(by).map(function(s){
+    const r = by[s];
+    return { s: s, tries: r.t, avg: Math.round(r.c / Math.max(1, r.t) * 100), best: r.best, last: r.last, master: subjectMastery(s) };
+  }).sort(function(a, b){
+    const ma = a.master === null ? -1 : a.master, mb = b.master === null ? -1 : b.master;
+    return mb - ma;
+  });
+  const all = att.map(function(a){ return Math.round((a.correct || 0) / Math.max(1, a.total || 1) * 100); });
+  const n = all.length;
+  const avg = n ? Math.round(all.reduce(function(s, v){ return s + v; }, 0) / n) : 0;
+  const best = n ? Math.max.apply(null, all) : 0;
+  const recent = all.slice(0, 6), older = all.slice(6, 12);
+  const rAvg = recent.length ? Math.round(recent.reduce(function(s, v){ return s + v; }, 0) / recent.length) : null;
+  const oAvg = older.length ? Math.round(older.reduce(function(s, v){ return s + v; }, 0) / older.length) : null;
+  const trend = (rAvg === null || oAvg === null) ? null : (rAvg - oAvg);
+  return { rows: rows, tries: att.length, avg: avg, best: best, last: best, trend: trend, grade: waecGrade(avg) };
+}
+function topicOf(q){
+  const list = TOPICS[q.s]; if (!list) return null;
+  const text = (q.q + " " + (q.o || []).join(" ")).toLowerCase();
+  let best = null, bestLen = 0;
+  list.forEach(function(t){
+    t[1].forEach(function(k){
+      if (text.indexOf(k) !== -1 && k.length > bestLen){ best = t[0]; bestLen = k.length; }
+    });
+  });
+  return best;
+}
+function repWeakTopics(rows){
+  const out = [];
+  const bank = store.get("nssc_mistakes", []);
+  rows.sort(function(a, b){ return (a.master === null ? 999 : a.master) - (b.master === null ? 999 : b.master); });
+  rows.slice(0, 6).forEach(function(r){
+    if (r.master !== null && r.master >= 60) return;
+    if (out.length >= 3) return;
+    if (!TOPICS[r.s]) return;
+    const mine = bank.filter(function(m){ return m.s === r.s; });
+    if (!mine.length) return;
+    const cnt = {};
+    mine.forEach(function(m){
+      const tp = topicOf(m);
+      if (tp) cnt[tp] = (cnt[tp] || 0) + 1;
+    });
+    const top = Object.keys(cnt).map(function(k){ return [k, cnt[k]]; }).sort(function(a, b){ return b[1] - a[1]; }).slice(0, 2);
+    if (top.length) out.push({ s: r.s, topics: top, master: r.master });
+  });
+  return out;
+}
+function labReportRender(){
+  const d = repData();
+  const nm = user ? (user.name || "Student") : "Guest Student";
+  const today = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const st = labStats();
+  const lv = lvlFromXp(getXP());
+  const badges = Object.keys(store.get("nssc_badges", {})).filter(function(k){ return store.get("nssc_badges", {})[k]; }).length;
+  const trendTxt = d.trend === null ? (d.tries ? "steady so far" : "no trend yet") : (d.trend >= 5 ? "improving ▲" : d.trend <= -5 ? "needs attention ▼" : "steady ◼");
+  const rowsHtml = d.rows.map(function(r){
+    const m = r.master === null ? "—" : r.master + "%";
+    const g = waecGrade(r.avg);
+    return "<tr><td>" + esc(r.s) + "</td><td>" + r.tries + "</td><td>" + r.avg + "%</td><td>" + r.best + "%</td><td>" + m + "</td><td><b>" + g.letter + "</b> · " + g.txt + "</td></tr>";
+  }).join("");
+  const weak = repWeakTopics(d.rows);
+  const weakHtml = weak.length
+    ? '<div class="rep-sec"><h4>Recommended focus</h4>' + weak.map(function(w){
+        return '<div class="rep-focus"><b>' + esc(w.s) + "</b> · focus on " + w.topics.map(function(t){ return esc(t[0]) + " (" + t[1] + ")"; }).join(" and ") + "</div>";
+      }).join("") + "</div>"
+    : '<div class="rep-sec"><h4>Recommended focus</h4><p class="rep-note">Complete a few papers to unlock subject-level recommendations.</p></div>';
+  const labsHtml = (st.cards.seen || st.rapid.played || st.spell.played)
+    ? '<div class="rep-sec"><h4>Study hall activity</h4><p class="rep-note">📇 ' + st.cards.seen + ' flashcards (' + st.cards.known + ' known) · ⚡ ' + st.rapid.played + ' sprints (best ' + st.rapid.best + ') · ⌨️ ' + st.spell.played + ' spelling rounds (best ' + st.spell.best + '%)</p></div>'
+    : "";
+  $("labBody").innerHTML =
+    '<div class="lab-printhide lab-head"><span class="lab-ico">🧾</span><h3>Progress Report</h3><span class="lab-sub">Printable for parents &amp; teachers</span></div>' +
+    '<div class="rep-card">' +
+      '<div class="rep-head"><div class="rep-brand">🎓 MY PERSONAL STUDY APP</div><div class="rep-doc">PROGRESS REPORT</div></div>' +
+      '<div class="rep-sub">Nigerian Senior Secondary Curriculum · SS1 – SS3 · ' + esc(today) + "</div>" +
+      '<div class="rep-id"><span><b>Student:</b> ' + esc(nm) + '</span><span><b>Candidate ID:</b> ' + esc(uid()) + "</span><span><b>Period:</b> All time</span></div>" +
+      '<div class="rep-stats">' +
+        '<div class="rep-stat"><b>' + d.tries + "</b><small>Papers</small></div>" +
+        '<div class="rep-stat"><b>' + d.avg + "%</b><small>Average</small></div>" +
+        '<div class="rep-stat"><b>' + d.best + "%</b><small>Best</small></div>" +
+        '<div class="rep-stat"><b>' + d.grade.letter + "</b><small>" + d.grade.txt + "</small></div>" +
+        '<div class="rep-stat"><b>' + getXP() + "</b><small>Study points · Lv " + lv.l + "</small></div>" +
+        '<div class="rep-stat"><b>' + getCoins() + "</b><small>Merits</small></div>" +
+        '<div class="rep-stat"><b>' + streakDays() + "</b><small>Day streak</small></div>" +
+        '<div class="rep-stat"><b>' + badges + "</b><small>Badges</small></div>" +
+      "</div>" +
+      '<div class="rep-line">' + (d.tries ? "Current standing: <b>" + d.grade.letter + "</b> (" + d.grade.txt + ") · Recent performance: <b>" + trendTxt + "</b> · Average <b>" + d.avg + "%</b> across " + d.tries + " paper" + (d.tries === 1 ? "" : "s") + "." : "No papers yet — sit a paper to start building this report.") + "</div>" +
+      (d.rows.length ? '<table class="rep-tbl"><thead><tr><th>Subject</th><th>Questions</th><th>Average</th><th>Best</th><th>Mastery</th><th>Grade</th></tr></thead><tbody>' + rowsHtml + "</tbody></table>" : "") +
+      weakHtml + labsHtml +
+      '<div class="rep-sig"><div>Parent / Guardian · signature</div><div>Student · signature</div></div>' +
+      '<div class="rep-foot">Generated by MY PERSONAL STUDY APP · Copyright © merebari web · All rights reserved.</div>' +
+    "</div>" +
+    '<div class="lab-printhide lab-cta"><button class="btn btn-primary" onclick="printReport()">🖨 Print / Save PDF</button><button class="btn btn-ghost" onclick="exportCSV()">⬇ CSV</button><button class="btn btn-ghost" onclick="closeLab()">Close</button></div>';
+}
+function printReport(){
+  document.body.classList.add("report-print");
+  const done = function(){ document.body.classList.remove("report-print"); window.removeEventListener("afterprint", done); };
+  window.addEventListener("afterprint", done);
+  try { if (window.print) window.print(); } catch (e) { done(); }
+}
+
 try { boot(); } catch (e) { showFatal("Something went wrong while starting: " + String((e && e.message) || e)); }
 </script>
 <!-- Compressed question bank (decompressed at load time) -->
