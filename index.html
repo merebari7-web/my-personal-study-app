@@ -983,6 +983,103 @@ body.gated{overflow:hidden}
 [data-theme="dark"] .lg-xp{color:#7dffc4}
 @media (max-width:640px){.lg-stats{display:none}.mr-n{font-size:.66rem}}
 
+/* ================= GRAPHICS-RICH PASS · © merebari web ================= */
+/* ---- hero: gold light sweep + knowledge constellation ---- */
+.hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(100deg,transparent 32%,rgba(255,255,255,.06) 44%,rgba(232,199,106,.14) 50%,rgba(255,255,255,.06) 56%,transparent 68%);
+  width:80%;left:-80%;animation:heroSheen 8.5s ease-in-out infinite}
+@keyframes heroSheen{0%{left:-80%}55%{left:100%}100%{left:115%}}
+[data-theme="dark"] .hero::after{opacity:.6}
+.hero-net{position:absolute;left:0;right:0;top:0;width:100%;height:100%;opacity:.55;animation:netPulse 7s ease-in-out infinite alternate}
+@keyframes netPulse{from{opacity:.35}to{opacity:.7}}
+.hero-net .net-lines path{stroke-dasharray:520;stroke-dashoffset:520;animation:netDraw 3.4s ease .3s forwards}
+@keyframes netDraw{to{stroke-dashoffset:0}}
+.hero-net circle{animation:netTwinkle 2.8s ease-in-out infinite}
+.hero-net circle:nth-child(2n){animation-delay:-1.2s}
+.hero-net circle:nth-child(3n){animation-delay:-2s}
+@keyframes netTwinkle{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.35)}}
+@media (max-width:640px){.hero-net{opacity:.35}}
+/* ---- scholarly owl mascot (SVG) ---- */
+.owl-svg{display:block;filter:drop-shadow(0 4px 8px rgba(20,35,70,.25))}
+.m-emo .owl-svg{width:52px;height:52px}
+.lv-big .owl-svg{width:66px;height:66px}
+.m-emo{display:inline-grid;place-items:center;position:relative}
+.m-badge{position:absolute;top:-5px;right:-8px;font-size:.95rem;line-height:1;background:#fff;border:1.5px solid rgba(201,162,39,.6);border-radius:50%;padding:2px 5px;box-shadow:0 4px 10px -3px rgba(20,35,70,.4);animation:popIn .35s cubic-bezier(.22,1.6,.36,1) both;z-index:2}
+[data-theme="dark"] .m-badge{background:#1b2740}
+.m-bubble{background:linear-gradient(165deg,#fffdf6,var(--panel));border:2px solid rgba(201,162,39,.45);box-shadow:0 10px 24px -10px rgba(20,35,70,.45),inset 0 1px 0 rgba(255,255,255,.8);border-radius:18px 18px 18px 5px}
+[data-theme="dark"] .m-bubble{background:linear-gradient(165deg,var(--card-solid),#101a30);border-color:rgba(201,162,39,.4)}
+/* ---- class & study tiles: gilded medallions ---- */
+.tab .cls-glyph{width:58px;height:58px;margin:0 auto 10px;display:grid;place-items:center;border-radius:50%;
+  background:radial-gradient(circle at 32% 26%,#1a4a7a,#002147 64%,#00142e);
+  border:2px solid var(--gold);box-shadow:0 0 0 3px rgba(0,33,71,.25),0 8px 18px -8px rgba(0,21,46,.55),inset 0 2px 3px rgba(255,255,255,.25);
+  font-size:1.5rem;color:#f2e4b5;text-shadow:0 1px 1px rgba(0,0,0,.5);transition:.25s}
+.tab:hover .cls-glyph{transform:translateY(-3px) rotate(-4deg);box-shadow:0 0 0 3px rgba(201,162,39,.30),0 12px 22px -8px rgba(0,21,46,.6),inset 0 2px 3px rgba(255,255,255,.25)}
+.tab.active .cls-glyph{box-shadow:0 0 0 3px rgba(201,162,39,.35),0 0 18px -2px rgba(201,162,39,.55),inset 0 2px 3px rgba(255,255,255,.25)}
+.lab-tile{position:relative;overflow:hidden}
+.lab-tile::before{content:"";position:absolute;inset:0;background:linear-gradient(150deg,rgba(201,162,39,.14),transparent 55%);opacity:0;transition:.25s}
+.lab-tile:hover::before{opacity:1}
+.lab-tile .li{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:1.3rem;
+  background:linear-gradient(150deg,var(--card-solid),var(--panel));border:1.5px solid rgba(201,162,39,.55);
+  box-shadow:0 6px 14px -6px rgba(20,35,70,.4),inset 0 1px 0 rgba(255,255,255,.7);margin-bottom:7px;position:relative}
+[data-theme="dark"] .lab-tile .li{background:linear-gradient(150deg,#1d2a47,#141e33);box-shadow:0 6px 14px -6px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.12)}
+.lab-tile:hover .li{transform:translateY(-2px) scale(1.06);border-color:var(--gold)}
+/* ---- buttons: shine sweep + raised gradient ---- */
+.btn::after{content:"";position:absolute;top:-8%;bottom:-8%;left:-30%;width:36%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.34),transparent);
+  transform:translateX(-140%) skewX(-18deg);transition:transform .5s ease;opacity:0}
+.btn:hover::after{opacity:1;transform:translateX(480%) skewX(-18deg)}
+.btn-primary{background:linear-gradient(135deg,var(--green-2),var(--green) 55%,var(--green-d));box-shadow:0 10px 24px -10px rgba(0,135,81,.7),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 14px 30px -10px rgba(0,135,81,.8),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:focus-visible{outline:3px solid rgba(201,162,39,.55);outline-offset:2px}
+/* ---- answer options: gilded letters + glow hover ---- */
+.opt .letter{background:linear-gradient(160deg,#fffdf6,var(--bar-track));border:1px solid rgba(201,162,39,.4);color:var(--green-d);box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+[data-theme="dark"] .opt .letter{background:linear-gradient(160deg,#24304e,#1b2740);color:#7dffc4}
+.opt:hover:not(:disabled){box-shadow:0 8px 20px -10px rgba(15,107,79,.55),0 0 0 2px color-mix(in srgb,var(--sub,var(--green)) 45%,transparent)}
+/* ---- progress & result ring: living glow ---- */
+#qBar{box-shadow:0 1px 8px rgba(201,162,39,.45),0 0 14px -2px rgba(201,162,39,.35)}
+.ring-fg{animation:ringGlow 2.6s ease-in-out infinite}
+@keyframes ringGlow{0%,100%{filter:drop-shadow(0 0 5px rgba(15,107,79,.28))}50%{filter:drop-shadow(0 0 11px rgba(15,107,79,.6))}}
+/* ---- grade seal: rotating medal sheen ---- */
+.seal{overflow:hidden}
+.seal::after{content:"";position:absolute;inset:-40% -80%;pointer-events:none;z-index:2;
+  background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.38) 50%,transparent 58%);
+  animation:sealSheen 3.6s ease-in-out infinite}
+@keyframes sealSheen{0%{transform:translateX(-90%)}60%{transform:translateX(90%)}100%{transform:translateX(110%)}}
+.seal.top::after{background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.55) 50%,transparent 58%)}
+/* ---- level-up: spinning honour rays + ribbon ---- */
+.lv-inner{position:relative;overflow:hidden;border-radius:16px;padding:18px 14px 12px}
+.lv-inner::before{content:"";position:absolute;left:50%;top:-62%;width:170%;aspect-ratio:1;translate:-50% 0;
+  background:repeating-conic-gradient(rgba(201,162,39,.24) 0deg 9deg,transparent 9deg 24deg);
+  border-radius:50%;animation:lvRays 14s linear infinite;pointer-events:none}
+@keyframes lvRays{to{rotate:360deg}}
+.lv-inner::after{content:"";position:absolute;left:8%;right:8%;bottom:8px;height:2px;border-radius:99px;
+  background:linear-gradient(90deg,transparent,rgba(201,162,39,.8),transparent)}
+.lv-big,.lv-inner b,.lv-inner span{position:relative;z-index:2}
+/* ---- dashboard tiles & hero stats ---- */
+.g-tile{transition:.22s;position:relative}
+.g-tile:hover{transform:translateY(-3px);box-shadow:0 12px 26px -12px rgba(20,35,70,.4);border-color:rgba(201,162,39,.55)}
+.stat{box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.stat b{text-shadow:0 2px 8px rgba(0,0,0,.28)}
+/* ---- chips: emblem discs ---- */
+.chip .ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--panel);
+  border:1px solid rgba(201,162,39,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.6);font-size:1rem}
+.chip.active .ico{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.45)}
+[data-theme="dark"] .chip .ico{background:#1b2740;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+/* ---- stepbar: shimmering progress ---- */
+.stepbar .s.on::after{background:linear-gradient(90deg,var(--green),var(--green-2),#37b58a,var(--green));background-size:240% 100%;animation:fill .6s ease both,stepbarSheen 2.2s linear .6s infinite}
+@keyframes stepbarSheen{to{background-position:-240% 0}}
+/* ---- toast & chrome ---- */
+#toast{background:linear-gradient(140deg,#23395c,var(--ink));box-shadow:0 16px 36px -12px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.18)}
+::selection{background:rgba(201,162,39,.38);color:inherit}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:var(--bar-track)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--green-2),var(--green-d));border-radius:8px;border:2px solid var(--bar-track)}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#37b58a,var(--green))}
+@media (max-width:400px){
+  .tab .cls-glyph{width:40px;height:40px;margin:0;flex:none;font-size:1.05rem}
+  .lab-tile .li{width:38px;height:38px;font-size:1.05rem}
+}
+
 </style>
 </head>
 <body>
@@ -1047,6 +1144,7 @@ body.gated{overflow:hidden}
   </div>
   <div class="rays" aria-hidden="true"></div>
   <div class="hero3d" aria-hidden="true">
+<svg class="hero-net" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g class="net-lines" stroke="rgba(232,199,106,.42)" stroke-width="1.2" fill="none"><path d="M90 250 L240 130 L420 300 L610 120 L800 260 L980 140 L1120 300"/><path d="M240 130 L210 330 M420 300 L300 210 M610 120 L640 320 M800 260 L900 380 M980 140 L1030 330"/></g><g fill="#e8c76a"><circle cx="90" cy="250" r="3.5"/><circle cx="240" cy="130" r="4.5"/><circle cx="420" cy="300" r="3.5"/><circle cx="610" cy="120" r="4.5"/><circle cx="800" cy="260" r="3.5"/><circle cx="980" cy="140" r="4.5"/><circle cx="1120" cy="300" r="3.5"/><circle cx="210" cy="330" r="2.5"/><circle cx="300" cy="210" r="2.5"/><circle cx="640" cy="320" r="2.5"/><circle cx="900" cy="380" r="2.5"/><circle cx="1030" cy="330" r="2.5"/></g></svg>
     <span class="h-orb" data-depth="1.4" style="left:6%;top:16%">📚</span>
     <span class="h-orb" data-depth="0.8" style="left:80%;top:10%">🎓</span>
     <span class="h-orb" data-depth="1.8" style="left:13%;top:56%">✏️</span>
@@ -1387,7 +1485,7 @@ body.gated{overflow:hidden}
 <div class="overlay hidden" id="levelOverlay">
   <div class="modal" style="max-width:380px">
     <div class="lv-inner">
-      <div class="lv-big">🦉</div>
+      <div class="lv-big"><svg class="owl-svg" viewBox="0 0 96 96" aria-hidden="true"><path d="M30 19 L24 6 L38 15 Z" fill="#a67c1e"/><path d="M66 19 L72 6 L58 15 Z" fill="#a67c1e"/><path d="M48 13 C27 13 16 29 18 47 C20 67 30 83 48 83 C66 83 76 67 78 47 C80 29 69 13 48 13 Z" fill="#f4ead0" stroke="#a67c1e" stroke-width="2.6"/><path d="M18 47 C9 52 7 65 14 71 C20 76 27 75 29 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><path d="M78 47 C87 52 89 65 82 71 C76 76 69 75 67 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><circle cx="48" cy="40" r="16.5" fill="#fdf9ec" stroke="#c9a227" stroke-width="2.2"/><circle cx="41" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="55" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="41" cy="40" r="3.2" fill="#221b06"/><circle cx="55" cy="40" r="3.2" fill="#221b06"/><circle cx="42.7" cy="38.3" r="1.15" fill="#fff"/><circle cx="56.7" cy="38.3" r="1.15" fill="#fff"/><path d="M48 47 L44 52 L52 52 Z" fill="#c9a227" stroke="#8a6d1f" stroke-width="1.1"/><path d="M35 61 Q48 56 61 61 L61 70 Q48 65 35 70 Z" fill="#0f6b4f" stroke="#0a4a36" stroke-width="1.4"/><path d="M48 59.5 L48 70 M39.6 61.6 h5.2 M39.6 64.4 h5.2 M56.4 61.6 h-5.2 M56.4 64.4 h-5.2" stroke="#e8c76a" stroke-width="1.25" fill="none"/><path d="M38 82 v5 M46 83 v5 M50 83 v5 M58 82 v5" stroke="#a67c1e" stroke-width="2" stroke-linecap="round"/></svg></div>
       <b id="lvTitle">LEVEL 2!</b>
       <span id="lvSub">Quiz Rookie</span>
     </div>
@@ -1463,7 +1561,7 @@ body.gated{overflow:hidden}
   </div>
 </div>
 
-<div class="mascot hidden" id="mascot" aria-hidden="true"><span class="m-emo">🦉</span><div class="m-bubble" id="mascotTxt">Welcome — let us learn!</div></div>
+<div class="mascot hidden" id="mascot" aria-hidden="true"><span class="m-emo"><svg class="owl-svg" viewBox="0 0 96 96" aria-hidden="true"><path d="M30 19 L24 6 L38 15 Z" fill="#a67c1e"/><path d="M66 19 L72 6 L58 15 Z" fill="#a67c1e"/><path d="M48 13 C27 13 16 29 18 47 C20 67 30 83 48 83 C66 83 76 67 78 47 C80 29 69 13 48 13 Z" fill="#f4ead0" stroke="#a67c1e" stroke-width="2.6"/><path d="M18 47 C9 52 7 65 14 71 C20 76 27 75 29 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><path d="M78 47 C87 52 89 65 82 71 C76 76 69 75 67 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><circle cx="48" cy="40" r="16.5" fill="#fdf9ec" stroke="#c9a227" stroke-width="2.2"/><circle cx="41" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="55" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="41" cy="40" r="3.2" fill="#221b06"/><circle cx="55" cy="40" r="3.2" fill="#221b06"/><circle cx="42.7" cy="38.3" r="1.15" fill="#fff"/><circle cx="56.7" cy="38.3" r="1.15" fill="#fff"/><path d="M48 47 L44 52 L52 52 Z" fill="#c9a227" stroke="#8a6d1f" stroke-width="1.1"/><path d="M35 61 Q48 56 61 61 L61 70 Q48 65 35 70 Z" fill="#0f6b4f" stroke="#0a4a36" stroke-width="1.4"/><path d="M48 59.5 L48 70 M39.6 61.6 h5.2 M39.6 64.4 h5.2 M56.4 61.6 h-5.2 M56.4 64.4 h-5.2" stroke="#e8c76a" stroke-width="1.25" fill="none"/><path d="M38 82 v5 M46 83 v5 M50 83 v5 M58 82 v5" stroke="#a67c1e" stroke-width="2" stroke-linecap="round"/></svg><b class="m-badge" id="mascotEmo">🦉</b></span><div class="m-bubble" id="mascotTxt">Welcome — let us learn!</div></div>
 <div id="toast"></div>
 
 <!-- fatal error screen (never fail silently) -->
@@ -2970,7 +3068,8 @@ function mascotSay(txt, emo){
   const m = $("mascot"); if (!m) return;
   m.classList.remove("hidden");
   const tt = $("mascotTxt"); if (tt) tt.textContent = txt;
-  const e = m.querySelector(".m-emo"); if (e && emo) e.textContent = emo;
+  let eb = $("mascotEmo"); if (!eb){ eb = document.createElement("b"); eb.className = "m-badge"; eb.id = "mascotEmo"; m.querySelector(".m-emo").appendChild(eb); }
+  if (eb && emo) eb.textContent = emo;
   clearTimeout(m.__t);
   m.__t = setTimeout(function(){ m.classList.add("hidden"); }, 4600);
 }

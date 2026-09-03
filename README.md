@@ -25,6 +25,7 @@ Copyright © merebari web · All rights reserved.
 | 🎓 Mock Hall | Full timed **mock examinations** — 25/50/100 questions, exam pace or 30/60/90 min, auto-submit at zero, **integrity monitoring** (tab-switches recorded on the report), review screen with jump-to-any-question grid before submitting |
 | 💾 Backup & Restore | One-tap **JSON export** of every paper, mistake, topic stat, badge, point and lab result — merge or replace when restoring on any device |
 | 🏆 Scholar League | Local **leaderboard** of every study account on the device, ranked by study points with medals, papers, best % and YOU marker |
+| ✨ Graphics pass | **Scholarly owl mascot** (SVG avatar + reaction badge) · **knowledge-constellation hero** with twinkling nodes and a gold light sweep · gilded medallions on class & study tiles · spinning honour rays on level-up · sheened grade seal · shimmering step-bar & progress glow |
 | 📜 Revision wheel | A prize wheel on every paper result (merits & study points) |
 | 🔒 Access gate | Everything is locked behind a study account — **no anonymous access**. Sign in with Google (hosted version) or create a free study account (name + optional email; works fully offline). Profiles & scores stay on the device |
 | 🖼 Certificate | Gilded certificate PNG export with serial number & signature |
