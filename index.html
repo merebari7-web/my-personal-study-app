@@ -912,6 +912,32 @@ footer b{color:var(--green-d)}
 /* 3D tilt (desktop, pointer-precise only) */
 .has-tilt{will-change:transform}
 
+/* ================= 3D SCENE DEPTH: hero + certificate ================= */
+/* hero parallax scene */
+.hero3d{position:absolute;inset:0;z-index:1;pointer-events:none;perspective:900px;overflow:hidden}
+.h-orb{position:absolute;font-size:1.5rem;line-height:1;opacity:.85;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45));will-change:translate;animation:hfloat 7s ease-in-out infinite alternate;user-select:none}
+.h-orb.star{color:#e8c76a;text-shadow:0 0 14px rgba(232,199,106,.9);font-size:1rem;animation-delay:-2s}
+.h-ring{position:absolute;width:340px;height:340px;margin:-170px 0 0 -170px;border:1px dashed rgba(232,199,106,.35);border-radius:50%;will-change:transform;animation:hspin 26s linear infinite}
+.h-ring.r2{width:460px;height:460px;margin:-230px 0 0 -230px;border-color:rgba(255,255,255,.16);animation-duration:44s;animation-direction:reverse}
+@keyframes hfloat{from{transform:translateY(-9px)}to{transform:translateY(9px)}}
+@keyframes hspin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.hero [data-depth]{will-change:translate}
+@media (max-width:640px){
+  .h-orb{font-size:1.15rem;opacity:.7}
+  .h-orb.star{font-size:.8rem}
+  .h-ring{width:230px;height:230px;margin:-115px 0 0 -115px}
+  .h-ring.r2{width:310px;height:310px;margin:-155px 0 0 -155px}
+}
+@media (max-width:400px){.h-orb:nth-child(3),.h-orb:nth-child(5){display:none}}
+/* certificate 3D tilt display */
+.cert-tilt{perspective:1100px;margin:14px 0 6px;padding:4px}
+.cert-tilt .cert-img{display:block;margin:0 auto;will-change:transform;transform-style:preserve-3d;transition:transform .18s ease-out,box-shadow .18s ease-out;animation:cert3din .65s cubic-bezier(.22,1,.36,1) both;backface-visibility:hidden}
+@keyframes cert3din{from{opacity:0;transform:rotateX(16deg) translateY(22px) scale(.96)}to{opacity:1;transform:rotateX(0) translateY(0) scale(1)}}
+.cert-tilt .cert-img.tilting{transition:transform .05s linear,box-shadow .05s linear}
+@media (max-width:640px){
+  .cert-tilt{perspective:900px}
+}
+
 </style>
 </head>
 <body>
@@ -975,6 +1001,17 @@ footer b{color:var(--green-d)}
     </div>
   </div>
   <div class="rays" aria-hidden="true"></div>
+  <div class="hero3d" aria-hidden="true">
+    <span class="h-orb" data-depth="1.4" style="left:6%;top:16%">📚</span>
+    <span class="h-orb" data-depth="0.8" style="left:80%;top:10%">🎓</span>
+    <span class="h-orb" data-depth="1.8" style="left:13%;top:56%">✏️</span>
+    <span class="h-orb" data-depth="0.6" style="left:87%;top:46%">🧮</span>
+    <span class="h-orb" data-depth="2.2" style="left:69%;top:58%">📐</span>
+    <span class="h-orb star" data-depth="1.1" style="left:45%;top:7%">✦</span>
+    <span class="h-orb star" data-depth="1.6" style="left:25%;top:33%">✦</span>
+    <span class="h-ring" data-depth="0.5" style="left:50%;top:44%"></span>
+    <span class="h-ring r2" data-depth="0.9" style="left:50%;top:44%"></span>
+  </div>
   <svg class="facade" viewBox="0 0 1200 190" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
     <g fill="none" stroke="rgba(232,199,106,.28)" stroke-width="1.6">
       <path d="M150 190 V74 H1050 V190"/>
@@ -1290,7 +1327,7 @@ footer b{color:var(--green-d)}
   <div class="modal wide">
     <button class="x icon-btn" onclick="hideCert()">✕</button>
     <h3>🖼 Certificate of examination</h3>
-    <div class="center" style="margin:14px 0 6px"><img id="certImg" alt="Certificate of Examination" style="max-width:100%;border:1px solid var(--card-border);border-radius:12px;box-shadow:var(--shadow)"></div>
+    <div class="cert-tilt" id="certTilt"><img id="certImg" class="cert-img" alt="Certificate of Examination" style="max-width:100%;border:1px solid var(--card-border);border-radius:12px;box-shadow:var(--shadow)"></div>
     <div class="row center" style="margin-top:14px">
       <button class="btn btn-gold" onclick="dlCert()">⬇ Download PNG</button>
       <button class="btn btn-ghost" onclick="hideCert()">Close</button>
@@ -2516,16 +2553,64 @@ function saveCert(){
     const g = x.createLinearGradient(0, 0, W, H);
     g.addColorStop(0, "#f8f3e6"); g.addColorStop(0.55, "#f0e7cc"); g.addColorStop(1, "#e6d9b4");
     x.fillStyle = g; x.fillRect(0, 0, W, H);
-    x.strokeStyle = "#c9a227"; x.lineWidth = 7; x.strokeRect(20, 20, W - 40, H - 40);
-    x.lineWidth = 1.6; x.strokeRect(36, 36, W - 72, H - 72);
+    /* embossed bevel frame */
+    x.shadowColor = "rgba(70,50,10,.4)"; x.shadowBlur = 30; x.shadowOffsetY = 12;
+    x.strokeStyle = "#8a6d1f"; x.lineWidth = 9; x.strokeRect(20, 20, W - 40, H - 40);
+    x.shadowColor = "transparent"; x.shadowBlur = 0; x.shadowOffsetY = 0;
+    const fg = x.createLinearGradient(0, 16, 0, H - 16);
+    fg.addColorStop(0, "#f4e3ae"); fg.addColorStop(0.5, "#d9b95c"); fg.addColorStop(1, "#a67c1e");
+    x.strokeStyle = fg; x.lineWidth = 7; x.strokeRect(20, 20, W - 40, H - 40);
+    x.strokeStyle = "rgba(255,255,255,.55)"; x.lineWidth = 1.6; x.strokeRect(26, 26, W - 52, H - 52);
+    x.strokeStyle = "rgba(90,66,15,.55)"; x.lineWidth = 1.4; x.strokeRect(34, 34, W - 68, H - 68);
+    x.strokeStyle = "#c9a227"; x.lineWidth = 1.6; x.strokeRect(36, 36, W - 72, H - 72);
     x.fillStyle = "rgba(201,162,39,.10)";
     x.fillRect(60, 60, W - 120, H - 120);
+    /* corner ornaments with engraved depth */
+    const CORN = [[46, 46, 1, 1], [W - 46, 46, -1, 1], [46, H - 46, 1, -1], [W - 46, H - 46, -1, -1]];
+    CORN.forEach(function(c2){
+      const ox = c2[0], oy = c2[1], sx = c2[2], sy = c2[3];
+      x.save();
+      x.shadowColor = "rgba(70,50,10,.35)"; x.shadowBlur = 8; x.shadowOffsetY = 3;
+      const lg2 = x.createLinearGradient(ox, oy, ox + 30 * sx, oy + 30 * sy);
+      lg2.addColorStop(0, "#f4e3ae"); lg2.addColorStop(1, "#b8912f");
+      x.strokeStyle = lg2; x.lineWidth = 4; x.lineCap = "round";
+      x.beginPath(); x.moveTo(ox + 30 * sx, oy); x.quadraticCurveTo(ox, oy, ox, oy + 30 * sy); x.stroke();
+      x.restore();
+      x.fillStyle = "#c9a227";
+      x.save(); x.translate(ox, oy); x.rotate(Math.PI / 4);
+      x.fillRect(-4.2, -4.2, 8.4, 8.4); x.restore();
+    });
+    /* soft vignette depth */
+    const vg = x.createRadialGradient(W / 2, H / 2, H * 0.22, W / 2, H / 2, H * 0.78);
+    vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(112,84,20,.14)");
+    x.fillStyle = vg; x.fillRect(0, 0, W, H);
+    /* 3D folds of honour behind the crest */
+    x.save();
+    x.shadowColor = "rgba(60,45,10,.35)"; x.shadowBlur = 10; x.shadowOffsetY = 4;
+    const rgb = x.createLinearGradient(0, 80, 0, 212);
+    rgb.addColorStop(0, "#e8c76a"); rgb.addColorStop(0.55, "#c9a227"); rgb.addColorStop(1, "#7e5f1a");
+    x.fillStyle = rgb;
+    function rtail(px){
+      x.beginPath(); x.moveTo(px, 88); x.lineTo(px + 54, 116); x.lineTo(px + 54, 196);
+      x.lineTo(px + 27, 180); x.lineTo(px, 196); x.closePath(); x.fill();
+    }
+    rtail(W / 2 - 150); rtail(W / 2 + 96);
+    x.fillStyle = "#7e5f1a";
+    x.beginPath(); x.moveTo(W / 2 - 150, 196); x.lineTo(W / 2 - 96, 196); x.lineTo(W / 2 - 123, 180); x.closePath(); x.fill();
+    x.beginPath(); x.moveTo(W / 2 + 96, 196); x.lineTo(W / 2 + 150, 196); x.lineTo(W / 2 + 123, 180); x.closePath(); x.fill();
+    x.restore();
     /* crest */
     x.save(); x.translate(W / 2, 148);
-    x.fillStyle = "#002147";
+    x.shadowColor = "rgba(0,26,53,.45)"; x.shadowBlur = 18; x.shadowOffsetY = 7;
+    const cg = x.createLinearGradient(0, -86, 0, 84);
+    cg.addColorStop(0, "#1c4c7c"); cg.addColorStop(0.45, "#002147"); cg.addColorStop(1, "#000d1c");
+    x.fillStyle = cg;
     x.beginPath(); x.moveTo(0, -86); x.lineTo(72, -62); x.lineTo(72, -8); x.lineTo(36, 62); x.lineTo(0, 84); x.lineTo(-36, 62); x.lineTo(-72, -8); x.lineTo(-72, -62); x.closePath(); x.fill();
     x.strokeStyle = "#c9a227"; x.lineWidth = 3; x.stroke();
-    x.fillStyle = "#e8c76a"; x.beginPath();
+    x.shadowColor = "transparent"; x.shadowBlur = 0; x.shadowOffsetY = 0;
+    const sg = x.createLinearGradient(0, -44, 0, 5);
+    sg.addColorStop(0, "#f4de9a"); sg.addColorStop(1, "#c9a227");
+    x.fillStyle = sg; x.beginPath();
     x.moveTo(0, -44); x.lineTo(7.5, -27); x.lineTo(26, -27); x.lineTo(11, -13); x.lineTo(16, 5); x.lineTo(0, -6); x.lineTo(-16, 5); x.lineTo(-11, -13); x.lineTo(-26, -27); x.lineTo(-7.5, -27); x.closePath(); x.fill();
     x.strokeStyle = "#e8c76a"; x.lineWidth = 2.4;
     x.beginPath(); x.moveTo(-36, 18); x.quadraticCurveTo(0, 4, 36, 18); x.lineTo(36, 42); x.quadraticCurveTo(0, 28, -36, 42); x.closePath(); x.stroke();
@@ -2539,8 +2624,11 @@ function saveCert(){
     x.fillText("merebari web", W / 2, 292);
     x.strokeStyle = "#c9a227"; x.lineWidth = 2;
     x.beginPath(); x.moveTo(W / 2 - 190, 312); x.lineTo(W / 2 + 190, 312); x.stroke();
+    x.save();
+    x.shadowColor = "rgba(166,124,30,.55)"; x.shadowBlur = 7; x.shadowOffsetY = 3;
     x.fillStyle = "#001a35"; x.font = "900 47px Georgia, serif";
     x.fillText("CERTIFICATE OF EXAMINATION", W / 2, 366);
+    x.restore();
     x.fillStyle = "#5a4a2a"; x.font = "italic 24px Georgia, serif";
     x.fillText("This is to certify that", W / 2, 416);
     x.fillStyle = "#fbf7ec"; rr(x, W / 2 - 320, 436, 640, 66, 10); x.fill();
@@ -3076,7 +3164,7 @@ function cardForState(){
 function boot(){
   const ready = applyBank();
   document.body.dataset.booted = "1";
-  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle(); initTilt();
+  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle(); initTilt(); heroDepth(); certTilt();
   mascotSay("Welcome. Choose your level, then begin with a paper — every answer builds your record.", "🦉");
   if (ready) {
     hideBankStatus(); setCard(cardForState());
@@ -3999,6 +4087,74 @@ function initTilt(){
       const ny = (ev.clientY - r.top) / r.height - 0.5;
       tiltEl.style.transform = "perspective(620px) rotateX(" + (-ny * 7).toFixed(2) + "deg) rotateY(" + (nx * 9).toFixed(2) + "deg) translateY(-3px)";
     }, { passive: true });
+  } catch (e) {}
+}
+
+/* ================= 3D SCENE DEPTH ENGINES ================= */
+let heroDepthOn = false, certTiltOn = false;
+function heroDepth(){
+  if (heroDepthOn) return;
+  try {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const hero = document.querySelector(".hero");
+    if (!hero) return;
+    /* assign depth to existing layers */
+    const layers = [];
+    [".hero .blob.b1", ".hero .blob.b2", ".hero .blob.b3", ".hero .cube-scene", ".hero-badge",
+     ".hero h1", ".hero p.tag", ".hero .stats"].forEach(function(sel, i){
+      const el = hero.querySelector(sel);
+      if (el && !el.getAttribute("data-depth")) el.setAttribute("data-depth", [1.4, 1.9, 1.0, 1.1, 0.55, 0.32, 0.24, 0.16][i]);
+    });
+    let lastX = 0, lastY = 0;
+    const apply = function(){
+      document.querySelectorAll(".hero [data-depth]").forEach(function(el){
+        const d = parseFloat(el.getAttribute("data-depth") || "0.5");
+        if (lastX === 0 && lastY === 0){ el.style.translate = ""; return; }
+        el.style.translate = (lastX * d).toFixed(2) + "px " + (lastY * d).toFixed(2) + "px";
+      });
+    };
+    hero.addEventListener("pointermove", function(ev){
+      const pt = ev.pointerType || "mouse";
+      if (pt !== "mouse") return;
+      let r = hero.getBoundingClientRect(); if (!r || !r.width) r = { left: 0, top: 0, width: 1200, height: 800 };
+      lastX = ((ev.clientX - r.left) / r.width - 0.5) * 2;   /* -1..1 */
+      lastY = ((ev.clientY - r.top) / r.height - 0.5) * 2;
+      apply();
+    }, { passive: true });
+    hero.addEventListener("pointerleave", function(){
+      lastX = 0; lastY = 0; apply();
+    }, { passive: true });
+    heroDepthOn = true;
+  } catch (e) {}
+}
+function certTilt(){
+  if (certTiltOn) return;
+  try {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const wrap = document.querySelector(".cert-tilt");
+    if (!wrap) return;
+    const img = wrap.querySelector(".cert-img");
+    if (!img) return;
+    document.addEventListener("pointermove", function(ev){
+      const t = ev.target && ev.target.closest ? ev.target.closest(".cert-tilt") : null;
+      if (!t) return;
+      const pt = ev.pointerType || "mouse";
+      if (pt !== "mouse") return;
+      let r = t.getBoundingClientRect(); if (!r || !r.width) r = { left: 0, top: 0, width: 700, height: 480 };
+      const nx = (ev.clientX - r.left) / r.width - 0.5;
+      const ny = (ev.clientY - r.top) / r.height - 0.5;
+      img.classList.add("tilting");
+      img.style.transform = "perspective(1100px) rotateX(" + (-ny * 7).toFixed(2) + "deg) rotateY(" + (nx * 9).toFixed(2) + "deg) scale(1.02)";
+      img.style.boxShadow = "0 34px 70px -18px rgba(20,35,70,.55)";
+    }, { passive: true });
+    document.addEventListener("pointerleave", function(ev){
+      const t = ev.target && ev.target.closest ? ev.target.closest(".cert-tilt") : null;
+      if (!t) return;
+      img.classList.remove("tilting");
+      img.style.transform = "";
+      img.style.boxShadow = "";
+    }, { passive: true });
+    certTiltOn = true;
   } catch (e) {}
 }
 
