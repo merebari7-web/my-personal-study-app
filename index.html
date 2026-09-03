@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#002147">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 L58 11 V30 C58 46 47 56 32 60 C17 56 6 46 6 30 V11 Z' fill='%23002147' stroke='%23c9a227' stroke-width='3'/%3E%3Cpath d='M32 10 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z' fill='%23e8c76a'/%3E%3Cpath d='M20 38 Q32 32 44 38 L44 48 Q32 42 32 48 Q32 42 20 48 Z' fill='%23f7f1de'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 L58 11 V30 C58 46 47 56 32 60 C17 56 6 46 6 30 V11 Z' fill='%232d1f10' stroke='%23c9a227' stroke-width='3'/%3E%3Cpath d='M32 10 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z' fill='%23e8c76a'/%3E%3Cpath d='M20 38 Q32 32 44 38 L44 48 Q32 42 32 48 Q32 42 20 48 Z' fill='%23f7f1de'/%3E%3C/svg%3E">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>MY PERSONAL STUDY APP — Senior Secondary Practice Papers (SS1–SS3)</title>
@@ -1080,8 +1080,175 @@ body.gated{overflow:hidden}
   .lab-tile .li{width:38px;height:38px;font-size:1.05rem}
 }
 
+/* ================= MAISON D'ÉTUDE — warm ivory · espresso · champagne gold
+   Visual language inspired by Nouvelle Parfumerie Gandour (DD.NYC): editorial
+   serifs, hairline gold, generous ivory, amber noir evenings.
+   GRAPHICS-RICH PASS · © merebari web ================= */
+
+/* ---- palette remap (this block wins: appended last) ---- */
+:root{
+  --bg:#faf3e8; --bg-2:#f2e7d3;
+  --card:rgba(255,252,244,.94); --card-solid:#fdf8ec; --card-border:rgba(122,84,32,.24);
+  --ink:#32373c; --ink-2:#6f5b3e; --mut:#a08a68;
+  --green:#b98a45; --green-2:#d0a25c; --green-d:#8a5f24; --green-l:#f6ead2;
+  --gold:#c9a25f; --gold-l:#f4e5c2; --gold-d:#8a5f24;
+  --red:#a4482e; --red-l:#f6e2d8;
+  --shadow:0 1px 0 rgba(255,255,255,.65),0 14px 34px -20px rgba(90,60,25,.35);
+  --shadow-sm:0 2px 12px -6px rgba(90,60,25,.3);
+  --ring:#e0d2b4; --hero-grad:linear-gradient(160deg,#1c1207 0%,#3a2412 46%,#6b421c 100%);
+  --hero-ink:#f6ead2;
+  --chip-bg:#fdf8ec; --chip-border:#d3bd92; --opt-bg:#fdf8ec; --opt-border:#cbb386;
+  --opt-hover:rgba(185,138,69,.10); --bar-track:#ecdfc4; --panel:#f7efdd;
+}
+[data-theme="dark"]{
+  --bg:#17110a; --bg-2:#20160c; --card:rgba(36,27,15,.94); --card-solid:#22180e;
+  --card-border:rgba(201,162,94,.24); --ink:#f2e5cd; --ink-2:#cdb691; --mut:#a58a5e;
+  --green:#c9a25f; --green-2:#e0b978; --green-d:#e8c98a; --green-l:rgba(201,162,94,.16);
+  --gold:#c9a25f; --gold-l:#33270f; --red:#d98a6e; --red-l:#3a2016;
+  --shadow:0 16px 44px -16px rgba(0,0,0,.65); --shadow-sm:0 4px 18px -8px rgba(0,0,0,.55);
+  --ring:#4a3a22; --hero-grad:linear-gradient(160deg,#0f0a05 0%,#261709 46%,#4a2c10 100%);
+  --chip-bg:#2c2012; --chip-border:#5a4526; --opt-bg:#2c2012; --opt-border:#5a4526;
+  --opt-hover:rgba(224,185,120,.12); --bar-track:#3a2c18; --panel:#2a1e10;
+}
+/* warm the accents that were green/navy in dark mode */
+[data-theme="dark"] .tab .cls,[data-theme="dark"] .tab .lvl,[data-theme="dark"] .pill.g,
+[data-theme="dark"] .review .tag.g,[data-theme="dark"] .map-chip.m-hi,[data-theme="dark"] .plan-num,
+[data-theme="dark"] .m-sub,[data-theme="dark"] .s3-fig b,[data-theme="dark"] .spell-fb.ok,
+[data-theme="dark"] .fc-a,[data-theme="dark"] .fc-tag.ok,[data-theme="dark"] .mr-n.done,
+[data-theme="dark"] .lg-xp,[data-theme="dark"] .s3-formula code,[data-theme="dark"] .opt .letter,
+[data-theme="dark"] .chip .lbl,[data-theme="dark"] .fc-tag{color:#eecf9a}
+[data-theme="dark"] .tab .lvl,[data-theme="dark"] .pill.g,[data-theme="dark"] .review .tag.g,[data-theme="dark"] .fc-tag,[data-theme="dark"] .fc-tag.ok{background:rgba(201,162,94,.16)}
+[data-theme="dark"] .tab.active{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,94,.2)}
+[data-theme="dark"] .opt .letter{background:linear-gradient(160deg,#3a2c18,#2c2012);color:#f2e5cd}
+[data-theme="dark"] .lg-xp,[data-theme="dark"] .plan-num,[data-theme="dark"] .s3-fig b{color:#eecf9a}
+
+/* ---- ivory canvas, hairline gold frame, film grain ---- */
+body{background:var(--bg);color:var(--ink)}
+body::before{background:radial-gradient(900px 500px at 50% -10%,rgba(201,162,94,.10),transparent 60%),radial-gradient(700px 480px at -10% 30%,rgba(185,138,69,.08),transparent 60%),radial-gradient(800px 520px at 110% 90%,rgba(201,162,94,.09),transparent 60%)}
+body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;opacity:.045;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+.luxe-frame{position:fixed;inset:11px;pointer-events:none;z-index:260;border:1px solid rgba(185,138,69,.30);border-radius:3px}
+.luxe-frame::before,.luxe-frame::after{content:"";position:absolute;width:26px;height:26px;border:1px solid rgba(201,162,94,.55)}
+.luxe-frame::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.luxe-frame::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+::selection{background:rgba(201,162,94,.38);color:#241708}
+::-webkit-scrollbar-track{background:var(--panel)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#d0a25c,#8a5f24);border:2px solid var(--panel)}
+
+/* ---- hero: amber-noir salon ---- */
+.hero{background:var(--hero-grad)}
+.hero .blob.b1{background:rgba(232,201,138,.20)}
+.hero .blob.b2{background:rgba(201,162,94,.26)}
+.hero .blob.b3{background:rgba(255,246,222,.12)}
+.hero-badge{border-color:rgba(232,201,138,.4);background:rgba(38,26,12,.35);letter-spacing:.30em;font-size:.66rem}
+.hero-badge .dot{background:#e8c98a;box-shadow:0 0 12px #e8c98a;animation-duration:2.4s}
+.hero-overline{position:relative;z-index:2;font-size:.6rem;letter-spacing:.5em;text-transform:uppercase;color:#dfbe7e;margin:0 0 14px;font-weight:800;text-indent:.5em}
+.hero-overline b{font-weight:800;color:#f0d9a6}
+.hero h1{letter-spacing:.045em;font-weight:700;color:#f9f2e2;font-size:clamp(1.9rem,4.4vw,3.1rem)}
+.hero h1 em{font-style:italic;color:#eecf9a;font-weight:500}
+.hero p.tag{color:#e9d8b4;opacity:.95;font-style:italic}
+.hero-deco{font-family:Georgia,serif;font-style:italic;letter-spacing:.22em;font-size:.74rem;color:#cfae6e;margin-top:20px;text-transform:none}
+.hero-deco::before,.hero-deco::after{content:"—";margin:0 12px;color:rgba(207,174,110,.6)}
+.stat{background:rgba(34,23,10,.34);border:1px solid rgba(232,201,138,.30);backdrop-filter:blur(10px);border-radius:4px}
+.stat b{font-weight:700;letter-spacing:.06em;color:#f6ead2}
+.stat span{letter-spacing:.28em;color:#cfae6e}
+.stat:hover{background:rgba(48,33,15,.45)}
+@media (max-width:640px){.hero .stat{background:rgba(34,23,10,.5)}}
+/* orbs become gold fleurons */
+.h-orb{color:#e6c88f;font-family:Georgia,serif;font-size:1.3rem;text-shadow:0 0 20px rgba(230,200,143,.55);opacity:.9;font-weight:400}
+.h-orb.star{color:#f0d9a6;text-shadow:0 0 16px rgba(240,217,166,.9);font-size:1.05rem}
+@media (max-width:640px){.h-orb{font-size:1.05rem}}
+
+/* ---- editorial serif cards ---- */
+.card{background:var(--card);border:1px solid var(--card-border);border-radius:6px;box-shadow:var(--shadow)}
+h2.step{color:#a4895f;letter-spacing:.34em;font-size:.68rem;font-weight:800}
+h2.step::after{background:linear-gradient(90deg,var(--card-border),rgba(185,138,69,.4),transparent)}
+.stepbar .s{height:3px;background:var(--bar-track)}
+.stepbar .s.on::after{background:linear-gradient(90deg,#a67c3b,#e0b978,#8a5f24,#c9a25f);background-size:240% 100%;animation:fill .6s ease both,stepbarSheen 2.2s linear .6s infinite}
+/* class medallions: bronze */
+.tab{border-radius:6px;border:1px solid var(--chip-border);background:var(--chip-bg)}
+.tab .cls-glyph{background:radial-gradient(circle at 32% 26%,#8a5f24,#4a2c10 62%,#241708);border-color:#c9a25f;color:#f4e5c2;box-shadow:0 0 0 3px rgba(90,60,25,.18),0 10px 22px -10px rgba(60,38,12,.6),inset 0 2px 3px rgba(255,244,220,.28)}
+.tab .cls{color:#5c3f16;letter-spacing:.06em}
+.tab .meta{color:#a08a68}
+.tab .lvl{background:#f6ead2;color:#8a5f24;letter-spacing:.22em}
+[data-theme="dark"] .tab .cls{color:#f2e5cd}
+/* study tiles: gilded fleurons */
+.lab-tile{background:var(--chip-bg);border:1px solid var(--chip-border);border-radius:6px}
+.lab-tile .li{border-radius:50%;border:1px solid rgba(201,162,94,.7);background:radial-gradient(circle at 32% 26%,#fffdf4,#f2e5c6)}
+[data-theme="dark"] .lab-tile .li{background:radial-gradient(circle at 32% 26%,#3a2c18,#241a10)}
+.lab-tile .lt{letter-spacing:.08em;color:#5c3f16;font-size:.82rem}
+.lab-tile:hover{border-color:#c9a25f;box-shadow:0 10px 24px -12px rgba(90,60,25,.4)}
+[data-theme="dark"] .lab-tile .lt{color:#f2e5cd}
+[data-theme="dark"] .lab-tile{background:#241a10;border-color:#5a4526}
+/* subject chips */
+.chip{border-radius:6px;border:1px solid var(--chip-border);background:var(--chip-bg)}
+.chip .ico{background:#f6ead2;border:1px solid rgba(185,138,69,.5);border-radius:50%}
+.chip.active .ico{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.5)}
+[data-theme="dark"] .chip .ico{background:#33270f;border-color:#5a4526}
+.chip .cnt{background:#f6ead2;color:#8a5f24}
+/* counts */
+.count{border-radius:6px;border:1px solid var(--chip-border)}
+.count b{color:#5c3f16}
+/* buttons: champagne couture */
+.btn{border:1px solid rgba(185,138,69,.5);border-radius:999px;padding:12px 26px;font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;background:transparent;color:var(--ink)}
+.btn-primary{background:linear-gradient(135deg,#d0a25c,#b98a45 55%,#8a5f24);border-color:transparent;color:#241708;box-shadow:0 12px 26px -12px rgba(138,95,36,.75),inset 0 1px 0 rgba(255,248,230,.5)}
+.btn-primary:hover{box-shadow:0 16px 32px -12px rgba(138,95,36,.85),inset 0 1px 0 rgba(255,248,230,.5)}
+.btn-gold{background:linear-gradient(135deg,#e0b978,#c9a25f 55%,#a67c3b);border-color:transparent;color:#241708}
+.btn-ghost{color:var(--ink)}
+[data-theme="dark"] .btn{border-color:rgba(201,162,94,.45)}
+[data-theme="dark"] .btn-primary{color:#241708}
+/* options */
+.opt{border-radius:6px;border:1px solid var(--opt-border)}
+.opt .letter{background:linear-gradient(160deg,#fffdf4,var(--bar-track));border:1px solid rgba(185,138,69,.5);border-radius:50%;color:#8a5f24;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+[data-theme="dark"] .opt .letter{color:#f2e5cd}
+.opt:hover:not(:disabled){box-shadow:0 8px 20px -10px rgba(138,95,36,.5),0 0 0 2px rgba(201,162,94,.3)}
+.qtext{color:var(--ink)}
+/* result: bronze seal */
+.seal{background:radial-gradient(circle at 32% 28%,#8a5f24,#4a2c10 62%,#241708);border-color:#c9a25f;box-shadow:0 0 0 4px #241708,0 0 0 5.5px #c9a25f,0 14px 28px -12px rgba(60,38,12,.6)}
+.seal.top{background:radial-gradient(circle at 32% 28%,#f6e1a0,#c9a25f 60%,#8a5f24);color:#241708}
+.seal.low{background:radial-gradient(circle at 32% 28%,#8a795e,#5c4a30 62%,#33270f)}
+/* plan / gauges */
+.plan-gauge,.plan-items{background:var(--panel);border-color:var(--card-border)}
+.plan-bar i{background:linear-gradient(90deg,#a67c3b,#e0b978)}
+.plan-num{color:#5c3f16}
+/* gamified dashboard */
+.g-tile{background:linear-gradient(160deg,var(--card-solid),var(--panel));border:1px solid var(--card-border);border-radius:6px}
+.g-tile:hover{border-color:rgba(201,162,94,.6)}
+/* toast / chrome */
+#toast{background:linear-gradient(140deg,#3a2c18,#241708);box-shadow:0 16px 36px -12px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,244,220,.2)}
+/* avatars */
+.avatar-lg{background:linear-gradient(135deg,#d0a25c,#8a5f24)}
+.acct-btn .avatar{background:#fff8ea;color:#8a5f24}
+.acct-btn{background:rgba(38,26,12,.4);border-color:rgba(232,201,138,.35)}
+.icon-btn{background:rgba(38,26,12,.4);border-color:rgba(232,201,138,.35)}
+.brand .logo{background:rgba(38,26,12,.45);border-color:rgba(232,201,138,.45)}
+/* mascot */
+.m-bubble{border:1px solid rgba(185,138,69,.45)}
+/* maps warm */
+.map-chip.m-hi{background:rgba(185,138,69,.18);border-color:rgba(185,138,69,.55);color:#7a521c}
+.map-chip.m-mid{background:rgba(201,162,94,.16);border-color:rgba(201,162,94,.55);color:#8a5f24}
+.map-chip.m-lo{background:rgba(164,72,46,.12);border-color:rgba(164,72,46,.5);color:#a4482e}
+[data-theme="dark"] .map-chip.m-hi{color:#eecf9a}
+/* lab modal */
+.modal{background:var(--card-solid);border:1px solid rgba(185,138,69,.3);border-radius:8px}
+/* gate: amber-noir salon */
+#gateOverlay{background:radial-gradient(1100px 700px at 50% -20%,#3a2412 0%,#1c1207 52%,#100a04 100%);color:#f6ead2}
+#gateOverlay::before{background:radial-gradient(600px 380px at 50% 112%,rgba(224,185,120,.14),transparent 65%),repeating-linear-gradient(0deg,rgba(255,244,220,.02) 0 1px,transparent 1px 26px)}
+.gate-card{background:rgba(38,26,12,.55);border:1px solid rgba(232,201,138,.35);border-radius:6px}
+.gate-brand h1{letter-spacing:.1em;color:#f6ead2}
+.gate-brand small{letter-spacing:.42em;color:#dfbe7e}
+.gate-welcome{color:#e3d0ab;font-style:italic}
+.gate-lock{color:#cfae6e;letter-spacing:.22em}
+.gate-card .input{background:rgba(20,13,6,.5);border-color:rgba(232,201,138,.3);color:#f6ead2}
+.gate-cta{letter-spacing:.2em}
+/* footer */
+footer{color:#a08a68;letter-spacing:.12em}
+footer b{color:#8a5f24}
+/* print untouched: report card keeps its parchment */
+
 </style>
 </head>
+<div class="luxe-frame" aria-hidden="true"></div>
 <body>
 <canvas id="confetti" class="hidden"></canvas>
 <div class="overlay" id="fatalOverlay" style="display:none">
@@ -1145,11 +1312,11 @@ body.gated{overflow:hidden}
   <div class="rays" aria-hidden="true"></div>
   <div class="hero3d" aria-hidden="true">
 <svg class="hero-net" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g class="net-lines" stroke="rgba(232,199,106,.42)" stroke-width="1.2" fill="none"><path d="M90 250 L240 130 L420 300 L610 120 L800 260 L980 140 L1120 300"/><path d="M240 130 L210 330 M420 300 L300 210 M610 120 L640 320 M800 260 L900 380 M980 140 L1030 330"/></g><g fill="#e8c76a"><circle cx="90" cy="250" r="3.5"/><circle cx="240" cy="130" r="4.5"/><circle cx="420" cy="300" r="3.5"/><circle cx="610" cy="120" r="4.5"/><circle cx="800" cy="260" r="3.5"/><circle cx="980" cy="140" r="4.5"/><circle cx="1120" cy="300" r="3.5"/><circle cx="210" cy="330" r="2.5"/><circle cx="300" cy="210" r="2.5"/><circle cx="640" cy="320" r="2.5"/><circle cx="900" cy="380" r="2.5"/><circle cx="1030" cy="330" r="2.5"/></g></svg>
-    <span class="h-orb" data-depth="1.4" style="left:6%;top:16%">📚</span>
-    <span class="h-orb" data-depth="0.8" style="left:80%;top:10%">🎓</span>
-    <span class="h-orb" data-depth="1.8" style="left:13%;top:56%">✏️</span>
-    <span class="h-orb" data-depth="0.6" style="left:87%;top:46%">🧮</span>
-    <span class="h-orb" data-depth="2.2" style="left:69%;top:58%">📐</span>
+    <span class="h-orb" data-depth="1.4" style="left:6%;top:16%">❦</span>
+    <span class="h-orb" data-depth="0.8" style="left:80%;top:10%">✦</span>
+    <span class="h-orb" data-depth="1.8" style="left:13%;top:56%">✧</span>
+    <span class="h-orb" data-depth="0.6" style="left:87%;top:46%">❖</span>
+    <span class="h-orb" data-depth="2.2" style="left:69%;top:58%">❁</span>
     <span class="h-orb star" data-depth="1.1" style="left:45%;top:7%">✦</span>
     <span class="h-orb star" data-depth="1.6" style="left:25%;top:33%">✦</span>
     <span class="h-ring" data-depth="0.5" style="left:50%;top:44%"></span>
@@ -1205,9 +1372,11 @@ body.gated{overflow:hidden}
     </div>
   </nav>
   <div class="hero-copy">
+    <p class="hero-overline">La Maison d’Étude · <b>L’art du savoir</b></p>
     <div class="hero-badge"><span class="dot"></span> MY PERSONAL STUDY APP · Senior Secondary Curriculum · SS1–SS3</div>
     <h1>Learn, revise, and master every subject<span class="h1-sub">3,900 curriculum questions with full worked explanations · SS1 · SS2 · SS3 · aligned to the national syllabus</span></h1>
     <p class="tag">Candidates are to answer questions from each paper as instructed. 3,900 verified questions — 100 per subject, per class — with instant marking and full explanations. Sign in to keep a record of your results.</p>
+    <p class="hero-deco">knowledge, bottled with care</p>
     <div class="stats">
       <div class="stat"><b>3,900</b><span>Examination questions</span></div>
       <div class="stat"><b>13</b><span>Subjects</span></div><div class="stat"><b>100×</b><span>Per subject</span></div>
@@ -1791,7 +1960,7 @@ function renderSubjects(){
     d.style.setProperty("--sub", meta.c);
     d.style.animationDelay = (Math.random()*0.2)+"s";
     const master = val === null ? null : subjectMastery(val);
-    const ring = master === null ? "" : '<svg class="pring" viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="prGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f6b4f"/><stop offset="1" stop-color="#2e9a76"/></linearGradient></defs><circle class="pr-track" cx="18" cy="18" r="15"/><circle class="pr-fill" cx="18" cy="18" r="15" style="stroke-dashoffset:' + (94.2 - 94.2 * master / 100) + '"></circle><text x="18" y="22" text-anchor="middle" font-size="9.5" font-weight="800" fill="var(--green-d)">' + master + "</text></svg>";
+    const ring = master === null ? "" : '<svg class="pring" viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="prGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9a25f"/><stop offset="1" stop-color="#e8c98a"/></linearGradient></defs><circle class="pr-track" cx="18" cy="18" r="15"/><circle class="pr-fill" cx="18" cy="18" r="15" style="stroke-dashoffset:' + (94.2 - 94.2 * master / 100) + '"></circle><text x="18" y="22" text-anchor="middle" font-size="9.5" font-weight="800" fill="var(--green-d)">' + master + "</text></svg>";
     d.innerHTML = `<span class="ico">${meta.em || meta.icon}</span><span class="lbl">${label}</span>${count?`<span class="cnt">${count}</span>`:""}${ring}`;
     d.onclick = () => { state.subject=val; renderSubjects(); renderCounts(); setCard("length"); };
     el.appendChild(d);
@@ -2818,7 +2987,7 @@ function saveCert(){
     x.beginPath(); x.moveTo(0, 12); x.lineTo(0, 60); x.stroke();
     x.restore();
     x.textAlign = "center";
-    x.fillStyle = "#002147";
+    x.fillStyle = "#2d1f10";
     x.font = "700 32px Georgia, 'Times New Roman', serif";
     x.fillText("MY PERSONAL STUDY APP", W / 2, 262);
     x.fillStyle = "#8a6d1f"; x.font = "italic 19px Georgia, serif";
@@ -2827,14 +2996,14 @@ function saveCert(){
     x.beginPath(); x.moveTo(W / 2 - 190, 312); x.lineTo(W / 2 + 190, 312); x.stroke();
     x.save();
     x.shadowColor = "rgba(166,124,30,.55)"; x.shadowBlur = 7; x.shadowOffsetY = 3;
-    x.fillStyle = "#001a35"; x.font = "900 47px Georgia, serif";
+    x.fillStyle = "#2d1f10"; x.font = "900 47px Georgia, serif";
     x.fillText("CERTIFICATE OF EXAMINATION", W / 2, 366);
     x.restore();
     x.fillStyle = "#5a4a2a"; x.font = "italic 24px Georgia, serif";
     x.fillText("This is to certify that", W / 2, 416);
     x.fillStyle = "#fbf7ec"; rr(x, W / 2 - 320, 436, 640, 66, 10); x.fill();
     x.strokeStyle = "#c9a227"; x.lineWidth = 2; rr(x, W / 2 - 320, 436, 640, 66, 10); x.stroke();
-    x.fillStyle = "#001a35"; x.font = "700 37px Georgia, serif";
+    x.fillStyle = "#2d1f10"; x.font = "700 37px Georgia, serif";
     x.fillText(name, W / 2, 481);
     x.fillStyle = "#4a4a3a"; x.font = "21px Georgia, serif";
     x.fillText("has completed the " + lastResult.cls + " paper", W / 2, 546);
@@ -2850,7 +3019,7 @@ function saveCert(){
     x.fillStyle = "#7c7f6d"; x.font = "15px Georgia, serif";
     const cno = $("certNo");
     x.fillText(((cno && cno.textContent) || "№ 0000 / " + new Date().getFullYear()).trim(), 96, 810);
-    x.textAlign = "right"; x.fillStyle = "#001a35"; x.font = "italic 24px Georgia, serif";
+    x.textAlign = "right"; x.fillStyle = "#2d1f10"; x.font = "italic 24px Georgia, serif";
     x.fillText("Chief Examiner", W - 96, 796);
     x.strokeStyle = "rgba(166,124,30,.75)"; x.lineWidth = 2;
     x.beginPath(); x.moveTo(W - 330, 776); x.quadraticCurveTo(W - 250, 742, W - 200, 770); x.quadraticCurveTo(W - 150, 798, W - 96, 776); x.stroke();
@@ -3123,7 +3292,7 @@ function drawWheel(){
   const c = $("wheel"); if (!c) return;
   const ctx = c.getContext("2d");
   const cx = 135, cy = 135, R = 128, n = WHEEL_SEGS.length, seg = 2 * Math.PI / n;
-  const cols = ["#0f6b4f", "#0e7490", "#b8912f", "#2f5d35", "#4338ca", "#8a3324", "#475569", "#0369a1"];
+  const cols = ["#a67c3b", "#8a5f24", "#c9a25f", "#6b4a16", "#d0a25c", "#7a4a1f", "#e0b978", "#93561f"];
   ctx.clearRect(0, 0, 270, 270);
   ctx.save(); ctx.translate(cx, cy); ctx.rotate(wheelRot);
   for (let i = 0; i < n; i++) {
