@@ -1142,8 +1142,6 @@ body::after{content:"";position:fixed;inset:0;z-index:300;pointer-events:none;op
 .hero .blob.b3{background:rgba(255,246,222,.12)}
 .hero-badge{border-color:rgba(232,201,138,.4);background:rgba(38,26,12,.35);letter-spacing:.30em;font-size:.66rem}
 .hero-badge .dot{background:#e8c98a;box-shadow:0 0 12px #e8c98a;animation-duration:2.4s}
-.hero-overline{position:relative;z-index:2;font-size:.6rem;letter-spacing:.5em;text-transform:uppercase;color:#dfbe7e;margin:0 0 14px;font-weight:800;text-indent:.5em}
-.hero-overline b{font-weight:800;color:#f0d9a6}
 .hero h1{letter-spacing:.045em;font-weight:700;color:#f9f2e2;font-size:clamp(1.9rem,4.4vw,3.1rem)}
 .hero h1 em{font-style:italic;color:#eecf9a;font-weight:500}
 .hero p.tag{color:#e9d8b4;opacity:.95;font-style:italic}
@@ -1246,10 +1244,126 @@ footer{color:#a08a68;letter-spacing:.12em}
 footer b{color:#8a5f24}
 /* print untouched: report card keeps its parchment */
 
+/* ================= ATELIER FX — GRAPHICS WAVE II =================
+   Golden salon sunburst, calligraphic flourish, shimmering headline,
+   entrance choreography, a living owl (blink · bob · halo · tilt),
+   gold spark bursts, reading hairline, stationery card details.
+   Pure decoration — motion honours prefers-reduced-motion. */
+
+/* ---- Reading hairline (gold progress edge) ---- */
+#readBar{position:fixed;top:0;left:0;right:0;height:3px;z-index:140;pointer-events:none;
+  background:linear-gradient(90deg,#a67c1e,#e8c98a 45%,#fdf6dc 55%,#c9a25f);
+  transform:scaleX(0);transform-origin:0 50%;box-shadow:0 0 14px rgba(201,162,95,.5)}
+[data-theme="dark"] #readBar{box-shadow:0 0 16px rgba(232,201,138,.35)}
+
+/* ---- Golden sunburst behind the salon hero ---- */
+#heroSun{position:absolute;left:50%;top:42%;width:165vmax;height:165vmax;z-index:0;pointer-events:none;
+  transform:translate(-50%,-50%);opacity:.5;
+  background:repeating-conic-gradient(from 8deg,rgba(232,199,106,.11) 0deg 2deg,transparent 2deg 11.4deg);
+  -webkit-mask-image:radial-gradient(circle,#000 0%,rgba(0,0,0,.55) 34%,transparent 62%);
+  mask-image:radial-gradient(circle,#000 0%,rgba(0,0,0,.55) 34%,transparent 62%);
+  animation:sunSpin 150s linear infinite}
+@keyframes sunSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+[data-theme="dark"] #heroSun{opacity:.32}
+@media (max-width:640px){#heroSun{opacity:.4;top:38%}}
+
+/* ---- Calligraphic flourish under the headline ---- */
+.flourish{width:min(330px,66vw);height:26px;margin:2px auto 0;display:block;overflow:visible}
+.flourish .fl-line{fill:none;stroke:url(#flGrad);stroke-width:1.7;stroke-linecap:round;
+  stroke-dasharray:640;stroke-dashoffset:640;animation:florDraw 1.5s .55s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes florDraw{to{stroke-dashoffset:0}}
+.flourish .fl-dia{opacity:0;transform-box:fill-box;transform-origin:center;
+  animation:florDia .7s 1.8s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes florDia{from{opacity:0;transform:scale(.2) rotate(-45deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+.flourish::after{content:"";display:block;height:1px;width:62%;margin:0 auto;
+  background:linear-gradient(90deg,transparent,rgba(201,162,95,.45),transparent)}
+
+/* ---- Editorial shimmer on the headline ---- */
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .hero h1{background:linear-gradient(105deg,#f7edd2 0%,#fdf8e8 20%,#e9c98a 38%,#b8892f 50%,#e9c98a 62%,#fdf8e8 80%,#f7edd2 100%);
+    background-size:230% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:h1Flow 10s linear infinite}
+  @keyframes h1Flow{to{background-position:230% 0}}
+}
+
+/* ---- Entrance choreography (plays once, backwards fill keeps hover) ---- */
+@keyframes heroIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.hero-copy>*{animation:heroIn .85s cubic-bezier(.22,1,.36,1) backwards}
+.hero-copy>*:nth-child(1){animation-delay:.06s}
+.hero-copy>*:nth-child(2){animation-delay:.18s}
+.hero-copy>*:nth-child(3){animation-delay:.32s}
+.hero-copy>*:nth-child(4){animation-delay:.46s}
+.hero-copy>*:nth-child(5){animation-delay:.58s}
+.hero-copy>*:nth-child(6){animation-delay:.7s}
+.stats .stat{animation:heroIn .7s cubic-bezier(.22,1,.36,1) backwards}
+.stats .stat:nth-child(1){animation-delay:.82s}
+.stats .stat:nth-child(2){animation-delay:.9s}
+.stats .stat:nth-child(3){animation-delay:.98s}
+.stats .stat:nth-child(4){animation-delay:1.06s}
+.stats .stat:nth-child(5){animation-delay:1.14s}
+
+/* ---- The living owl ---- */
+.owl-svg{animation:owlBob 5.2s ease-in-out infinite}
+@keyframes owlBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+.owl-lid{transform-box:fill-box;transform-origin:center top;transform:scaleY(0);animation:owlBlink 5.6s infinite}
+@keyframes owlBlink{0%,91%,100%{transform:scaleY(0)}94%,97%{transform:scaleY(1)}}
+#mascot:hover .owl-svg{animation:owlTilt 1.1s ease-in-out 2}
+@keyframes owlTilt{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-2px) rotate(-7deg)}65%{transform:rotate(4deg)}}
+.m-emo::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:1.5px solid rgba(201,162,95,.6);
+  pointer-events:none;animation:haloPulse 3.2s ease-out infinite}
+@keyframes haloPulse{0%{transform:scale(.9);opacity:0}25%{opacity:.85}100%{transform:scale(1.28);opacity:0}}
+
+/* ---- Mascot speech pop ---- */
+.mascot{transition:transform .3s}
+.m-pop{animation:mPop .5s cubic-bezier(.22,1,.36,1)}
+@keyframes mPop{0%{transform:scale(.9)}55%{transform:scale(1.03)}100%{transform:scale(1)}}
+.m-pop .m-bubble{animation:bubblePop .45s cubic-bezier(.22,1,.36,1)}
+@keyframes bubblePop{from{opacity:0;transform:translateY(6px) scale(.94)}to{opacity:1;transform:none}}
+
+/* ---- Couture button sweep ---- */
+.btn::after{content:"";position:absolute;top:-4px;bottom:-4px;left:-80px;width:46px;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,247,220,.55),transparent);
+  transform:skewX(-20deg);transition:left .55s ease}
+.btn:hover::after{left:calc(100% + 60px)}
+
+/* ---- Gold confirmation pulse on a correct option ---- */
+@keyframes optOk{0%{box-shadow:inset 0 0 0 1px var(--green-2),0 0 0 0 rgba(201,162,95,.55)}
+  70%{box-shadow:inset 0 0 0 1px var(--green-2),0 0 0 16px rgba(201,162,95,0)}
+  100%{box-shadow:inset 0 0 0 1px var(--green-2),0 0 0 0 rgba(201,162,95,0)}}
+.opt.correct{animation:optOk .55s ease}
+
+/* ---- Stationery cards: gilded top hairline + corner signature ---- */
+.card{position:relative}
+.card::before{content:"";position:absolute;top:0;left:11%;right:11%;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(201,162,95,.55),transparent)}
+.card::after{content:"";position:absolute;top:-1px;left:-1px;width:15px;height:15px;pointer-events:none;
+  border-top:2px solid rgba(201,162,95,.65);border-left:2px solid rgba(201,162,95,.65);
+  border-radius:7px 0 0 0;opacity:.9}
+[data-theme="dark"] .card::after{opacity:.55}
+
+/* ---- Section labels get a gold fleuron ---- */
+h2.step::before{content:"\u2756";color:var(--gold,#c9a25f);font-size:.8em;text-shadow:0 0 10px rgba(201,162,95,.45)}
+
+/* ---- Study tiles: warm lift ---- */
+.lab-tile:hover{box-shadow:0 16px 28px -16px rgba(150,100,25,.5),inset 0 0 0 1px rgba(201,162,95,.25)}
+
+/* ---- Footer ornament ---- */
+footer{padding-top:8px}
+footer::before{content:"\u2014  \u2756  \u2014";display:block;margin:0 auto 12px;color:#b98a45;
+  letter-spacing:.35em;text-indent:.35em;font-size:.8rem;opacity:.85}
+
+/* ---- Scroll reveal (progressive: only where view() timelines exist) ---- */
+@supports (animation-timeline: view()){
+  .card,.lab-tile,.panel{animation:rvReveal linear both;animation-timeline:view();animation-range:entry 0% entry 30%}
+  @keyframes rvReveal{from{opacity:.25;transform:translateY(26px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.card,.lab-tile,.panel{animation:none}}
+}
+
 </style>
 </head>
 <div class="luxe-frame" aria-hidden="true"></div>
 <body>
+<div id="readBar" aria-hidden="true"></div>
 <canvas id="confetti" class="hidden"></canvas>
 <div class="overlay" id="fatalOverlay" style="display:none">
   <div class="modal" style="text-align:center">
@@ -1302,6 +1416,7 @@ footer b{color:#8a5f24}
 
 <!-- ============ HERO ============ -->
 <header class="hero">
+  <div id="heroSun" aria-hidden="true"></div>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
   <div class="cube-scene" aria-hidden="true">
     <div class="cube">
@@ -1372,9 +1487,9 @@ footer b{color:#8a5f24}
     </div>
   </nav>
   <div class="hero-copy">
-    <p class="hero-overline">La Maison d’Étude · <b>L’art du savoir</b></p>
     <div class="hero-badge"><span class="dot"></span> MY PERSONAL STUDY APP · Senior Secondary Curriculum · SS1–SS3</div>
     <h1>Learn, revise, and master every subject<span class="h1-sub">3,900 curriculum questions with full worked explanations · SS1 · SS2 · SS3 · aligned to the national syllabus</span></h1>
+    <svg class="flourish" viewBox="0 0 320 28" aria-hidden="true"><defs><linearGradient id="flGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a67c1e"/><stop offset=".5" stop-color="#f0d9a6"/><stop offset="1" stop-color="#a67c1e"/></linearGradient></defs><path class="fl-line" d="M12 14 C 60 4, 92 24, 160 14 C 228 4, 260 24, 308 14"/><path class="fl-dia" d="M160 8 l5.5 6 -5.5 6 -5.5 -6z" fill="#c9a25f"/></svg>
     <p class="tag">Candidates are to answer questions from each paper as instructed. 3,900 verified questions — 100 per subject, per class — with instant marking and full explanations. Sign in to keep a record of your results.</p>
     <p class="hero-deco">knowledge, bottled with care</p>
     <div class="stats">
@@ -1654,7 +1769,7 @@ footer b{color:#8a5f24}
 <div class="overlay hidden" id="levelOverlay">
   <div class="modal" style="max-width:380px">
     <div class="lv-inner">
-      <div class="lv-big"><svg class="owl-svg" viewBox="0 0 96 96" aria-hidden="true"><path d="M30 19 L24 6 L38 15 Z" fill="#a67c1e"/><path d="M66 19 L72 6 L58 15 Z" fill="#a67c1e"/><path d="M48 13 C27 13 16 29 18 47 C20 67 30 83 48 83 C66 83 76 67 78 47 C80 29 69 13 48 13 Z" fill="#f4ead0" stroke="#a67c1e" stroke-width="2.6"/><path d="M18 47 C9 52 7 65 14 71 C20 76 27 75 29 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><path d="M78 47 C87 52 89 65 82 71 C76 76 69 75 67 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><circle cx="48" cy="40" r="16.5" fill="#fdf9ec" stroke="#c9a227" stroke-width="2.2"/><circle cx="41" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="55" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="41" cy="40" r="3.2" fill="#221b06"/><circle cx="55" cy="40" r="3.2" fill="#221b06"/><circle cx="42.7" cy="38.3" r="1.15" fill="#fff"/><circle cx="56.7" cy="38.3" r="1.15" fill="#fff"/><path d="M48 47 L44 52 L52 52 Z" fill="#c9a227" stroke="#8a6d1f" stroke-width="1.1"/><path d="M35 61 Q48 56 61 61 L61 70 Q48 65 35 70 Z" fill="#0f6b4f" stroke="#0a4a36" stroke-width="1.4"/><path d="M48 59.5 L48 70 M39.6 61.6 h5.2 M39.6 64.4 h5.2 M56.4 61.6 h-5.2 M56.4 64.4 h-5.2" stroke="#e8c76a" stroke-width="1.25" fill="none"/><path d="M38 82 v5 M46 83 v5 M50 83 v5 M58 82 v5" stroke="#a67c1e" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <div class="lv-big"><svg class="owl-svg" viewBox="0 0 96 96" aria-hidden="true"><path d="M30 19 L24 6 L38 15 Z" fill="#a67c1e"/><path d="M66 19 L72 6 L58 15 Z" fill="#a67c1e"/><path d="M48 13 C27 13 16 29 18 47 C20 67 30 83 48 83 C66 83 76 67 78 47 C80 29 69 13 48 13 Z" fill="#f4ead0" stroke="#a67c1e" stroke-width="2.6"/><path d="M18 47 C9 52 7 65 14 71 C20 76 27 75 29 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><path d="M78 47 C87 52 89 65 82 71 C76 76 69 75 67 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><circle cx="48" cy="40" r="16.5" fill="#fdf9ec" stroke="#c9a227" stroke-width="2.2"/><circle cx="41" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="55" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="41" cy="40" r="3.2" fill="#221b06"/><circle cx="55" cy="40" r="3.2" fill="#221b06"/><circle cx="42.7" cy="38.3" r="1.15" fill="#fff"/><circle class="owl-lid" cx="41" cy="40" r="7" fill="#f4ead0" opacity=".97"/><circle cx="56.7" cy="38.3" r="1.15" fill="#fff"/><circle class="owl-lid" cx="55" cy="40" r="7" fill="#f4ead0" opacity=".97"/><path d="M48 47 L44 52 L52 52 Z" fill="#c9a227" stroke="#8a6d1f" stroke-width="1.1"/><path d="M35 61 Q48 56 61 61 L61 70 Q48 65 35 70 Z" fill="#0f6b4f" stroke="#0a4a36" stroke-width="1.4"/><path d="M48 59.5 L48 70 M39.6 61.6 h5.2 M39.6 64.4 h5.2 M56.4 61.6 h-5.2 M56.4 64.4 h-5.2" stroke="#e8c76a" stroke-width="1.25" fill="none"/><path d="M38 82 v5 M46 83 v5 M50 83 v5 M58 82 v5" stroke="#a67c1e" stroke-width="2" stroke-linecap="round"/></svg></div>
       <b id="lvTitle">LEVEL 2!</b>
       <span id="lvSub">Quiz Rookie</span>
     </div>
@@ -1730,7 +1845,7 @@ footer b{color:#8a5f24}
   </div>
 </div>
 
-<div class="mascot hidden" id="mascot" aria-hidden="true"><span class="m-emo"><svg class="owl-svg" viewBox="0 0 96 96" aria-hidden="true"><path d="M30 19 L24 6 L38 15 Z" fill="#a67c1e"/><path d="M66 19 L72 6 L58 15 Z" fill="#a67c1e"/><path d="M48 13 C27 13 16 29 18 47 C20 67 30 83 48 83 C66 83 76 67 78 47 C80 29 69 13 48 13 Z" fill="#f4ead0" stroke="#a67c1e" stroke-width="2.6"/><path d="M18 47 C9 52 7 65 14 71 C20 76 27 75 29 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><path d="M78 47 C87 52 89 65 82 71 C76 76 69 75 67 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><circle cx="48" cy="40" r="16.5" fill="#fdf9ec" stroke="#c9a227" stroke-width="2.2"/><circle cx="41" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="55" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="41" cy="40" r="3.2" fill="#221b06"/><circle cx="55" cy="40" r="3.2" fill="#221b06"/><circle cx="42.7" cy="38.3" r="1.15" fill="#fff"/><circle cx="56.7" cy="38.3" r="1.15" fill="#fff"/><path d="M48 47 L44 52 L52 52 Z" fill="#c9a227" stroke="#8a6d1f" stroke-width="1.1"/><path d="M35 61 Q48 56 61 61 L61 70 Q48 65 35 70 Z" fill="#0f6b4f" stroke="#0a4a36" stroke-width="1.4"/><path d="M48 59.5 L48 70 M39.6 61.6 h5.2 M39.6 64.4 h5.2 M56.4 61.6 h-5.2 M56.4 64.4 h-5.2" stroke="#e8c76a" stroke-width="1.25" fill="none"/><path d="M38 82 v5 M46 83 v5 M50 83 v5 M58 82 v5" stroke="#a67c1e" stroke-width="2" stroke-linecap="round"/></svg><b class="m-badge" id="mascotEmo">🦉</b></span><div class="m-bubble" id="mascotTxt">Welcome — let us learn!</div></div>
+<div class="mascot hidden" id="mascot" aria-hidden="true"><span class="m-emo"><svg class="owl-svg" viewBox="0 0 96 96" aria-hidden="true"><path d="M30 19 L24 6 L38 15 Z" fill="#a67c1e"/><path d="M66 19 L72 6 L58 15 Z" fill="#a67c1e"/><path d="M48 13 C27 13 16 29 18 47 C20 67 30 83 48 83 C66 83 76 67 78 47 C80 29 69 13 48 13 Z" fill="#f4ead0" stroke="#a67c1e" stroke-width="2.6"/><path d="M18 47 C9 52 7 65 14 71 C20 76 27 75 29 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><path d="M78 47 C87 52 89 65 82 71 C76 76 69 75 67 68" fill="#e6d5a3" stroke="#a67c1e" stroke-width="2"/><circle cx="48" cy="40" r="16.5" fill="#fdf9ec" stroke="#c9a227" stroke-width="2.2"/><circle cx="41" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="55" cy="40" r="6.6" fill="#fff" stroke="#5b4a12" stroke-width="1.6"/><circle cx="41" cy="40" r="3.2" fill="#221b06"/><circle cx="55" cy="40" r="3.2" fill="#221b06"/><circle cx="42.7" cy="38.3" r="1.15" fill="#fff"/><circle class="owl-lid" cx="41" cy="40" r="7" fill="#f4ead0" opacity=".97"/><circle cx="56.7" cy="38.3" r="1.15" fill="#fff"/><circle class="owl-lid" cx="55" cy="40" r="7" fill="#f4ead0" opacity=".97"/><path d="M48 47 L44 52 L52 52 Z" fill="#c9a227" stroke="#8a6d1f" stroke-width="1.1"/><path d="M35 61 Q48 56 61 61 L61 70 Q48 65 35 70 Z" fill="#0f6b4f" stroke="#0a4a36" stroke-width="1.4"/><path d="M48 59.5 L48 70 M39.6 61.6 h5.2 M39.6 64.4 h5.2 M56.4 61.6 h-5.2 M56.4 64.4 h-5.2" stroke="#e8c76a" stroke-width="1.25" fill="none"/><path d="M38 82 v5 M46 83 v5 M50 83 v5 M58 82 v5" stroke="#a67c1e" stroke-width="2" stroke-linecap="round"/></svg><b class="m-badge" id="mascotEmo">🦉</b></span><div class="m-bubble" id="mascotTxt">Welcome — let us learn!</div></div>
 <div id="toast"></div>
 
 <!-- fatal error screen (never fail silently) -->
@@ -2076,7 +2191,7 @@ function pick(i){
       + ` The correct answer is <b>${LETTERS[q.a]}</b> — ${esc(q.e)}`;
     ex.classList.add("show");
     sfx(i === q.a ? "ok" : "no");
-    if (firstPick && i === q.a) xpAdd(10);
+    if (firstPick && i === q.a){ xpAdd(10); sparkAt(btns[i], 26); }
   }
   $("qBar").style.width = ((state.idx+1)/state.quiz.length*100)+"%";
   $("qPct").textContent = Math.round((state.idx+1)/state.quiz.length*100)+"%";
@@ -3210,7 +3325,7 @@ function levelUp(lv){
   if (su) su.textContent = lvName(lv.l);
   const ov = $("levelOverlay");
   if (ov) ov.classList.remove("hidden");
-  fireConfetti(90);
+  fireConfetti(90); try{ sparkAt(null, 120); }catch(e){}
   sfx("level");
   mascotSay("LEVEL UP! You are now a " + lvName(lv.l) + ". Incredible work!", "🎉");
   clearTimeout(window.__lvlT);
@@ -3235,8 +3350,8 @@ function coinsAdd(n){
 }
 function mascotSay(txt, emo){
   const m = $("mascot"); if (!m) return;
-  m.classList.remove("hidden");
-  const tt = $("mascotTxt"); if (tt) tt.textContent = txt;
+  m.classList.remove("hidden"); m.classList.remove("m-pop"); try{ void m.offsetWidth; }catch(e){} m.classList.add("m-pop");
+  const tt = $("mascotTxt"); if (tt){ tt.textContent = txt; tt.classList.remove("m-pop"); try{ void tt.offsetWidth; }catch(e){} tt.classList.add("m-pop"); }
   let eb = $("mascotEmo"); if (!eb){ eb = document.createElement("b"); eb.className = "m-badge"; eb.id = "mascotEmo"; m.querySelector(".m-emo").appendChild(eb); }
   if (eb && emo) eb.textContent = emo;
   clearTimeout(m.__t);
@@ -5028,6 +5143,109 @@ window.__sha256 = sha256Hex;
   window.QUIZ_RAW = QUIZ_RAW;
   window.QUIZ_ERR = QUIZ_ERR;
   try { window.dispatchEvent(new Event("quizbank-updated")); } catch (e) {}
+})();
+</script>
+<canvas id="fxCanvas" aria-hidden="true"></canvas>
+<script>
+/* ================= ATELIER FX ENGINE =================
+   Gold spark bursts + reading hairline. Canvas-based, DPR-aware,
+   self-stopping when idle, pauses when the tab hides, honours
+   prefers-reduced-motion. Never throws. ATELIER-FX */
+(function(){
+  "use strict";
+  var cv = null, ctx = null, parts = [], raf = 0, last = 0;
+  function reduced(){
+    try { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch(e){ return false; }
+  }
+  function size(){
+    try {
+      var dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = Math.max(320, Math.round((window.innerWidth || 320) * dpr));
+      cv.height = Math.max(240, Math.round((window.innerHeight || 640) * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    } catch(e){}
+  }
+  function ensure(){
+    if (cv) return !!ctx;
+    try {
+      cv = document.getElementById("fxCanvas");
+      if (!cv) return false;
+      ctx = cv.getContext && cv.getContext("2d");
+      if (!ctx || typeof ctx.arc !== "function"){ ctx = null; return false; }
+      size();
+      window.addEventListener("resize", size);
+      document.addEventListener("visibilitychange", function(){ if (document.hidden) stop(); else run(); });
+    } catch(e){ ctx = null; }
+    return !!ctx;
+  }
+  function tick(t){
+    var dt = Math.min(50, (t - last) || 16.6) / 16.6;
+    last = t;
+    var w = window.innerWidth || 320, h = window.innerHeight || 640;
+    try {
+      ctx.clearRect(0, 0, w, h);
+      for (var i = parts.length - 1; i >= 0; i--){
+        var p = parts[i];
+        p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.g * dt; p.r *= Math.pow(.988, dt);
+        if (p.t > p.life || p.r < .3){ parts.splice(i, 1); continue; }
+        var a = Math.max(0, 1 - p.t / p.life);
+        ctx.globalAlpha = a * .9;
+        ctx.fillStyle = p.c;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.2832); ctx.fill();
+        if (p.spark){
+          ctx.globalAlpha = a;
+          ctx.fillStyle = "#fff6dd";
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r * .35, 0, 6.2832); ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+    } catch(e){}
+    if (!parts.length){ stop(); }
+  }
+  function run(){ if (!raf && ctx){ try { raf = requestAnimationFrame(tick); } catch(e){} } }
+  function stop(){ if (raf){ try { cancelAnimationFrame(raf); } catch(e){} raf = 0; last = 0; } }
+  function sparkAt(el, n){
+    if (reduced() || !ensure()) return;
+    var w = window.innerWidth || 320, h = window.innerHeight || 640, x = w / 2, y = h * .42;
+    try {
+      if (el && el.getBoundingClientRect){
+        var r = el.getBoundingClientRect();
+        if (r && (r.width || r.height)){ x = r.left + r.width / 2; y = r.top + r.height / 2; }
+      }
+    } catch(e){}
+    n = n || 24;
+    var C = ["#f2d98c", "#e8c98a", "#c9a25f", "#a67c3b", "#f8ecc8"];
+    var big = n > 60;
+    for (var i = 0; i < n; i++){
+      var ang = Math.random() * 6.2832, sp = (.6 + Math.random() * 3.4) * (big ? 1.6 : 1);
+      parts.push({
+        x: x, y: y,
+        vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 1.6,
+        g: .12 + Math.random() * .1,
+        r: 1.2 + Math.random() * 2.6,
+        t: 0, life: 38 + Math.random() * 30,
+        c: C[i % C.length], spark: Math.random() < .5
+      });
+    }
+    if (parts.length > 420) parts.splice(0, parts.length - 420);
+    run();
+  }
+  window.sparkAt = sparkAt;
+
+  /* ---- gold reading hairline ---- */
+  try {
+    var rb = document.getElementById("readBar");
+    function bar(){
+      var d = document.documentElement || {}, b = document.body || {};
+      var m = Math.max(d.scrollTop || 0, b.scrollTop || 0);
+      var s = Math.max(d.scrollHeight || 0, b.scrollHeight || 0) - (window.innerHeight || 0);
+      if (s <= 0 || !rb) return;
+      rb.style.transform = "scaleX(" + Math.min(1, Math.max(0, m / s)) + ")";
+    }
+    window.addEventListener("scroll", bar, { passive: true });
+    window.addEventListener("resize", bar);
+    bar();
+  } catch(e){}
 })();
 </script>
 
