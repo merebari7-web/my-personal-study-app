@@ -23,6 +23,7 @@ Copyright © merebari web · All rights reserved.
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** (cube, cuboid, sphere, cylinder, cone, pyramid, prism) — drag to rotate, live dimension sliders, real-time volume & surface area with formulas, links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
 | 📜 Revision wheel | A prize wheel on every paper result (merits & study points) |
+| 🔒 Access gate | Everything is locked behind a study account — **no anonymous access**. Sign in with Google (hosted version) or create a free study account (name + optional email; works fully offline). Profiles & scores stay on the device |
 | 🖼 Certificate | Gilded certificate PNG export with serial number & signature |
 | 🔒 Integrity | SHA-256 hash check of the question bank at load time |
 | ♿ Accessibility | Text-size control, reduced motion, read-aloud (browser speech), keyboard shortcuts (`?` for help) |
@@ -45,7 +46,7 @@ This repo deploys to GitHub Pages straight from its `main` branch — the site i
 2. Go to **Settings → Pages → Source: Deploy from a branch** → `main` / `/ (root)`.
 3. Save. Your site appears at `https://<username>.github.io/<repo>/` within a minute or two.
 
-> **Sign-in:** Google sign-in is enabled on this deployment (OAuth Client ID configured for the `https://<username>.github.io` origin). The app also works fully as a guest — no account needed. If you ever move the site to a different domain, add that origin to the OAuth client's *Authorised JavaScript origins* in Google Cloud Console.
+> **Access policy:** the app is gated — you must sign in (Google, on the hosted version) or create a free study account (name + optional email; fully offline) before anything is reachable. Google OAuth is configured for the `https://<username>.github.io` origin; if you move the site to another domain, add that origin to the OAuth client's *Authorised JavaScript origins* in Google Cloud Console.
 
 **Updating the live site:** edit `index.html` locally, then `git add index.html && git commit -m "update" && git push` — GitHub Pages re-deploys automatically within a minute.
 

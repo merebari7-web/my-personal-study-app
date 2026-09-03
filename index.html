@@ -938,6 +938,27 @@ footer b{color:var(--green-d)}
   .cert-tilt{perspective:900px}
 }
 
+/* ================= ACCESS GATE: no account = no access ================= */
+body.gated{overflow:hidden}
+#gateOverlay{position:fixed;inset:0;z-index:220;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(1100px 700px at 50% -20%,#1c4c7c 0%,#001430 52%,#000d1c 100%);color:#f7f1de;overflow:auto;animation:fadein .3s ease both}
+#gateOverlay.hidden{display:none !important}
+#gateOverlay::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(600px 380px at 50% 112%,rgba(232,199,106,.12),transparent 65%),repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 26px)}
+.gate-card{position:relative;width:100%;max-width:440px;background:rgba(251,247,236,.06);border:1px solid rgba(232,199,106,.34);border-radius:24px;padding:30px 26px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 40px 90px -30px rgba(0,0,0,.72);animation:rise .5s cubic-bezier(.22,1,.36,1) both}
+.gate-brand{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;margin-bottom:4px}
+.gate-brand h1{font-size:1.22rem;font-weight:900;letter-spacing:.03em;margin:0;color:#f7f1de}
+.gate-brand small{font-size:.64rem;letter-spacing:.24em;text-transform:uppercase;color:#e8c76a;font-weight:800}
+.gate-welcome{font-size:.92rem;color:#cfd9ec;text-align:center;margin:14px 0 18px;line-height:1.6}
+.gate-gsi{font-size:.8rem;color:#a9b8d4;margin-top:10px;text-align:center;min-height:1.2em;line-height:1.5}
+.gate-card .input{background:rgba(255,255,255,.07);border-color:rgba(232,199,106,.35);color:#f7f1de;margin-top:9px}
+.gate-card .input::placeholder{color:#8fa0bd}
+.gate-card .divider{color:#8fa0bd}
+.gate-card .divider::before,.gate-card .divider::after{background:rgba(232,199,106,.25)}
+.gate-cta{width:100%;margin-top:14px}
+.gate-note{font-size:.7rem;color:#8fa0bd;text-align:center;line-height:1.55;margin-top:16px}
+.gate-note b{color:#e8c76a}
+.gate-lock{font-size:.8rem;color:#a9b8d4;text-align:center;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+@media (max-width:640px){.gate-card{padding:24px 18px;border-radius:20px}.gate-brand h1{font-size:1.08rem}}
+
 </style>
 </head>
 <body>
@@ -1243,6 +1264,36 @@ footer b{color:var(--green-d)}
   </div>
 </div>
 
+<!-- ============ ACCESS GATE (sign in / sign up required) ============ -->
+<div id="gateOverlay" role="dialog" aria-modal="true" aria-label="Sign in required">
+  <div class="gate-card">
+    <div class="gate-brand">
+      <svg viewBox="0 0 100 112" width="56" height="63" aria-hidden="true">
+        <defs><linearGradient id="gldg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efd58b"/><stop offset="1" stop-color="#a67c1e"/></linearGradient></defs>
+        <path d="M50 6 L90 16 V46 C90 72 74 94 50 104 C26 94 10 72 10 46 V16 Z" fill="#001a35" stroke="url(#gldg)" stroke-width="3"/>
+        <path d="M50 12 L84 21 V46 C84 68 70 86 50 96 C30 86 16 68 16 46 V21 Z" fill="none" stroke="rgba(232,199,106,.35)" stroke-width="1"/>
+        <path d="M50 16 c1.6 3.4 5.4 5 5.4 5 s-3.2 1.6 -5.4 5 c-2.2 -3.4 -5.4 -5 -5.4 -5 s3.8 -1.6 5.4 -5 z" fill="#e8c76a"/>
+        <path d="M30 50 Q50 42 70 50 L70 68 Q50 60 50 68 Q50 60 30 68 Z" fill="#f7f1de"/>
+        <path d="M36 54 h12 M36 59 h12 M36 64 h10 M52 54 h12 M52 59 h12 M52 64 h10" stroke="#a67c1e" stroke-width="1.6" stroke-linecap="round"/>
+        <path d="M50 44 L50 74" stroke="#c9a227" stroke-width="1.6"/>
+        <path d="M18 96 Q50 89 82 96 L78 108 Q50 101 22 108 Z" fill="#0a1e33" stroke="url(#gldg)" stroke-width="1.6"/>
+        <text x="50" y="104" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" letter-spacing="1.6" fill="#e8c76a">STUDY</text>
+      </svg>
+      <h1>MY PERSONAL STUDY APP</h1>
+      <small>Secure study area</small>
+    </div>
+    <p class="gate-lock">🔒 Sign in or create your account to open your books</p>
+    <p class="gate-welcome">Your papers, progress and certificates are locked behind a study account. Sign in with Google, or create a free study account — it takes a few seconds and everything is saved on this device.</p>
+    <div id="gateGoogle"></div>
+    <p class="gate-gsi" id="gateGsiNote"></p>
+    <div class="divider">or</div>
+    <input class="input" id="gateName" placeholder="Full name (e.g. Adaeze Okafor)" maxlength="40" autocomplete="name" aria-label="Full name">
+    <input class="input" id="gateEmail" type="email" placeholder="Email — optional" maxlength="60" autocomplete="email" aria-label="Email (optional)">
+    <button class="btn btn-primary gate-cta" onclick="gateSignUp()">🔐 Create my study account</button>
+    <p class="gate-note">Profiles and scores are stored <b>on this device only</b>. The study account is free — no card, no subscription. © merebari web</p>
+  </div>
+</div>
+
 <!-- ============ ACCOUNT MODAL ============ -->
 <div class="overlay hidden" id="libraryOverlay" onclick="if(event.target===this)closeLibrary()">
   <div class="modal wide">
@@ -1349,7 +1400,7 @@ footer b{color:var(--green-d)}
       <input class="input" id="guestName" placeholder="e.g. Chidinma Okafor" maxlength="40">
       <label style="font-size:.8rem;font-weight:800;color:var(--ink-2);display:block;margin-top:10px">Email (optional)</label>
       <input class="input" id="guestEmail" type="email" placeholder="you@example.com" maxlength="60">
-      <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="signUpGuest()">Continue as Guest →</button>
+      <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="signUpGuest()">Create study account →</button>
       <p style="font-size:.72rem;color:var(--mut);margin-top:10px" id="gsiNote"></p>
     </div>
     <div id="acctSignedIn" class="hidden">
@@ -1930,19 +1981,31 @@ function renderGoogleBtn(){
     width: Math.min(320, Math.max(200, window.innerWidth - 70)), locale:"en"
   });
   gsiRendered = true;
+  const gv = $("gateGoogle");
+  if (gv && gv.parentNode && !$("gateOverlay").classList.contains("hidden")){
+    google.accounts.id.renderButton(gv, {
+      type:"standard",
+      theme: document.documentElement.dataset.theme==="dark" ? "filled_black" : "outline",
+      size:"large", text:"signup_with", shape:"pill",
+      width: Math.min(320, Math.max(200, window.innerWidth - 70)), locale:"en"
+    });
+  }
 }
 function initGoogle(){
   if(!GOOGLE_CLIENT_ID){
     $("gsiNote").textContent = "Tip: add your Google OAuth Client ID to enable one-click Google sign-in. You can continue as a guest for now.";
+    const g1 = $("gateGsiNote"); if (g1) g1.textContent = "Google one-click needs an OAuth Client ID — a study account works everywhere.";
     return;
   }
   if(!/^https:/.test(location.protocol)){
     $("gsiNote").textContent = "One-click Google sign-in works on the hosted web version — continue as a guest here; progress is still saved on this device.";
+    const g2 = $("gateGsiNote"); if (g2) g2.textContent = "Google one-click is for the hosted web version — on this device, create a study account below.";
     return;
   }
   if(typeof google !== "undefined" && google.accounts && google.accounts.id){ renderGoogleBtn(); }
   else if(gsiTries++ < 40){ setTimeout(initGoogle, 250); }           // wait for the GSI script
-  else { $("gsiNote").textContent = "Google sign-in isn't available right now (offline?) — continue as a guest instead."; }
+  else { $("gsiNote").textContent = "Google sign-in isn't available right now (offline?) — continue as a guest instead.";
+    const g3 = $("gateGsiNote"); if (g3) g3.textContent = "Google sign-in is unavailable right now (offline?) — a study account below still works."; }
 }
 function onGoogleCred(resp){
   try{
@@ -1953,24 +2016,31 @@ function onGoogleCred(resp){
     migrateAnonymousAttempts();
     renderAccountChip();
     closeOverlay();
+    gateCheck();
     toast(`Welcome, ${user.name.split(" ")[0]}!`, "🎉");
     if(typeof google !== "undefined" && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
   }catch(e){ toast("Google sign-in failed", "⚠️"); }
 }
 function signOut(){
-  user = null; store.del("nssc_user"); renderAccountChip(); closeOverlay();
+  user = null; store.del("nssc_user"); renderAccountChip(); closeOverlay(); gateCheck();
   toast("Signed out", "👋");
+}
+function createStudyAccount(name, email){
+  const gid = "guest_" + (store.get("nssc_guest_id", 0) + 1);
+  store.set("nssc_guest_id", gid.split("_")[1]);
+  user = { id: gid, name: name, email: email, picture: null, provider:"guest", joined: Date.now() };
+  store.set("nssc_user", user);
+  migrateAnonymousAttempts();
+  renderAccountChip();
+  gateCheck();
+  return user;
 }
 function signUpGuest(){
   const name = $("guestName").value.trim();
   if(!name){ toast("Please enter your name", "⚠️"); $("guestName").focus(); return; }
   const email = $("guestEmail").value.trim();
-  const gid = "guest_" + (store.get("nssc_guest_id", 0) + 1);
-  store.set("nssc_guest_id", gid.split("_")[1]);
-  user = { id: gid, name, email, picture: null, provider:"guest", joined: Date.now() };
-  store.set("nssc_user", user);
-  migrateAnonymousAttempts();
-  renderAccountChip(); closeOverlay();
+  createStudyAccount(name, email);
+  closeOverlay();
   toast(`Welcome, ${name.split(" ")[0]}!`, "🎉");
 }
 function openAccount(){
@@ -3164,7 +3234,7 @@ function cardForState(){
 function boot(){
   const ready = applyBank();
   document.body.dataset.booted = "1";
-  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle(); initTilt(); heroDepth(); certTilt();
+  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle(); initTilt(); heroDepth(); certTilt(); gateCheck();
   mascotSay("Welcome. Choose your level, then begin with a paper — every answer builds your record.", "🦉");
   if (ready) {
     hideBankStatus(); setCard(cardForState());
@@ -4156,6 +4226,47 @@ function certTilt(){
     }, { passive: true });
     certTiltOn = true;
   } catch (e) {}
+}
+
+/* ================= ACCESS GATE =================
+   No account = no access. Gate renders over everything on boot
+   (and after sign-out). Only Google sign-in or a study account opens it. */
+function gateCheck(){
+  const g = $("gateOverlay"); if (!g) return false;
+  if (user){
+    g.classList.add("hidden");
+    document.body.classList.remove("gated");
+    document.body.style.overflow = "";
+    return false;
+  }
+  g.classList.remove("hidden");
+  document.body.classList.add("gated");
+  document.body.style.overflow = "hidden";
+  try {
+    if (typeof GOOGLE_CLIENT_ID === "string" && GOOGLE_CLIENT_ID &&
+        typeof google !== "undefined" && google.accounts && google.accounts.id){
+      const gv = $("gateGoogle");
+      if (gv && !gv.dataset.rendered) { gv.dataset.rendered = "1"; renderGoogleBtn(); }
+    }
+  } catch (e) {}
+  const n = $("gateName"), em = $("gateEmail");
+  if (n && !n.dataset.k){
+    n.dataset.k = "1";
+    n.onkeydown = function(ev){ if (ev && ev.key === "Enter"){ ev.preventDefault(); gateSignUp(); } };
+    if (em){ em.dataset.k = "1";
+      em.onkeydown = function(ev){ if (ev && ev.key === "Enter"){ ev.preventDefault(); gateSignUp(); } };
+    }
+    setTimeout(function(){ try { n.focus(); } catch (e) {} }, 60);
+  }
+  return true;
+}
+function gateSignUp(){
+  const n = $("gateName"), em = $("gateEmail");
+  const name = n ? n.value.trim() : "";
+  if (!name){ toast("Please enter your name to create your study account", "⚠️"); if (n) n.focus(); return; }
+  const email = em ? em.value.trim() : "";
+  createStudyAccount(name, email);
+  toast("Welcome to MY PERSONAL STUDY APP, " + name.split(" ")[0] + "!", "🎉");
 }
 
 try { boot(); } catch (e) { showFatal("Something went wrong while starting: " + String((e && e.message) || e)); }
