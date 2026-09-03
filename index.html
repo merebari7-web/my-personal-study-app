@@ -959,6 +959,30 @@ body.gated{overflow:hidden}
 .gate-lock{font-size:.8rem;color:#a9b8d4;text-align:center;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 @media (max-width:640px){.gate-card{padding:24px 18px;border-radius:20px}.gate-brand h1{font-size:1.08rem}}
 
+/* ================= MOCK HALL · BACKUP · SCHOLAR LEAGUE ================= */
+.mock-warn{margin:0 0 12px;padding:10px 13px;border-radius:12px;background:rgba(220,38,38,.10);border:1px solid rgba(220,38,38,.45);font-size:.82rem;line-height:1.5;color:var(--ink)}
+.mock-warn.bad{background:rgba(220,38,38,.18);border-color:var(--red)}
+.mock-count{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;margin-bottom:10px}
+.mock-count .mr-red{color:var(--red)}
+.mock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:5px;max-height:190px;overflow:auto;border:1px solid var(--card-border);border-radius:12px;padding:8px;background:var(--panel)}
+.mr-n{position:relative;border-radius:8px;border:1.5px solid var(--chip-border);background:var(--chip-bg);color:var(--ink);font-weight:800;font-size:.72rem;padding:6px 0;cursor:pointer;font-family:inherit;transition:.15s}
+.mr-n:hover{border-color:var(--green);transform:translateY(-1px)}
+.mr-n.done{background:rgba(15,107,79,.16);border-color:rgba(15,107,79,.5);color:var(--green-d)}
+[data-theme="dark"] .mr-n.done{color:#7dffc4}
+.mr-n.flag::after{content:"⚑";position:absolute;top:-5px;right:-3px;font-size:.6rem}
+.mr-n.cur{outline:2px solid var(--gold);outline-offset:1px}
+.lg-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.lg-row{display:flex;align-items:center;gap:10px;border:1px solid var(--card-border);border-radius:13px;padding:9px 12px;background:var(--panel);animation:rise .35s both}
+.lg-row.you{border-color:var(--green);box-shadow:0 0 0 2px rgba(15,107,79,.15)}
+.lg-rank{font-size:1.05rem;flex:none;width:30px;text-align:center}
+.lg-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-2));color:#fff;display:grid;place-items:center;font-weight:900;font-size:.82rem;flex:none}
+.lg-name{font-weight:800;font-size:.86rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lg-stats{font-size:.68rem;color:var(--mut);white-space:nowrap}
+.lg-xp{font-weight:900;color:var(--green-d);font-variant-numeric:tabular-nums;font-size:.9rem}
+.lg-xp small{font-size:.6rem;color:var(--mut)}
+[data-theme="dark"] .lg-xp{color:#7dffc4}
+@media (max-width:640px){.lg-stats{display:none}.mr-n{font-size:.66rem}}
+
 </style>
 </head>
 <body>
@@ -1113,6 +1137,9 @@ body.gated{overflow:hidden}
   <button class="lab-tile" onclick="openLab('report')"><b class="li">🧾</b><span class="lt">Report Card</span><small class="lc">Printable progress · for parents &amp; teachers</small></button>
   <button class="lab-tile" onclick="openLab('map')"><b class="li">🗺️</b><span class="lt">Mastery Map</span><small class="lc">Topic heat-map · tap to drill weak spots</small></button>
   <button class="lab-tile" onclick="openLab('s3')"><b class="li">🧊</b><span class="lt">3D Shape Lab</span><small class="lc">Rotate solids · live volume &amp; surface area</small></button>
+  <button class="lab-tile" onclick="openLab('mock')"><b class="li">🎓</b><span class="lt">Mock Hall</span><small class="lc">Full timed exam · auto-submit · integrity watch</small></button>
+  <button class="lab-tile" onclick="openLab('backup')"><b class="li">💾</b><span class="lt">Backup &amp; Restore</span><small class="lc">Export or restore all your progress</small></button>
+  <button class="lab-tile" onclick="openLab('league')"><b class="li">🏆</b><span class="lt">Scholar League</span><small class="lc">Every account on this device, ranked</small></button>
 </div>
 
     <div class="plan-card" id="planCard"></div>
@@ -1152,6 +1179,7 @@ body.gated{overflow:hidden}
     </div>
     <div class="progress"><div id="qBar" style="width:0%"></div></div>
     <div class="exam-note hidden" id="examNote">⏱ Timed examination — you will be marked only when you submit. Flag any question you wish to return to.</div>
+    <div class="mock-warn hidden" id="mockWarn" role="status"></div>
     <div class="qtext" id="qText" aria-live="polite"></div>
     <div class="opts" id="qOpts" role="radiogroup" aria-label="Answer options"></div>
     <div class="explain" id="qExplain"></div>
@@ -1166,6 +1194,7 @@ body.gated{overflow:hidden}
       <button class="btn btn-ghost" id="speakBtn" onclick="speakQ()" title="Read this question aloud">🔊 Read</button>
       <button class="btn btn-ghost" onclick="togglePalette()">☰ Palette</button>
       <button class="btn btn-ghost" id="printQuizBtn" onclick="printPaper()">🖨 Print</button>
+      <button class="btn btn-ghost hidden" id="mockReviewBtn" onclick="mockReview()">📋 Review</button>
       <button class="btn btn-ghost" id="submitBtn" onclick="maybeSubmit()">✓ Submit</button>
       <button class="btn btn-primary hidden" id="nextBtn" onclick="nextQ()">Next →</button>
     </div>
@@ -1711,7 +1740,7 @@ function startQuiz(){
   let qz = shuffle(qs);
   if ($("smartToggle") && $("smartToggle").checked && !state.daily && !state.reviewing) qz = smartShuffle(qs);
   state.quiz = qz.slice(0, state.count);
-  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false;
+  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mock = false;
   submitting = false;
   state.mode = $("examToggle") && $("examToggle").checked ? "exam" : "study";
   state.started = Date.now();
@@ -1749,6 +1778,7 @@ function renderQ(){
   $("nextBtn").classList.add("hidden");
   if ($("flagBtn")) { $("flagBtn").classList.toggle("flag-on", !!state.flags[state.idx]); $("flagBtn").setAttribute("aria-pressed", state.flags[state.idx] ? "true" : "false"); }
   renderBmk();
+  const mrb = $("mockReviewBtn"); if (mrb) mrb.classList.toggle("hidden", !state.mock);
   try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
   renderPalette(); updateTimerUI();
   state.qStart = Date.now();
@@ -1794,7 +1824,7 @@ function nextQ(){
 }
 function quitQuiz(){ resetToClass(); }
 function resetToClass(){
-  state.cls=null; state.subject=null; state.count=null; state.quiz=[]; state.palOpen=false;
+  state.cls=null; state.subject=null; state.count=null; state.quiz=[]; state.palOpen=false; state.mock=false;
   submitting = false;
   stopTimer();
   renderClasses(); renderSubjects(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameDash(); setCard("class");
@@ -1811,13 +1841,13 @@ function showResults(){
   const g = waecGrade(pct);
   const clsLbl = state.reviewing ? "Review session" : state.daily ? "Daily Challenge" : CLASSES[state.cls].class;
   const subjLbl = state.reviewing ? "Spaced revision" : state.daily ? "Mixed syllabus" : (state.subject || "All subjects");
-  lastResult = { correct, total: state.quiz.length, pct, wrongIdx, grade:g.letter, timeUsed:usedTime(), sp:subjectScores(), cls:clsLbl, subj:subjLbl, daily: !!state.daily };
+  lastResult = { correct, total: state.quiz.length, pct, wrongIdx, grade:g.letter, timeUsed:usedTime(), sp:subjectScores(), cls:clsLbl, subj:subjLbl, daily: !!state.daily, mock: !!state.mock, intg: (state.intg||0) };
   const ring = document.querySelector(".ring-fg"), C = 2*Math.PI*52;
   ring.style.strokeDashoffset = C;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ ring.style.strokeDashoffset = C*(1-pct/100); }));
   countUp($("ringPct"), pct, "%");
   $("gradeTxt").textContent = `${correct} / ${state.quiz.length} correct`;
-  $("resultMeta").textContent = `Grade ${g.letter} · ${state.reviewing ? "review session" : state.daily ? "daily challenge" : state.mode === "exam" ? "timed paper" : "study paper"} · time ${fmtT(usedTime())}`;
+  $("resultMeta").textContent = `Grade ${g.letter} · ${state.reviewing ? "review session" : state.daily ? "daily challenge" : state.mode === "exam" ? (state.mock ? "mock exam" : "timed paper") : "study paper"} · time ${fmtT(usedTime())}` + (state.mock && state.intg ? ` · ⚠ ${state.intg} integrity event${state.intg > 1 ? "s" : ""}` : "");
   const seal = $("gradeSeal");
   if (seal) { seal.textContent = g.letter; seal.className = "seal" + (pct >= 70 ? " top" : pct >= 50 ? " mid" : " low"); }
   let grade, award;
@@ -2013,6 +2043,7 @@ function onGoogleCred(resp){
     if(!payload.sub) throw new Error("no sub");
     user = { id:"g_"+payload.sub, name: payload.name || "Student", email: payload.email || "", picture: payload.picture || null, provider:"google", joined: Date.now() };
     store.set("nssc_user", user);
+    regProfile(user);
     migrateAnonymousAttempts();
     renderAccountChip();
     closeOverlay();
@@ -2031,6 +2062,7 @@ function createStudyAccount(name, email){
   user = { id: gid, name: name, email: email, picture: null, provider:"guest", joined: Date.now() };
   store.set("nssc_user", user);
   migrateAnonymousAttempts();
+  regProfile(user);
   renderAccountChip();
   gateCheck();
   return user;
@@ -2066,7 +2098,7 @@ function recordAttempt(){
   const subj = state.reviewing ? "Spaced revision" : state.daily ? "Mixed syllabus" : (state.subject || "All subjects");
   const att = attempts();
   att.unshift({ d:new Date().toLocaleString(), tms:Date.now(), cls, subj, total:lastResult.total, correct:lastResult.correct,
-    pct:lastResult.pct, grade:lastResult.grade, mode:state.mode, t:lastResult.timeUsed, sp:lastResult.sp, daily: !!state.daily, rev: !!state.reviewing });
+    pct:lastResult.pct, grade:lastResult.grade, mode:state.mode, t:lastResult.timeUsed, sp:lastResult.sp, daily: !!state.daily, rev: !!state.reviewing, mock: !!state.mock, intg: (state.intg||0) });
   store.set("nssc_attempts_"+uid(), att.slice(0, 200));
 }
 function pctPill(p){ return `<span class="pill ${p>=65?"g":p>=50?"o":"r"}">${p}%</span>`; }
@@ -2086,7 +2118,7 @@ function openHistory(){
     $("exportBtn").disabled = false;
     list.innerHTML = att.map((a,i)=>`
       <div class="attempt" style="animation:rise .3s ${Math.min(i,10)*0.04}s both">
-        <div class="a-ico">${a.rev ? "🧠" : a.daily ? "⚡" : (a.subj==="All subjects" ? "🎯" : subMeta(a.subj).icon)}</div>
+        <div class="a-ico">${a.mock ? "🎓" : a.rev ? "🧠" : a.daily ? "⚡" : (a.subj==="All subjects" ? "🎯" : subMeta(a.subj).icon)}</div>
         <div class="a-main">
           <div class="a-t">${a.rev ? "Review session" : a.daily ? "Daily Challenge" : a.cls} · ${a.rev ? "Spaced revision" : a.daily ? "Mixed syllabus" : a.subj}</div>
           <div class="a-m">${a.correct}/${a.total} correct · ${a.d}${a.grade?" · "+a.grade:""}${a.mode==="exam"?" · timed":""}</div>
@@ -2218,6 +2250,7 @@ function toggleFlag(){
 /* ---- submit ---- */
 function maybeSubmit(){
   if (!state.quiz.length) return;
+  if (state.mock){ mockReview(); return; }
   const unanswered = state.quiz.length - state.answers.filter(function(a){ return a !== undefined; }).length;
   if (unanswered === 0) { doSubmit(); return; }
   $("submitCheckMsg").textContent = "You have " + unanswered + " unanswered question" + (unanswered === 1 ? "" : "s") +
@@ -2255,7 +2288,7 @@ function drillTopic(topic, subj){
   state.subject = subj || null;
   state.count = Math.min(100, qs.length);
   state.quiz = shuffle(qs).slice(0, state.count);
-  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mode = "study"; submitting = false;
+  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mock = false; state.mode = "study"; submitting = false;
   state.started = Date.now(); state.deadline = 0;
   $("examNote").classList.add("hidden"); $("qTimer").classList.add("hidden");
   setCard("quiz"); renderQ(); stopTimer(); saveSession();
@@ -2354,7 +2387,7 @@ function practiceLibrary(){
   const subs = []; qs.forEach(function(x){ if (subs.indexOf(x.s) === -1) subs.push(x.s); });
   state.subject = subs.length === 1 ? subs[0] : null;
   state.count = qs.length; state.quiz = shuffle(qs.slice());
-  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mode = "study"; submitting = false;
+  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mock = false; state.mode = "study"; submitting = false;
   state.started = Date.now(); state.deadline = 0;
   $("examNote").classList.add("hidden"); $("qTimer").classList.add("hidden");
   closeLibrary(); setCard("quiz"); renderQ(); stopTimer(); saveSession();
@@ -2392,7 +2425,7 @@ function drillMistakes(){
   state.count = Math.min(100, bank.length);
   state.quiz = shuffle(bank).slice(0, state.count);
   submitting = false;
-  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mode = "study"; state.started = Date.now(); state.deadline = 0;
+  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mock = false; state.mode = "study"; state.started = Date.now(); state.deadline = 0;
   setCard("quiz"); renderQ(); stopTimer(); saveSession();
   toast("Drilling " + state.quiz.length + " past mistakes — study mode", "🔁");
 }
@@ -2524,7 +2557,7 @@ function startDaily(){
   if (picked.length < 5) { toast("Could not assemble today's paper — try again", "⚠️"); return; }
   state.cls = 0; state.subject = null;
   state.count = picked.length; state.quiz = picked;
-  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.qTimes = [];
+  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mock = false; state.qTimes = [];
   state.mode = "study"; submitting = false;
   state.started = Date.now(); state.deadline = 0;
   state.daily = true;
@@ -2763,7 +2796,7 @@ function startReviews(){
   state.cls = clsIdx < 0 ? 0 : clsIdx;
   state.subject = null;
   state.count = items.length; state.quiz = items;
-  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.reviewing = false;
+  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mock = false; state.reviewing = false;
   state.reviewing = true;
   state.mode = "study"; submitting = false;
   state.started = Date.now(); state.deadline = 0;
@@ -3234,7 +3267,7 @@ function cardForState(){
 function boot(){
   const ready = applyBank();
   document.body.dataset.booted = "1";
-  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle(); initTilt(); heroDepth(); certTilt(); gateCheck();
+  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle(); initTilt(); heroDepth(); certTilt(); initMockIntegrity(); gateCheck();
   mascotSay("Welcome. Choose your level, then begin with a paper — every answer builds your record.", "🦉");
   if (ready) {
     hideBankStatus(); setCard(cardForState());
@@ -3297,6 +3330,9 @@ function labRender(){
   else if (LAB.sec === "report") labReportRender();
   else if (LAB.sec === "map") labMapRender();
   else if (LAB.sec === "s3") s3Render();
+  else if (LAB.sec === "mock") labMockSetup();
+  else if (LAB.sec === "backup") labBackupRender();
+  else if (LAB.sec === "league") labLeagueRender();
 }
 function labClassTabs(id, cur, fn){
   return CLASSES.map(function(cc, i){
@@ -3830,7 +3866,7 @@ function smartPaper(n){
   state.cls = best; state.subject = null; state.count = n;
   state.quiz = smartShuffle(CLASSES[best].questions).slice(0, n);
   submitting = false;
-  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mode = "study";
+  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mock = false; state.mode = "study";
   state.started = Date.now(); state.deadline = 0;
   $("examNote").classList.add("hidden"); $("qTimer").classList.add("hidden");
   setCard("quiz"); renderQ(); stopTimer(); saveSession();
@@ -4267,6 +4303,268 @@ function gateSignUp(){
   const email = em ? em.value.trim() : "";
   createStudyAccount(name, email);
   toast("Welcome to MY PERSONAL STUDY APP, " + name.split(" ")[0] + "!", "🎉");
+}
+
+/* ================= ADVANCED: MOCK HALL · BACKUP & RESTORE · SCHOLAR LEAGUE ================= */
+LAB.mock = { cls: 0, sub: null, comp: "all", count: 50, dur: "auto" };
+let BK = { pending: null };
+
+/* ---- profile registry (feeds the Scholar League) ---- */
+function regProfile(u){
+  try {
+    if (!u || !u.id) return;
+    const ps = store.get("nssc_profiles", {});
+    const prev = ps[u.id];
+    ps[u.id] = { name: (u.name || "Student").slice(0, 40), email: (u.email || "").slice(0, 60), provider: u.provider || "guest", first: prev ? prev.first : Date.now(), last: Date.now() };
+    const ks = Object.keys(ps);
+    if (ks.length > 40){ ks.sort(function(a, b){ return ps[a].last - ps[b].last; }); ks.slice(0, ks.length - 40).forEach(function(k){ delete ps[k]; }); }
+    store.set("nssc_profiles", ps);
+  } catch (e) {}
+}
+
+/* ---- mock integrity ---- */
+function initMockIntegrity(){
+  try {
+    window.addEventListener("blur", function(){ mockIntegrity(); });
+    document.addEventListener("visibilitychange", function(){
+      if (document.hidden || (document.visibilityState && document.visibilityState === "hidden")) mockIntegrity();
+    });
+  } catch (e) {}
+}
+function mockIntegrity(){
+  if (!state.mock || submitting || !state.quiz.length) return;
+  state.intg = (state.intg || 0) + 1;
+  const w = $("mockWarn");
+  if (w){
+    w.classList.remove("hidden");
+    w.innerHTML = "⚠ <b>Exam integrity:</b> you left the exam window" + (state.intg > 1 ? " (" + state.intg + " times)" : "") + " — this is recorded on your mock report. In the real hall, invigilators flag this and may withdraw your script.";
+    w.classList.toggle("bad", state.intg >= 3);
+  }
+  if (state.intg === 3) toast("3 integrity events — this mock is flagged", "⚠️");
+}
+
+/* ---- mock setup + start ---- */
+function labMockSetup(){
+  const m = LAB.mock;
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">🎓</span><h3>Mock Examination Hall</h3><span class="lab-sub">A full timed examination — no feedback until submission · auto-submits at zero · integrity is monitored</span></div>' +
+    '<div class="lab-row"><span class="lab-lbl">Class</span><div class="lab-tabs">' + labClassTabs("mock", m.cls, "labMockSetup") + "</div></div>" +
+    '<div class="lab-row"><span class="lab-lbl">Paper</span><div class="lab-tabs">' +
+      '<button class="lab-tab' + (m.comp === "all" ? " on" : "") + '" onclick="LAB.mock.comp=\'all\';labMockSetup()">All subjects</button>' +
+      '<button class="lab-tab' + (m.comp === "sub" ? " on" : "") + '" onclick="LAB.mock.comp=\'sub\';labMockSetup()">One subject</button>' +
+      '<button class="lab-tab' + (m.comp === "weak" ? " on" : "") + '" onclick="LAB.mock.comp=\'weak\';labMockSetup()">🎯 Weakest areas</button>' +
+    "</div></div>" +
+    (m.comp === "sub" ? '<div class="lab-row"><span class="lab-lbl">Subject</span><div class="lab-tabs">' + labSubTabs("mock", m.sub, "labMockSetup") + "</div></div>" : "") +
+    '<div class="lab-row"><span class="lab-lbl">Questions</span><div class="lab-tabs">' + [25, 50, 100].map(function(n){
+      return '<button class="lab-tab' + (m.count === n ? " on" : "") + '" onclick="LAB.mock.count=' + n + ";labMockSetup()\">" + n + "</button>";
+    }).join("") + "</div></div>" +
+    '<div class="lab-row"><span class="lab-lbl">Duration</span><div class="lab-tabs">' + [["auto", "Exam pace · 60s per question"], ["30", "30 minutes"], ["60", "60 minutes"], ["90", "90 minutes"]].map(function(t){
+      return '<button class="lab-tab' + (m.dur === t[0] ? " on" : "") + '" onclick="LAB.mock.dur=\'' + t[0] + '\';labMockSetup()">' + t[1] + "</button>";
+    }).join("") + "</div></div>" +
+    '<p class="lab-note" style="font-size:.78rem">A mock behaves like the real hall: countdown timer, marking only at submission, auto-submit when time expires, and tab-switching recorded on your mock report.</p>' +
+    '<div class="lab-cta"><button class="btn btn-primary" onclick="mockStart()">▶ Begin mock examination</button></div>';
+}
+function mockStart(){
+  if (!CLASSES.length){ toast("The question bank is still loading", "⏳"); return; }
+  const m = LAB.mock;
+  let pool = CLASSES[m.cls].questions;
+  if (m.comp === "sub" && m.sub) pool = pool.filter(function(q){ return q.s === m.sub; });
+  state.cls = m.cls; state.subject = (m.comp === "sub") ? m.sub : null;
+  state.count = m.count;
+  state.quiz = (m.comp === "weak" ? smartShuffle(pool) : shuffle(pool)).slice(0, m.count);
+  submitting = false;
+  state.idx = 0; state.answers = []; state.flags = []; state.qTimes = []; state.daily = false; state.reviewing = false; state.mock = true;
+  state.intg = 0;
+  state.mode = "exam";
+  state.started = Date.now();
+  state.deadline = Date.now() + (m.dur === "auto" ? state.quiz.length * 60000 : m.dur * 60000);
+  setCard("quiz"); renderQ(); startTimer(); saveSession(); closeLab();
+  const w = $("mockWarn"); if (w){ w.classList.add("hidden"); w.innerHTML = ""; }
+  toast("Mock examination begins — " + Math.round((state.deadline - Date.now()) / 60000) + " minutes on the clock", "🎓");
+}
+function mockReview(){
+  if (!state.quiz.length) return;
+  let un = 0, flagged = 0;
+  state.quiz.forEach(function(q, i){
+    if (state.answers[i] === undefined) un++;
+    if (state.flags[i]) flagged++;
+  });
+  const grid = state.quiz.map(function(q, i){
+    const cls = (state.answers[i] !== undefined ? " done" : "") + (state.flags[i] ? " flag" : "") + (i === state.idx ? " cur" : "");
+    return '<button class="mr-n' + cls + '" onclick="jumpTo(' + i + ");hideSubmitCheck()\">" + (i + 1) + "</button>";
+  }).join("");
+  $("submitCheckMsg").innerHTML =
+    '<div class="mock-count">Answered <b>' + (state.quiz.length - un) + "</b> / " + state.quiz.length + ' · Unanswered <b class="' + (un ? "mr-red" : "") + '">' + un + "</b> · Flagged <b>" + flagged + "</b>" + (state.intg ? ' · ⚠ integrity events <b>' + state.intg + "</b>" : "") + "</div>" +
+    '<div class="mock-grid">' + grid + "</div>" +
+    '<small style="color:var(--mut)">Tap any number to jump back to it. Time keeps running.</small>';
+  $("submitCheckOverlay").classList.remove("hidden");
+}
+
+/* ---- backup & restore ---- */
+function backupPayload(){
+  const u = uid();
+  const keys = ["nssc_attempts_" + u, "nssc_topics_" + u, "nssc_xp_" + u, "nssc_coins_" + u, "nssc_daily_" + u, "nssc_goal_" + u, "nssc_qday_" + u, "nssc_lab_" + u, "nssc_mistakes", "nssc_marks", "nssc_badges", "nssc_revtotal", "nssc_profiles"];
+  const data = {};
+  keys.forEach(function(k){ const v = store.get(k, null); if (v !== null) data[k] = v; });
+  return { app: "MyPersonalStudyApp", v: 1, exported: Date.now(), uid: u, profile: user ? { name: user.name, email: user.email || "", provider: user.provider } : null, data: data };
+}
+function labBackupRender(){
+  const p = backupPayload();
+  const size = (JSON.stringify(p).length / 1024).toFixed(1);
+  const att = attempts();
+  const last = store.get("nssc_lastbackup", 0);
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">💾</span><h3>Backup &amp; Restore</h3><span class="lab-sub">Your progress lives on this device — export it, or move it to a new device</span></div>' +
+    '<div class="s3-info" style="margin-top:10px">' +
+      '<div class="s3-fig"><h4>Papers on record</h4><b>' + att.length + "</b><div class=\"sf\">" + Object.keys(store.get("nssc_topics_" + uid(), {})).length + " topics tracked</div></div>" +
+      '<div class="s3-fig"><h4>Backup size</h4><b>' + size + ' <small style="font-size:.6em;color:var(--mut)">KB</small></b><div class="sf">' + (last ? "Last export: " + new Date(last).toLocaleDateString() : "Never exported") + "</div></div>" +
+    "</div>" +
+    '<div class="lab-cta">' +
+      '<button class="btn btn-primary" onclick="labBackupExport()">⬇ Export backup</button>' +
+      '<button class="btn btn-gold" onclick="document.getElementById(\'backupFile\').click()">⬆ Restore a backup</button>' +
+    "</div>" +
+    '<input type="file" id="backupFile" accept="application/json,.json" style="display:none" onchange="labBackupPick(this.files[0]);this.value=\'\'">' +
+    '<div id="backupMsg"></div>' +
+    '<p class="lab-note">Exports papers, mistakes, topic stats, badges, study points, merits and lab results for <b>' + esc(user ? user.name : "this account") + "</b>. Nothing leaves your device unless you save it.</p>";
+}
+function labBackupExport(){
+  try {
+    const p = backupPayload();
+    const blob = new Blob([JSON.stringify(p)], { type: "application/json" });
+    const a = document.createElement("a");
+    const dd = new Date();
+    a.download = "MyStudyApp-Backup-" + dd.getFullYear() + "-" + String(dd.getMonth() + 1).padStart(2, "0") + "-" + String(dd.getDate()).padStart(2, "0") + ".json";
+    if (window.URL && URL.createObjectURL){ a.href = URL.createObjectURL(blob); }
+    else { a.href = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(p)); }
+    document.body.appendChild(a); a.click(); a.remove();
+    store.set("nssc_lastbackup", Date.now());
+    toast("Backup exported — keep that file somewhere safe", "💾");
+    labBackupRender();
+  } catch (e){ toast("Export failed on this device", "⚠️"); }
+}
+function labBackupPick(file){
+  const msg = $("backupMsg");
+  if (!file){ return; }
+  if (msg) msg.innerHTML = '<p class="lab-note">Reading backup…</p>';
+  const rd = new FileReader();
+  rd.onload = function(){
+    let data = null;
+    try { data = JSON.parse(String(rd.result || "")); } catch (e){ if (msg) msg.innerHTML = '<p class="lab-note" style="color:var(--red)">That file is not a valid backup.</p>'; return; }
+    if (!data || data.app !== "MyPersonalStudyApp" || !data.data || typeof data.data !== "object"){
+      if (msg) msg.innerHTML = '<p class="lab-note" style="color:var(--red)">That file is not a MyPersonalStudyApp backup.</p>';
+      return;
+    }
+    BK.pending = data;
+    const who = (data.profile && data.profile.name) ? data.profile.name : (data.uid || "another account");
+    const n = Object.keys(data.data).length;
+    if (msg) msg.innerHTML = '<div class="rep-card" style="padding:16px;margin-top:14px">' +
+      '<p style="font-size:.9rem;margin:0 0 10px">Backup from <b>' + esc(String(who)) + "</b> · " + n + " data fields" + (data.exported ? " · made " + new Date(data.exported).toLocaleDateString() : "") + "</p>" +
+      '<div class="lab-cta" style="margin:0">' +
+        '<button class="btn btn-primary" onclick="applyBackup(BK.pending,\'merge\')">Merge into my progress</button>' +
+        '<button class="btn btn-ghost" onclick="applyBackup(BK.pending,\'replace\')">Replace everything</button>' +
+        '<button class="btn btn-ghost" onclick="BK.pending=null;labBackupRender()">Cancel</button>' +
+      "</div></div>";
+  };
+  rd.onerror = function(){ if (msg) msg.innerHTML = '<p class="lab-note" style="color:var(--red)">Could not read that file.</p>'; };
+  rd.readAsText(file);
+}
+function applyBackup(data, mode){
+  try {
+    if (!data || !data.data) throw new Error("bad");
+    const d = data.data; const u = uid(); const merge = mode !== "replace";
+    let applied = 0;
+    Object.keys(d).forEach(function(k){
+      const v = d[k];
+      const m = k.match(/^nssc_(attempts|topics|xp|coins|daily|goal|qday|lab)_(.+)$/);
+      let target = null;
+      if (m) target = "nssc_" + m[1] + "_" + u;
+      else if (k === "nssc_mistakes" || k === "nssc_marks" || k === "nssc_badges" || k === "nssc_revtotal" || k === "nssc_profiles") target = k;
+      if (!target) return;
+      applied++;
+      const cur = store.get(target, null);
+      if (!merge || cur === null){ try { store.set(target, JSON.parse(JSON.stringify(v))); } catch (e2) {} return; }
+      if (m && m[1] === "attempts"){
+        const mine = Array.isArray(cur) ? cur : []; const inc = Array.isArray(v) ? v : [];
+        const seen = {}; mine.forEach(function(a){ if (a && a.tms) seen[a.tms] = 1; });
+        const merged = mine.concat(inc.filter(function(a){ return a && a.tms && !seen[a.tms]; }));
+        merged.sort(function(a, b){ return (b.tms || 0) - (a.tms || 0); });
+        store.set(target, merged.slice(0, 200));
+      } else if (m && m[1] === "topics"){
+        const out = {}; Object.keys(cur || {}).forEach(function(kk){ out[kk] = cur[kk]; });
+        Object.keys(v || {}).forEach(function(kk){
+          const a = out[kk] || { s: (v[kk] || {}).s, t: (v[kk] || {}).t, c: 0, n: 0 };
+          a.c += ((v[kk] || {}).c || 0); a.n += ((v[kk] || {}).n || 0);
+          out[kk] = a;
+        });
+        store.set(target, out);
+      } else if (m && m[1] === "lab"){
+        const a = cur || {}, b = v || {};
+        const s3a = (a.s3seen || []).slice(), s3b = (b.s3seen || []).slice();
+        const s3m = s3a.concat(s3b.filter(function(x){ return s3a.indexOf(x) < 0; }));
+        store.set(target, {
+          cards: { seen: ((a.cards || {}).seen || 0) + ((b.cards || {}).seen || 0), known: ((a.cards || {}).known || 0) + ((b.cards || {}).known || 0) },
+          rapid: { played: ((a.rapid || {}).played || 0) + ((b.rapid || {}).played || 0), best: Math.max((a.rapid || {}).best || 0, (b.rapid || {}).best || 0), bestStreak: Math.max((a.rapid || {}).bestStreak || 0, (b.rapid || {}).bestStreak || 0) },
+          spell: { played: ((a.spell || {}).played || 0) + ((b.spell || {}).played || 0), best: Math.max((a.spell || {}).best || 0, (b.spell || {}).best || 0) },
+          s3seen: s3m
+        });
+      } else if (k === "nssc_marks" || k === "nssc_badges"){
+        const out = {}; Object.keys(cur || {}).forEach(function(kk){ out[kk] = cur[kk]; });
+        Object.keys(v || {}).forEach(function(kk){ out[kk] = out[kk] || v[kk]; });
+        store.set(target, out);
+      } else if (k === "nssc_profiles"){
+        const out = {}; Object.keys(cur || {}).forEach(function(kk){ out[kk] = cur[kk]; });
+        Object.keys(v || {}).forEach(function(kk){
+          const p = v[kk]; if (!p) return;
+          out[kk] = { name: (p.name || "Scholar").slice(0, 40), email: (p.email || "").slice(0, 60), provider: p.provider || "guest", first: p.first || Date.now(), last: p.last || Date.now() };
+        });
+        store.set(target, out);
+      } else if (k === "nssc_revtotal"){
+        store.set(target, Math.max(+cur || 0, +v || 0));
+      } else {
+        if (typeof v === "number" && typeof cur === "number") store.set(target, Math.max(cur, v));
+        else if (v && typeof v === "object" && !Array.isArray(v) && cur && typeof cur === "object" && !Array.isArray(cur)){
+          const out = {}; Object.keys(cur).forEach(function(kk){ out[kk] = cur[kk]; });
+          Object.keys(v).forEach(function(kk){ out[kk] = Math.max(out[kk] || 0, v[kk] || 0); });
+          store.set(target, out);
+        } else { try { store.set(target, JSON.parse(JSON.stringify(v))); } catch (e3) {} }
+      }
+    });
+    store.set("nssc_lastbackup", Date.now());
+    renderGameHud(); renderGameDash(); renderPlan(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderAccountChip();
+    BK.pending = null; labBackupRender();
+    toast("Restored " + applied + " field" + (applied === 1 ? "" : "s") + " — your progress is back", "💾");
+  } catch (e){ toast("Restore failed — that backup could not be applied", "⚠️"); }
+}
+
+/* ---- scholar league ---- */
+function labLeagueRender(){
+  if (user) regProfile(user);
+  const ps = store.get("nssc_profiles", {});
+  const rows = Object.keys(ps).map(function(pu){
+    const prof = ps[pu] || {};
+    const xp = +store.get("nssc_xp_" + pu, 0) || 0;
+    const coins = +store.get("nssc_coins_" + pu, 0) || 0;
+    const atts = store.get("nssc_attempts_" + pu, []) || [];
+    let best = 0; atts.forEach(function(a){ if (a && (a.pct || 0) > best) best = a.pct; });
+    return { id: pu, name: prof.name || "Scholar", xp: xp, coins: coins, papers: atts.length, best: best, you: pu === uid(), last: prof.last || 0 };
+  }).filter(function(r){ return r.xp > 0 || r.papers > 0; })
+    .sort(function(a, b){ return b.xp - a.xp || b.papers - a.papers || b.last - a.last; });
+  const medal = ["🥇", "🥈", "🥉"];
+  $("labBody").innerHTML =
+    '<div class="lab-head"><span class="lab-ico">🏆</span><h3>Scholar League</h3><span class="lab-sub">Everyone who studies on this device — ranked by study points</span></div>' +
+    (rows.length
+      ? '<div class="lg-list">' + rows.slice(0, 20).map(function(r, i){
+          return '<div class="lg-row' + (r.you ? " you" : "") + '" style="animation-delay:' + Math.min(i, 10) * 0.04 + 's">' +
+            '<span class="lg-rank">' + (medal[i] || "#" + (i + 1)) + "</span>" +
+            '<span class="lg-av">' + esc((r.name || "?").charAt(0).toUpperCase()) + "</span>" +
+            '<span class="lg-name">' + esc(r.name) + (r.you ? ' <span class="pill g">YOU</span>' : "") + "</span>" +
+            '<span class="lg-stats">' + r.papers + " papers · " + r.best + "% best · 🎖 " + r.coins + "</span>" +
+            '<span class="lg-xp">' + r.xp + " <small>XP</small></span>" +
+          "</div>";
+        }).join("") + "</div>" +
+        '<div class="lab-cta"><button class="btn btn-ghost" onclick="labLeagueRender()">↻ Refresh</button><button class="btn btn-primary" onclick="closeLab()">Close</button></div>'
+      : '<p class="lab-note">No scholars on this device yet. Sit a paper to join the league — every study account earns its place.</p>' +
+        '<div class="lab-cta"><button class="btn btn-primary" onclick="closeLab()">Close</button></div>');
 }
 
 try { boot(); } catch (e) { showFatal("Something went wrong while starting: " + String((e && e.message) || e)); }

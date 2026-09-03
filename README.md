@@ -22,6 +22,9 @@ Copyright © merebari web · All rights reserved.
 | 🧠 Adaptive engine | Per-topic performance tracking · **Mastery Map** (every subject × topic heat-map, tap to drill) · **Exam-readiness score** (topics + mastery + consistency) · **Today's plan** with tailored actions · **Smart paper mode** that prioritises your weakest subjects |
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** (cube, cuboid, sphere, cylinder, cone, pyramid, prism) — drag to rotate, live dimension sliders, real-time volume & surface area with formulas, links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
+| 🎓 Mock Hall | Full timed **mock examinations** — 25/50/100 questions, exam pace or 30/60/90 min, auto-submit at zero, **integrity monitoring** (tab-switches recorded on the report), review screen with jump-to-any-question grid before submitting |
+| 💾 Backup & Restore | One-tap **JSON export** of every paper, mistake, topic stat, badge, point and lab result — merge or replace when restoring on any device |
+| 🏆 Scholar League | Local **leaderboard** of every study account on the device, ranked by study points with medals, papers, best % and YOU marker |
 | 📜 Revision wheel | A prize wheel on every paper result (merits & study points) |
 | 🔒 Access gate | Everything is locked behind a study account — **no anonymous access**. Sign in with Google (hosted version) or create a free study account (name + optional email; works fully offline). Profiles & scores stay on the device |
 | 🖼 Certificate | Gilded certificate PNG export with serial number & signature |
