@@ -876,6 +876,42 @@ footer b{color:var(--green-d)}
   .map-chip{font-size:.66rem;padding:3px 8px}
 }
 
+/* ================= 3D LAB + TILT ================= */
+.s3-wrap{display:flex;flex-direction:column;gap:14px}
+.s3-stage{position:relative;display:flex;justify-content:center;border:1px solid var(--card-border);border-radius:16px;background:radial-gradient(120% 90% at 50% 0%,var(--panel),var(--card-solid));padding:6px;touch-action:none}
+.s3-stage canvas{cursor:grab;max-width:100%}
+.s3-stage canvas:active{cursor:grabbing}
+.s3-hint{position:absolute;bottom:9px;left:0;right:0;text-align:center;font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);pointer-events:none}
+.s3-info{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.s3-fig{border:1px solid var(--card-border);border-radius:14px;padding:12px 13px;background:var(--panel)}
+.s3-fig h4{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:900;margin:0 0 6px}
+.s3-fig b{font-size:1.5rem;color:var(--green-d);font-variant-numeric:tabular-nums;display:block;line-height:1.15}
+[data-theme="dark"] .s3-fig b{color:#7dffc4}
+.s3-fig .sf{font-size:.72rem;color:var(--ink-2);margin-top:3px}
+.s3-fig .sf code{font-family:Georgia,serif;background:var(--bar-track);border-radius:6px;padding:1px 6px;color:var(--ink)}
+.s3-formula{margin-top:2px}
+.s3-formula h4{margin-bottom:4px}
+.s3-formula ul{margin:0;padding:0;list-style:none}
+.s3-formula li{font-size:.82rem;line-height:1.75;color:var(--ink-2)}
+.s3-formula li b{color:var(--ink)}
+.s3-formula code{font-family:Georgia,serif;font-size:.88rem;background:var(--bar-track);border-radius:6px;padding:1px 6px;color:var(--green-d)}
+[data-theme="dark"] .s3-formula code{color:#7dffc4}
+.s3-sliders{display:flex;flex-direction:column;gap:9px;border:1px solid var(--card-border);border-radius:14px;padding:12px 13px;background:var(--panel)}
+.s3-sl{display:flex;align-items:center;gap:10px}
+.s3-sl label{font-size:.74rem;font-weight:800;width:64px;flex:none;color:var(--ink-2)}
+.s3-sl input[type=range]{flex:1;accent-color:var(--green)}
+.s3-sl output{font-size:.82rem;font-weight:900;width:38px;text-align:right;font-variant-numeric:tabular-nums;color:var(--green-d)}
+[data-theme="dark"] .s3-sl output{color:#7dffc4}
+.s3-blurb{font-size:.8rem;color:var(--ink-2);line-height:1.55;border-left:3px solid var(--gold);padding:2px 0 2px 11px;margin:0}
+.s3-mini{display:flex;gap:6px;flex-wrap:wrap}
+.s3-mini .lab-tab{font-size:.74rem;padding:6px 11px}
+@media (max-width:640px){
+  .s3-info{grid-template-columns:1fr}
+  .s3-fig b{font-size:1.25rem}
+}
+/* 3D tilt (desktop, pointer-precise only) */
+.has-tilt{will-change:transform}
+
 </style>
 </head>
 <body>
@@ -1018,6 +1054,7 @@ footer b{color:var(--green-d)}
   <button class="lab-tile" onclick="openLab('spell')"><b class="li">⌨️</b><span class="lt">Spelling Lab</span><small class="lc">Type the answer · spelling counts</small></button>
   <button class="lab-tile" onclick="openLab('report')"><b class="li">🧾</b><span class="lt">Report Card</span><small class="lc">Printable progress · for parents &amp; teachers</small></button>
   <button class="lab-tile" onclick="openLab('map')"><b class="li">🗺️</b><span class="lt">Mastery Map</span><small class="lc">Topic heat-map · tap to drill weak spots</small></button>
+  <button class="lab-tile" onclick="openLab('s3')"><b class="li">🧊</b><span class="lt">3D Shape Lab</span><small class="lc">Rotate solids · live volume &amp; surface area</small></button>
 </div>
 
     <div class="plan-card" id="planCard"></div>
@@ -3039,7 +3076,7 @@ function cardForState(){
 function boot(){
   const ready = applyBank();
   document.body.dataset.booted = "1";
-  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle();
+  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle(); initTilt();
   mascotSay("Welcome. Choose your level, then begin with a paper — every answer builds your record.", "🦉");
   if (ready) {
     hideBankStatus(); setCard(cardForState());
@@ -3090,6 +3127,7 @@ function openLab(sec){
 function closeLab(){
   const ov = $("labOverlay"); if (!ov) return;
   if (LAB.rap.timer) { clearInterval(LAB.rap.timer); LAB.rap.timer = 0; }
+  s3Stop();
   ov.classList.add("hidden"); document.body.style.overflow = "";
 }
 function labRender(){
@@ -3100,6 +3138,7 @@ function labRender(){
   else if (LAB.sec === "spell") labSpellSetup();
   else if (LAB.sec === "report") labReportRender();
   else if (LAB.sec === "map") labMapRender();
+  else if (LAB.sec === "s3") s3Render();
 }
 function labClassTabs(id, cur, fn){
   return CLASSES.map(function(cc, i){
@@ -3503,7 +3542,7 @@ function labReportRender(){
       }).join("") + "</div>"
     : '<div class="rep-sec"><h4>Recommended focus</h4><p class="rep-note">Complete a few papers to unlock subject-level recommendations.</p></div>';
   const labsHtml = (st.cards.seen || st.rapid.played || st.spell.played)
-    ? '<div class="rep-sec"><h4>Study hall activity</h4><p class="rep-note">📇 ' + st.cards.seen + ' flashcards (' + st.cards.known + ' known) · ⚡ ' + st.rapid.played + ' sprints (best ' + st.rapid.best + ') · ⌨️ ' + st.spell.played + ' spelling rounds (best ' + st.spell.best + '%)</p></div>'
+    ? '<div class="rep-sec"><h4>Study hall activity</h4><p class="rep-note">📇 ' + st.cards.seen + ' flashcards (' + st.cards.known + ' known) · ⚡ ' + st.rapid.played + ' sprints (best ' + st.rapid.best + ') · ⌨️ ' + st.spell.played + ' spelling rounds (best ' + st.spell.best + '%)' + (st.s3seen && st.s3seen.length ? ' · 🧊 ' + st.s3seen.length + ' 3D shapes' : '') + '</p></div>'
     : "";
   $("labBody").innerHTML =
     '<div class="lab-printhide lab-head"><span class="lab-ico">🧾</span><h3>Progress Report</h3><span class="lab-sub">Printable for parents &amp; teachers</span></div>' +
@@ -3717,6 +3756,250 @@ function labMapRender(){
       }).join("") +
     '</div>' +
     '<div class="lab-cta"><button class="btn btn-primary" onclick="smartPaper(10)">🎯 Smart paper · 10</button><button class="btn btn-ghost" onclick="closeLab()">Close</button></div>';
+}
+
+/* ================= 3D SHAPES LAB =================
+   Dependency-free software 3D: rotate / project / painter's algorithm on a
+   2D canvas. Interactive with drag, live sliders & formulas. Educational
+   tie-in: Mathematics · Mensuration. */
+const S3 = {
+  shape: "cube", auto: true, drag: false,
+  rotX: 0.42, rotY: 0.62, zoom: 1,
+  raf: 0, last: 0, idle: 0, px: 0, py: 0,
+  seen: {}
+};
+const S3_SHAPES = [
+  { id: "cube", name: "Cube", icon: "🟦", params: [{ k: "a", label: "side a", min: 2, max: 8, def: 4 }],
+    vol: function(P){ return P.a * P.a * P.a; }, area: function(P){ return 6 * P.a * P.a; },
+    vtxt: "V = a³", atxt: "SA = 6a²", blurb: "Every edge is equal. Dice, boxes and storage bins are cubes (or cuboids) — the shape of packed goods and shipping containers.", topic: "Mensuration" },
+  { id: "cuboid", name: "Cuboid", icon: "📦", params: [{ k: "l", label: "length l", min: 2, max: 8, def: 5 }, { k: "w", label: "width w", min: 2, max: 8, def: 3 }, { k: "h", label: "height h", min: 2, max: 8, def: 2.5 }],
+    vol: function(P){ return P.l * P.w * P.h; }, area: function(P){ return 2 * (P.l * P.w + P.l * P.h + P.w * P.h); },
+    vtxt: "V = l × w × h", atxt: "SA = 2(lw + lh + wh)", blurb: "A box with three different edge lengths — bricks, books and classrooms are cuboids. Volume tells you what fits inside.", topic: "Mensuration" },
+  { id: "sphere", name: "Sphere", icon: "🔮", params: [{ k: "r", label: "radius r", min: 1, max: 4, def: 2 }],
+    vol: function(P){ return (4 / 3) * Math.PI * P.r * P.r * P.r; }, area: function(P){ return 4 * Math.PI * P.r * P.r; },
+    vtxt: "V = 4⁄3 πr³", atxt: "SA = 4πr²", blurb: "Perfectly round — balls, globes and water droplets. The sphere packs the most volume in the least surface area of any shape.", topic: "Mensuration" },
+  { id: "cylinder", name: "Cylinder", icon: "🥫", params: [{ k: "r", label: "radius r", min: 1, max: 4, def: 2 }, { k: "h", label: "height h", min: 1, max: 8, def: 4 }],
+    vol: function(P){ return Math.PI * P.r * P.r * P.h; }, area: function(P){ return 2 * Math.PI * P.r * P.r + 2 * Math.PI * P.r * P.h; },
+    vtxt: "V = πr²h", atxt: "SA = 2πr² + 2πrh", blurb: "Circles stacked into a solid — tins of milk, pipes and pillars. The curved side unwraps into a rectangle.", topic: "Mensuration" },
+  { id: "cone", name: "Cone", icon: "🍦", params: [{ k: "r", label: "radius r", min: 1, max: 4, def: 2 }, { k: "h", label: "height h", min: 1, max: 8, def: 4.5 }],
+    vol: function(P){ return (1 / 3) * Math.PI * P.r * P.r * P.h; }, area: function(P){ return Math.PI * P.r * P.r + Math.PI * P.r * Math.sqrt(P.r * P.r + P.h * P.h); },
+    vtxt: "V = 1⁄3 πr²h", atxt: "SA = πr² + πrl", blurb: "Exactly one third of its cylinder — traffic cones, party hats and ice-cream cones. The slant height l = √(r² + h²).", topic: "Mensuration" },
+  { id: "pyramid", name: "Pyramid", icon: "🔺", params: [{ k: "a", label: "base a", min: 2, max: 8, def: 4 }, { k: "h", label: "height h", min: 1, max: 8, def: 4 }],
+    vol: function(P){ return (1 / 3) * P.a * P.a * P.h; }, area: function(P){ return P.a * P.a + 2 * P.a * Math.sqrt(P.h * P.h + (P.a / 2) * (P.a / 2)); },
+    vtxt: "V = 1⁄3 a²h", atxt: "SA = a² + 2al", blurb: "One third of its box — the Great Pyramid of Giza. Square base, four triangular faces meeting at the apex.", topic: "Mensuration" },
+  { id: "prism", name: "Triangular prism", icon: "📐", params: [{ k: "a", label: "side a", min: 2, max: 8, def: 4 }, { k: "h", label: "length h", min: 1, max: 8, def: 5 }],
+    vol: function(P){ return (Math.sqrt(3) / 4) * P.a * P.a * P.h; }, area: function(P){ return (Math.sqrt(3) / 2) * P.a * P.a + 3 * P.a * P.h; },
+    vtxt: "V = (√3⁄4)a²h", atxt: "SA = (√3⁄2)a² + 3ah", blurb: "A triangle pushed through space — tent frames, Toblerone and roof trusses. Volume = area of the triangle × length.", topic: "Mensuration" }
+];
+function s3Shape(id){ for (var i = 0; i < S3_SHAPES.length; i++) if (S3_SHAPES[i].id === id) return S3_SHAPES[i]; return S3_SHAPES[0]; }
+function s3Params(id){ const P = {}; s3Shape(id).params.forEach(function(p){ P[p.k] = p.def; }); return P; }
+function s3Vol(id, P){ return s3Shape(id).vol(P); }
+function s3Area(id, P){ return s3Shape(id).area(P); }
+function s3Build(id, P){
+  const ns = null, outs = { v: [], f: [] };
+  function quad(a, b, c, d){ outs.f.push([a, b, c, d]); }
+  function tri(a, b, c){ outs.f.push([a, b, c]); }
+  if (id === "cube" || id === "cuboid"){
+    const l = (id === "cube" ? P.a : P.l) / 2, w = (id === "cube" ? P.a : P.w) / 2, h = (id === "cube" ? P.a : P.h) / 2;
+    outs.v = [[-l, -h, -w], [l, -h, -w], [l, -h, w], [-l, -h, w], [-l, h, -w], [l, h, -w], [l, h, w], [-l, h, w]];
+    outs.f = [[0, 1, 2, 3], [7, 6, 5, 4], [0, 4, 5, 1], [1, 5, 6, 2], [2, 6, 7, 3], [3, 7, 4, 0]];
+  } else if (id === "sphere"){
+    const rings = 7, segs = 14, r = P.r;
+    outs.v = [[0, r, 0]];
+    for (let i = 1; i < rings; i++){
+      const phi = Math.PI * i / rings, y = r * Math.cos(phi), rr = r * Math.sin(phi);
+      for (let j = 0; j < segs; j++){
+        const th = 2 * Math.PI * j / segs;
+        outs.v.push([rr * Math.cos(th), y, rr * Math.sin(th)]);
+      }
+    }
+    outs.v.push([0, -r, 0]);
+    const top = 0, bot = outs.v.length - 1, ringAt = function(i, j){ return 1 + (i - 1) * segs + (j % segs); };
+    for (let j = 0; j < segs; j++) tri(top, ringAt(1, j), ringAt(1, j + 1));
+    for (let i = 1; i < rings - 1; i++) for (let j = 0; j < segs; j++)
+      quad(ringAt(i, j), ringAt(i, j + 1), ringAt(i + 1, j + 1), ringAt(i + 1, j));
+    for (let j = 0; j < segs; j++) tri(bot, ringAt(rings - 1, j + 1), ringAt(rings - 1, j));
+  } else if (id === "cylinder"){
+    const segs = 18, r = P.r, hh = P.h / 2, base = 1;
+    outs.v = [[0, hh, 0]];
+    for (let j = 0; j < segs; j++){ const th = 2 * Math.PI * j / segs; outs.v.push([r * Math.cos(th), hh, r * Math.sin(th)]); }
+    for (let j = 0; j < segs; j++){ const th = 2 * Math.PI * j / segs; outs.v.push([r * Math.cos(th), -hh, r * Math.sin(th)]); }
+    for (let j = 0; j < segs; j++){ const a2 = 1 + j, b2 = 1 + ((j + 1) % segs), c2 = 1 + segs + ((j + 1) % segs), d2 = 1 + segs + j; quad(a2, b2, c2, d2); }
+    for (let j = 0; j < segs; j++) tri(0, 1 + ((j + 1) % segs), 1 + j);
+    for (let j = 0; j < segs; j++) tri(1 + segs, 1 + segs + j, 1 + segs + ((j + 1) % segs));
+  } else if (id === "cone"){
+    const segs = 18, r = P.r, hh = P.h / 2;
+    outs.v = [[0, hh, 0]];
+    for (let j = 0; j < segs; j++){ const th = 2 * Math.PI * j / segs; outs.v.push([r * Math.cos(th), -hh, r * Math.sin(th)]); }
+    for (let j = 0; j < segs; j++) tri(0, 1 + ((j + 1) % segs), 1 + j);
+    const ring = [];
+    for (let j = segs - 1; j >= 0; j--) ring.push(1 + j);
+    outs.f.push(ring);
+  } else if (id === "pyramid"){
+    const a = P.a / 2, hh = P.h / 2;
+    outs.v = [[-a, -hh, -a], [a, -hh, -a], [a, -hh, a], [-a, -hh, a], [0, hh, 0]];
+    outs.f = [[0, 4, 1], [1, 4, 2], [2, 4, 3], [3, 4, 0], [3, 2, 1, 0]];
+  } else if (id === "prism"){
+    const R = P.a / Math.sqrt(3), hh = P.h / 2;
+    outs.v = [
+      [0, hh, 2 * R], [P.a, hh, -R], [-P.a, hh, -R],
+      [0, -hh, 2 * R], [P.a, -hh, -R], [-P.a, -hh, -R]
+    ];
+    outs.f = [[0, 1, 2], [5, 4, 3], [0, 3, 4, 1], [1, 4, 5, 2], [2, 5, 3, 0]];
+  }
+  return outs;
+}
+const S3_L = { x: 0.42, y: 0.62, z: 0.66 };
+function s3Norm(ax, ay, az, bx, by, bz, cx, cy, cz){
+  const ux = bx - ax, uy = by - ay, uz = bz - az, vx = cx - ax, vy = cy - ay, vz = cz - az;
+  let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+  const m = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+  return [nx / m, ny / m, nz / m];
+}
+function s3Draw(){
+  const c = $("s3Canvas"); if (!c) return;
+  const ctx = c.getContext && c.getContext("2d"); if (!ctx) return;
+  const dpr = (window.devicePixelRatio || 1) > 1 ? 2 : 1;
+  const W = 340 * dpr, H = 300 * dpr;
+  if (c.width !== W){ c.width = W; c.height = H; }
+  const dark = document.documentElement.dataset.theme === "dark";
+  ctx.clearRect(0, 0, W, H);
+  const P = S3.params, geo = s3Build(S3.shape, P);
+  const cx = W / 2, cy = H / 2, f = 4.2, rotY = S3.rotY, rotX = S3.rotX;
+  const pts = geo.v.map(function(p){
+    const x1 = p[0] * Math.cos(rotY) + p[2] * Math.sin(rotY);
+    const z1 = -p[0] * Math.sin(rotY) + p[2] * Math.cos(rotY);
+    const y2 = p[1] * Math.cos(rotX) - z1 * Math.sin(rotX);
+    const z2 = p[1] * Math.sin(rotX) + z1 * Math.cos(rotX);
+    return [x1, y2, z2];
+  });
+  const faces = geo.f.map(function(fi, k){
+    let sz = 0, n = [0, 0, 0];
+    fi.forEach(function(vi){ sz += pts[vi][2]; });
+    const a = pts[fi[0]], b = pts[fi[1]], c2 = pts[fi[2]];
+    if (fi.length >= 3) n = s3Norm(a[0], a[1], a[2], b[0], b[1], b[2], c2[0], c2[1], c2[2]);
+    return { fi: fi, z: sz / fi.length, n: n, k: k };
+  }).sort(function(q1, q2){ return q1.z - q2.z; });
+  const scl = f / (f + 2.6) * (0.62 * W) * S3.zoom;
+  const base = dark ? [64, 200, 140] : [15, 107, 79];
+  const gold = dark ? [255, 210, 125] : [184, 145, 47];
+  ctx.lineJoin = "round";
+  faces.forEach(function(fc){
+    const shade = Math.max(0.3, Math.min(1, 0.55 + 0.45 * Math.abs(fc.n[0] * S3_L.x + fc.n[1] * S3_L.y + fc.n[2] * S3_L.z)));
+    const col = (fc.k % 3 === 0) ? gold : base;
+    ctx.beginPath();
+    fc.fi.forEach(function(vi, i2){
+      const px = cx + pts[vi][0] * scl, py = cy - pts[vi][1] * scl;
+      if (i2 === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    });
+    ctx.closePath();
+    ctx.fillStyle = "rgba(" + col[0] + "," + col[1] + "," + col[2] + "," + (0.28 + shade * 0.6).toFixed(3) + ")";
+    ctx.fill();
+    ctx.strokeStyle = dark ? "rgba(230,240,255,.5)" : "rgba(20,35,70,.4)";
+    ctx.lineWidth = 1.1 * dpr;
+    ctx.stroke();
+  });
+}
+function s3Loop(ts){
+  S3.raf = 0;
+  if (!ts) ts = Date.now();
+  if (S3.last && ts - S3.last > 16){
+    if (S3.auto && !S3.drag){ S3.rotY += 0.0045; S3.rotX += (0.42 - S3.rotX) * 0.005; }
+  }
+  S3.last = ts;
+  s3Draw();
+  if (!$("labOverlay") || $("labOverlay").classList.contains("hidden")) return;
+  S3.raf = (window.requestAnimationFrame || function(f){ setTimeout(f, 33); })(s3Loop);
+}
+function s3Stop(){ if (S3.raf){ (window.cancelAnimationFrame || clearTimeout)(S3.raf); S3.raf = 0; } }
+function s3Render(){
+  const B = $("labBody"); if (!B) return;
+  if (S3.autoInit === undefined){
+    S3.autoInit = true;
+    try { if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) S3.auto = false; } catch (e) {}
+  }
+  const sh = s3Shape(S3.shape);
+  S3.params = S3.params || {};
+  sh.params.forEach(function(p){ if (typeof S3.params[p.k] !== "number") S3.params[p.k] = p.def; });
+  const vol = s3Vol(S3.shape, S3.params), area = s3Area(S3.shape, S3.params);
+  const f3 = function(n){ return (Math.round(n * 100) / 100).toLocaleString(); };
+  B.innerHTML =
+    '<div class="lab-head"><span class="lab-ico">🧊</span><h3>3D Shape Lab</h3><span class="lab-sub">Drag to rotate · sliders change the dimensions live · Mathematics — Mensuration</span></div>' +
+    '<div class="s3-mini">' + S3_SHAPES.map(function(s){
+      return '<button class="lab-tab' + (s.id === S3.shape ? " on" : "") + '" onclick="S3.shape=\'' + s.id + '\';S3.params=s3Params(\'' + s.id + '\');s3Render()">' + s.icon + " " + s.name + "</button>";
+    }).join("") + "</div>" +
+    '<div class="s3-wrap">' +
+      '<div class="s3-stage"><canvas id="s3Canvas" width="340" height="300" aria-label="Interactive 3D ' + esc(sh.name) + '"></canvas><span class="s3-hint">' + (S3.auto ? "auto-rotating · drag to spin · double-click to reset" : "drag to spin") + "</span></div>" +
+      '<div class="s3-sliders">' + sh.params.map(function(p){
+        return '<div class="s3-sl"><label for="s3p_' + p.k + '">' + esc(p.label) + '</label><input type="range" id="s3p_' + p.k + '" min="' + p.min + '" max="' + p.max + '" step="0.5" value="' + S3.params[p.k] + '" oninput="S3.params[\'' + p.k + '\']=parseFloat(this.value);s3Sync()"><output id="s3o_' + p.k + '">' + S3.params[p.k] + "</output></div>";
+      }).join("") + "</div>" +
+      '<div class="s3-info">' +
+        '<div class="s3-fig"><h4>Volume</h4><b>' + f3(vol) + " <small style=\"font-size:.6em;color:var(--mut)\">units³</small></b><div class=\"sf\">Formula: <code>" + esc(sh.vtxt) + "</code></div></div>" +
+        '<div class="s3-fig"><h4>Surface area</h4><b>' + f3(area) + " <small style=\"font-size:.6em;color:var(--mut)\">units²</small></b><div class=\"sf\">Formula: <code>" + esc(sh.atxt) + "</code></div></div>" +
+        '<div class="s3-formula"><h4 class="s3-lbl">Why it works</h4><ul><li>' + esc(sh.blurb) + "</li></ul></div>" +
+        '<div class="s3-formula"><h4 class="s3-lbl">Exam hint</h4><ul><li>“How many of these fit?” → divide volumes. “How much paper to wrap it?” → surface area. Read the unit: <b>³ = volume, ² = area</b>.</li></ul></div>' +
+      "</div>" +
+      '<p class="s3-blurb">Every figure here links to the question bank — test yourself with the real Mensuration paper when you are ready.</p>' +
+    "</div>" +
+    '<div class="lab-cta">' +
+      '<button class="btn btn-ghost" onclick="S3.auto=!S3.auto;s3Render()">' + (S3.auto ? "⏸ Pause spin" : "▶ Auto-spin") + "</button>" +
+      '<button class="btn btn-ghost" onclick="S3.rotX=0.42;S3.rotY=0.62;s3Render()">↺ Reset view</button>' +
+      '<button class="btn btn-primary" onclick="labDrillTopic(\'Mathematics\',\'Mensuration\')">🎯 Quiz me · Mensuration</button>' +
+    "</div>";
+  const cv = $("s3Canvas");
+  if (cv) cv.onpointerdown = function(ev){ S3.drag = true; S3.px = ev.clientX; S3.py = ev.clientY; };
+  if (cv) cv.onpointermove = function(ev){
+    if (!S3.drag) return;
+    S3.rotY += (ev.clientX - S3.px) * 0.008;
+    S3.rotX += (ev.clientY - S3.py) * 0.008;
+    S3.rotX = Math.max(-1.45, Math.min(1.45, S3.rotX));
+    S3.px = ev.clientX; S3.py = ev.clientY;
+  };
+  if (cv) cv.onpointerup = cv.onpointercancel = function(){ S3.drag = false; };
+  if (cv) cv.ondblclick = function(){ S3.rotX = 0.42; S3.rotY = 0.62; };
+  if (!S3.studied || S3.studied.indexOf(S3.shape) < 0){
+    S3.studied = S3.studied || []; S3.studied.push(S3.shape);
+    const st = labStats(); st.s3seen = st.s3seen || []; if (st.s3seen.indexOf(S3.shape) < 0) st.s3seen.push(S3.shape); labSave(st);
+  }
+  s3Stop(); S3.last = 0;
+  S3.raf = (window.requestAnimationFrame || function(f){ setTimeout(f, 33); })(s3Loop);
+}
+function s3Sync(){
+  const sh = s3Shape(S3.shape);
+  sh.params.forEach(function(p){
+    const o = $("s3o_" + p.k); if (o) o.textContent = S3.params[p.k];
+  });
+  const vol = s3Vol(S3.shape, S3.params), area = s3Area(S3.shape, S3.params);
+  const f3 = function(n){ return (Math.round(n * 100) / 100).toLocaleString(); };
+  const figs = $("labBody") ? $("labBody").querySelectorAll(".s3-fig b") : [];
+  if (figs[0]) figs[0].innerHTML = f3(vol) + ' <small style="font-size:.6em;color:var(--mut)">units³</small>';
+  if (figs[1]) figs[1].innerHTML = f3(area) + ' <small style="font-size:.6em;color:var(--mut)">units²</small>';
+  s3Draw();
+}
+/* ---- 3D tilt cards (desktop pointer only; respects reduced motion) ---- */
+let tiltEl = null;
+function initTilt(){
+  try {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return;
+    const sel = ".tab, .lab-tile";
+    document.querySelectorAll(sel).forEach(function(el){ el.classList.add("has-tilt"); });
+    document.addEventListener("pointermove", function(ev){
+      const el = ev.target && ev.target.closest ? ev.target.closest(sel) : null;
+      if (el === tiltEl) return;
+      if (tiltEl) tiltEl.style.transform = "";
+      tiltEl = el;
+      if (!el) return;
+      if (!el.classList.contains("has-tilt")) el.classList.add("has-tilt");
+    }, { passive: true });
+    document.addEventListener("pointermove", function(ev){
+      if (!tiltEl || ev.pointerType !== "mouse") return;
+      const r = tiltEl.getBoundingClientRect();
+      const nx = (ev.clientX - r.left) / r.width - 0.5;
+      const ny = (ev.clientY - r.top) / r.height - 0.5;
+      tiltEl.style.transform = "perspective(620px) rotateX(" + (-ny * 7).toFixed(2) + "deg) rotateY(" + (nx * 9).toFixed(2) + "deg) translateY(-3px)";
+    }, { passive: true });
+  } catch (e) {}
 }
 
 try { boot(); } catch (e) { showFatal("Something went wrong while starting: " + String((e && e.message) || e)); }

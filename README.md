@@ -20,6 +20,7 @@ Copyright © merebari web · All rights reserved.
 | 🏆 Progression | Study points, scholar levels, 🎖 merits, badges, mastery rings per subject |
 | 📖 Study Hall | **Flashcard decks** (whole bank or your mistakes) with flip-recall · **Rapid Fire** sprints (30–90 s) with streaks · **Spelling Lab** (type the answer, typo-tolerant) · **Progress Report Card** — printable PDF/print for parents & teachers |
 | 🧠 Adaptive engine | Per-topic performance tracking · **Mastery Map** (every subject × topic heat-map, tap to drill) · **Exam-readiness score** (topics + mastery + consistency) · **Today's plan** with tailored actions · **Smart paper mode** that prioritises your weakest subjects |
+| 🧮 3D Shape Lab | Dependency-free interactive **3D solids** (cube, cuboid, sphere, cylinder, cone, pyramid, prism) — drag to rotate, live dimension sliders, real-time volume & surface area with formulas, links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 📜 Revision wheel | A prize wheel on every paper result (merits & study points) |
 | 🖼 Certificate | Gilded certificate PNG export with serial number & signature |
 | 🔒 Integrity | SHA-256 hash check of the question bank at load time |
