@@ -26,6 +26,7 @@ Copyright © merebari web · All rights reserved.
 | 💾 Backup & Restore | One-tap **JSON export** of every paper, mistake, topic stat, badge, point and lab result — merge or replace when restoring on any device |
 | 🏆 Scholar League | Local **leaderboard** of every study account on the device, ranked by study points with medals, papers, best % and YOU marker |
 | 🏛 Maison d'Étude skin | Editorial hôtelier look inspired by Nouvelle Parfumerie Gandour (DD.NYC): warm ivory `#faf3e8` canvas, espresso ink, champagne-gold accents, fine serif with italic flourishes, hairline gold page frame, film grain, amber-noir hero salon, couture pill buttons, bronze medallions · full dark 'amber noir' theme |
+| 🛡 Content protection | Public cannot edit the app's contents: SHA-256 fingerprint of the question bank verified at boot, before every quiz and on a 2-minute watchdog (any drift bricks the app with a fatal "integrity check failed" screen); bank object frozen; right-click, view-source/save/devtools shortcuts (F12, Ctrl+U, Ctrl+S, Ctrl+Shift+I/J/C), copy and image-drag disabled (typing fields stay usable); `noarchive` meta so search engines don't cache a copy; `main` branch protected on GitHub (force-push/deletion blocked, only the owner can push) |
 | ✨ Atelier FX wave | Exceptional motion layer: rotating golden salon sunburst, calligraphic gold flourish that draws itself under the headline, shimmering champagne headline text, staggered hero entrance choreography, a **living owl** (blinks · bobs · halo pulse · tilts on hover), gold spark bursts on correct answers and level-ups, gold reading-progress hairline, gilded card stationery (top hairline + corner signature), gold fleuron section labels, button sheen sweep, scroll-reveal cards |
 | ✨ Graphics pass | **Scholarly owl mascot** (SVG avatar + reaction badge) · **knowledge-constellation hero** with twinkling nodes and a gold light sweep · gilded medallions on class & study tiles · spinning honour rays on level-up · sheened grade seal · shimmering step-bar & progress glow |
 | 📜 Revision wheel | A prize wheel on every paper result (merits & study points) |
@@ -53,6 +54,16 @@ This repo deploys to GitHub Pages straight from its `main` branch — the site i
 3. Save. Your site appears at `https://<username>.github.io/<repo>/` within a minute or two.
 
 > **Access policy:** the app is gated — you must sign in (Google, on the hosted version) or create a free study account (name + optional email; fully offline) before anything is reachable. Google OAuth is configured for the `https://<username>.github.io` origin; if you move the site to another domain, add that origin to the OAuth client's *Authorised JavaScript origins* in Google Cloud Console.
+
+## Content protection
+
+The question bank and all app content carry `© merebari web`. Three layers keep the public from editing it:
+
+1. **In-app integrity guard** — the bank is fingerprinted with SHA-256 at boot and re-verified before every quiz and on a 2-minute watchdog; if anyone edits a question in a downloaded copy, the app bricks itself with a *content integrity check failed* screen.
+2. **Interaction locks** — right-click, view-source/save/devtools shortcuts, copying and image dragging are disabled (input fields stay usable for sign-in).
+3. **Repository protection** — `main` is branch-protected on GitHub: force-pushes and deletions are blocked, and only the owner (repository admins) can push.
+
+**Honest limits:** this is a client-side deterrent. The HTML file is served to every visitor's browser, so a determined person can always save and edit their own copy — no static file can prevent that. Real enforcement (e.g., paid/watermarked delivery or server-side checks) requires a backend. The GitHub repo must stay **public** for free GitHub Pages hosting; the write lock above is what stops anyone else from publishing changes.
 
 **Updating the live site:** edit `index.html` locally, then `git add index.html && git commit -m "update" && git push` — GitHub Pages re-deploys automatically within a minute.
 
