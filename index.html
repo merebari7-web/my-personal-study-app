@@ -1398,12 +1398,105 @@ body.guard-lock #gateOverlay{filter:none;pointer-events:none}
 .skip-link:focus{top:0}
 #qExplain[role="status"]{min-height:0}
 
+/* ================= PROGRESS HQ ================= */
+.modal-wide{max-width:780px}
+.hq-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:18px}
+.hq-stats .hs{background:var(--panel);border:1px solid var(--card-border);border-radius:14px;padding:12px 10px;text-align:center}
+.hq-stats .hs b{display:block;font-size:1.35rem;font-weight:900;color:var(--green-d)}
+[data-theme="dark"] .hq-stats .hs b{color:#eecf9a}
+.hq-stats .hs small{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.hq-sec{margin-bottom:20px}
+.hq-sec h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;color:#8a6a30;font-weight:900;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+[data-theme="dark"] .hq-sec h4{color:#eecf9a}
+.hq-sec h4::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(201,162,95,.4),transparent)}
+.hm-legend{display:flex;align-items:center;gap:5px;font-size:.62rem;color:var(--mut);margin-top:8px;justify-content:flex-end}
+.hm-legend i{width:10px;height:10px;border-radius:3px}
+.hm{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);gap:3px;overflow-x:auto;padding-bottom:4px}
+.hm i{width:13px;height:13px;border-radius:3.5px;background:var(--bar-track);flex:none}
+.hm i.today{outline:1.5px solid #c9a25f;outline-offset:1px}
+.hq-cv{background:var(--panel);border:1px solid var(--card-border);border-radius:14px;padding:10px}
+.hq-cv canvas{width:100%;display:block}
+.hq-empty{color:var(--mut);font-size:.84rem;padding:14px 0;text-align:center}
+.hm-row{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.hq-chip{display:flex;align-items:center;gap:9px;border:1px solid var(--card-border);border-radius:11px;background:var(--chip-bg);padding:7px 11px;font-size:.8rem}
+.hq-chip .hq-ico{font-size:1rem;flex:none}
+.hq-chip .hq-tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hq-chip .hq-pct{font-weight:900;font-size:.78rem;flex:none}
+.hq-chip .mini{width:64px;height:6px;border-radius:99px;background:var(--bar-track);overflow:hidden;flex:none}
+.hq-chip .mini i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#a67c3b,#e8c98a)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:420px}
+.cal .cw{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);text-align:center;font-weight:800}
+.cal i{aspect-ratio:1;border-radius:9px;background:var(--bar-track);display:grid;place-items:center;font-size:.68rem;font-style:normal;color:var(--mut);min-height:30px}
+.cal i.on{background:linear-gradient(150deg,#b98a45,#8a5f24);color:#fff7e0;font-weight:900}
+.cal i.today{outline:2px solid #c9a25f;outline-offset:2px}
+.cd-banner{margin:0 auto 18px;max-width:760px;border-radius:16px;padding:13px 16px;
+  background:linear-gradient(150deg,rgba(201,162,95,.14),rgba(201,162,95,.05));
+  border:1px solid rgba(201,162,95,.45);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.cd-banner .cd-num{font-size:2rem;font-weight:900;color:#8a5f24;line-height:1}
+[data-theme="dark"] .cd-banner .cd-num{color:#eecf9a}
+.cd-banner .cd-tx{flex:1;min-width:200px}
+.cd-banner .cd-tx b{font-size:.95rem;display:block}
+.cd-banner .cd-tx small{color:var(--mut);font-size:.74rem}
+.cd-banner .cd-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%}
+.cd-banner .cd-form input{border:1.5px solid var(--chip-border);background:var(--chip-bg);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:.84rem;outline:none}
+.cd-banner .cd-form input:focus{border-color:#c9a25f}
+
+/* ================= ATELIER II — ambient aurora, boot curtain, count-up ================= */
+/* #aurora — warm living nebula behind the ivory canvas */
+#aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#aurora i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;will-change:transform}
+#aurora .au1{width:46vw;height:46vw;left:-12vw;top:-16vw;background:radial-gradient(circle,rgba(201,162,95,.30),transparent 62%);animation:auDrift1 26s ease-in-out infinite alternate}
+#aurora .au2{width:38vw;height:38vw;right:-10vw;top:22vh;background:radial-gradient(circle,rgba(50,55,60,.14),transparent 62%);animation:auDrift2 32s ease-in-out infinite alternate}
+#aurora .au3{width:42vw;height:42vw;left:24vw;bottom:-18vw;background:radial-gradient(circle,rgba(201,162,95,.18),transparent 62%);animation:auDrift3 38s ease-in-out infinite alternate}
+@keyframes auDrift1{to{transform:translate(9vw,7vh) scale(1.14)}}
+@keyframes auDrift2{to{transform:translate(-8vw,9vh) scale(1.1)}}
+@keyframes auDrift3{to{transform:translate(7vw,-8vh) scale(1.16)}}
+[data-theme="dark"] #aurora .au1{background:radial-gradient(circle,rgba(201,162,95,.16),transparent 62%)}
+[data-theme="dark"] #aurora .au2{background:radial-gradient(circle,rgba(232,201,138,.10),transparent 62%)}
+[data-theme="dark"] #aurora .au3{background:radial-gradient(circle,rgba(140,100,40,.14),transparent 62%)}
+
+/* #curtain — golden veil that lifts on boot */
+#curtain{position:fixed;inset:0;z-index:400;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  background:linear-gradient(160deg,#fbf6e9 0%,#f5ecd6 48%,#efe2c4 100%);color:#32373c;
+  animation:curtainOut .9s cubic-bezier(.4,0,.2,1) 1.05s forwards}
+#curtain .ct-shield{width:74px;height:84px;filter:drop-shadow(0 14px 30px rgba(139,95,36,.35))}
+#curtain .ct-shield path{stroke-dasharray:600;stroke-dashoffset:600;animation:ctDraw 1.1s .1s ease-out forwards}
+@keyframes ctDraw{to{stroke-dashoffset:0}}
+#curtain .ct-name{font-family:Georgia,'Times New Roman',Times,serif;font-weight:800;font-size:clamp(1.05rem,3vw,1.5rem);letter-spacing:.34em;text-indent:.34em;color:#32373c}
+#curtain .ct-sub{font-size:.62rem;letter-spacing:.42em;text-indent:.42em;text-transform:uppercase;color:#8a6a30}
+#curtain .ct-rule{width:min(300px,56vw);height:1px;background:linear-gradient(90deg,transparent,#c9a25f,transparent);position:relative;overflow:visible}
+#curtain .ct-rule::after{content:"";position:absolute;top:-3px;left:0;width:7px;height:7px;border-radius:50%;background:#c9a25f;box-shadow:0 0 14px #c9a25f;animation:ctTravel 1.5s .2s ease-in-out infinite}
+@keyframes ctTravel{0%,100%{left:0}50%{left:calc(100% - 7px)}}
+@keyframes curtainOut{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion:reduce){#curtain{animation-duration:.05s;animation-delay:.05s}}
+
+/* .hero-rule — gilded rule with a travelling sparkle */
+.hero-rule{position:relative;z-index:2;width:min(540px,68vw);height:12px;margin:22px auto 0;pointer-events:none}
+.hero-rule::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(232,199,106,.55) 30%,rgba(232,199,106,.55) 70%,transparent)}
+.hero-rule::after{content:"\u2756";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#e8c76a;font-size:.66rem;text-shadow:0 0 12px rgba(232,199,106,.8)}
+.hero-rule i{position:absolute;top:50%;left:0;width:6px;height:6px;border-radius:50%;background:#fdf6dc;box-shadow:0 0 16px 3px rgba(232,199,106,.65);transform:translateY(-50%);animation:ruleTravel 5.2s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes ruleTravel{0%{left:2%}50%{left:calc(98% - 6px)}100%{left:2%}}
+@media (max-width:640px){.hero-rule{margin-top:16px}}
+
+/* logo tilt */
+.brand .logo{transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.brand .logo:hover{transform:rotate(-7deg) scale(1.07)}
+
+/* stat corner ticks */
+.stat::before,.stat::after{content:"";position:absolute;width:13px;height:13px;opacity:.75;transition:.25s;pointer-events:none}
+.stat{position:relative}
+.stat::before{top:-1px;left:-1px;border-top:1.5px solid rgba(201,162,95,.7);border-left:1.5px solid rgba(201,162,95,.7);border-radius:9px 0 0 0}
+.stat::after{bottom:-1px;right:-1px;border-bottom:1.5px solid rgba(201,162,95,.7);border-right:1.5px solid rgba(201,162,95,.7);border-radius:0 0 9px 0}
+.stat:hover::before,.stat:hover::after{opacity:1;width:18px;height:18px}
+
 </style>
 </head>
 <div class="luxe-frame" aria-hidden="true"></div>
 <body>
 <div id="readBar" aria-hidden="true"></div>
 <a class="skip-link" href="#main">Skip to content</a>
+<div id="aurora" aria-hidden="true"><i class="au1"></i><i class="au2"></i><i class="au3"></i></div>
+<div id="curtain" aria-hidden="true"><svg class="ct-shield" viewBox="0 0 64 72" aria-hidden="true"><defs><linearGradient id="ctGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efd58b"/><stop offset="1" stop-color="#a67c1e"/></linearGradient></defs><path d="M32 3 L58 10 V32 C58 48 47 62 32 68 C17 62 6 48 6 32 V10 Z" fill="#32373c" stroke="url(#ctGold)" stroke-width="2.4"/><path d="M32 14 l3.4 8.4 8.8 .7 -6.7 5.8 2 8.7 -7.5 -4.6 -7.5 4.6 2 -8.7 -6.7 -5.8 8.8 -.7z" fill="#e8c76a"/><path d="M20 48 Q32 42 44 48 L44 56 Q32 50 32 56 Q32 50 20 56 Z" fill="#f7f1de"/></svg><div class="ct-name">MY PERSONAL STUDY APP</div><div class="ct-rule"></div><div class="ct-sub">senior secondary practice papers · SS1–SS3</div></div>
 <canvas id="confetti" class="hidden"></canvas>
 <div class="overlay" id="fatalOverlay" style="display:none">
   <div class="modal" style="text-align:center">
@@ -1539,6 +1632,7 @@ body.guard-lock #gateOverlay{filter:none;pointer-events:none}
       <div class="stat"><b>100%</b><span>Fully explained</span></div>
     </div>
   </div>
+  <div class="hero-rule" aria-hidden="true"><i></i></div>
 </header>
 
 <!-- ============ MAIN ============ -->
@@ -1552,6 +1646,7 @@ body.guard-lock #gateOverlay{filter:none;pointer-events:none}
     <div class="daily-banner rev hidden" id="reviewBanner"></div>
     <div class="bank-banner hidden" id="bankStatus"></div>
     <div class="game-dash" id="gameDash"></div>
+    <div class="cd-banner" id="cdBanner"></div>
 <div class="lab-grid" id="labGrid">
   <button class="lab-tile" onclick="openLab('flash')"><b class="li">📇</b><span class="lt">Flashcards</span><small class="lc">Flip cards · recall &amp; lock in · mistake decks</small></button>
   <button class="lab-tile" onclick="openLab('rapid')"><b class="li">⚡</b><span class="lt">Rapid Fire</span><small class="lc">30–90 s sprints · beat your best streak</small></button>
@@ -1562,6 +1657,7 @@ body.guard-lock #gateOverlay{filter:none;pointer-events:none}
   <button class="lab-tile" onclick="openLab('mock')"><b class="li">🎓</b><span class="lt">Mock Hall</span><small class="lc">Full timed exam · auto-submit · integrity watch</small></button>
   <button class="lab-tile" onclick="openLab('backup')"><b class="li">💾</b><span class="lt">Backup &amp; Restore</span><small class="lc">Export or restore all your progress</small></button>
   <button class="lab-tile" onclick="openLab('league')"><b class="li">🏆</b><span class="lt">Scholar League</span><small class="lc">Every account on this device, ranked</small></button>
+  <button class="lab-tile" onclick="openHQ()"><b class="li">📈</b><span class="lt">Progress HQ</span><small class="lc">Heatmap · radar · trend · readiness</small></button>
 </div>
 
     <div class="plan-card" id="planCard"></div>
@@ -1677,6 +1773,7 @@ body.guard-lock #gateOverlay{filter:none;pointer-events:none}
     <div class="row center result-actions" style="margin-top:22px">
       <button class="btn btn-ghost" onclick="retake()">↻ Sit again</button>
       <button class="btn btn-gold" onclick="shareResult()">📣 Share result</button>
+      <button class="btn btn-gold" onclick="scoreCard()">🎁 Score card</button>
       <button class="btn btn-ghost hidden" id="reviewBtn" onclick="showReview()">📋 Review paper</button>
       <button class="btn btn-ghost hidden" id="drillBtn" onclick="drillMistakes()">🔁 Drill my mistakes</button>
       <button class="btn btn-ghost" id="printResultBtn" onclick="printPaper()">🖨 Print paper</button>
@@ -1771,6 +1868,12 @@ body.guard-lock #gateOverlay{filter:none;pointer-events:none}
     <button class="x icon-btn" onclick="closeStats()">✕</button>
     <h3>📊 Examination record</h3>
     <div id="statsBody"></div>
+  </div>
+</div>
+<div class="overlay hidden" id="hqOverlay" onclick="if(event.target===this)closeHQ()">
+  <div class="modal modal-wide">
+    <div class="row" style="align-items:center;margin-bottom:12px"><h3 style="margin:0">📈 Progress HQ</h3><span style="flex:1"></span><button class="btn btn-ghost" style="padding:7px 14px" onclick="closeHQ()">✕ Close</button></div>
+    <div id="hqBody"></div>
   </div>
 </div>
 <div class="overlay hidden" id="helpOverlay" onclick="if(event.target===this)closeHelp()">
@@ -2519,7 +2622,7 @@ function openAccount(){
   $("accountOverlay").classList.remove("hidden");
 }
 function closeOverlay(){
-  ["accountOverlay","historyOverlay","statsOverlay","submitCheckOverlay","libraryOverlay","certOverlay","helpOverlay","wheelOverlay","levelOverlay"].forEach(id => { const el = $(id); if (el) el.classList.add("hidden"); });
+  ["accountOverlay","historyOverlay","statsOverlay","submitCheckOverlay","libraryOverlay","certOverlay","helpOverlay","wheelOverlay","levelOverlay","hqOverlay"].forEach(id => { const el = $(id); if (el) el.classList.add("hidden"); });
 }
 
 /* history */
@@ -3700,7 +3803,7 @@ function cardForState(){
 function boot(){
   const ready = applyBank();
   document.body.dataset.booted = "1";
-  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle(); initTilt(); heroDepth(); certTilt(); initMockIntegrity(); gateCheck();
+  renderClasses(); renderSubjects(); renderCounts(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderGameHud(); renderGameDash(); if (typeof cdRender === "function") cdRender(); renderPlan(); renderAccountChip(); renderSeal(); initGoogle(); initTilt(); heroDepth(); certTilt(); initMockIntegrity(); gateCheck();
   mascotSay("Welcome. Choose your level, then begin with a paper — every answer builds your record.", "🦉");
   if (ready) {
     hideBankStatus(); setCard(cardForState());
@@ -4963,7 +5066,7 @@ function applyBackup(data, mode){
       }
     });
     store.set("nssc_lastbackup", Date.now());
-    renderGameHud(); renderGameDash(); renderPlan(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderAccountChip();
+    renderGameHud(); renderGameDash(); if (typeof cdRender === "function") cdRender(); renderPlan(); renderResume(); renderDailyBanner(); renderReviewBanner(); renderAccountChip();
     BK.pending = null; labBackupRender();
     toast("Restored " + applied + " field" + (applied === 1 ? "" : "s") + " — your progress is back", "💾");
   } catch (e){ toast("Restore failed — that backup could not be applied", "⚠️"); }
@@ -5438,6 +5541,431 @@ window.__sha256 = sha256Hex;
       if(window.QUIZ_RAW && !window.verifyBankIntact()) lock("Content integrity check failed \u2014 the question bank has been altered. Reload the page.");
     }, 120000);
   }catch(e){}
+})();
+</script>
+<script>
+/* ================= PROGRESS HQ — analytics, heatmap, countdown, score card =================
+   Everything degrades gracefully with no data. Canvas drawing is guarded so
+   unsupported environments simply skip the picture. PROGRESS-HQ */
+
+/* ---------- helpers ---------- */
+function hqSubs(){
+  try{
+    const c = CLASSES[0]; if (!c) return [];
+    const set = [];
+    c.questions.forEach(function(q){ if (set.indexOf(q.s) < 0) set.push(q.s); });
+    return set;
+  }catch(e){ return []; }
+}
+function hqSubAcc(){
+  /* marks per subject from topic stats (authoritative), fallback attempts */
+  const out = {};
+  try{
+    const st = topicStats();
+    Object.keys(st).forEach(function(k){
+      const v = st[k]; if (!v || !v.n) return;
+      if (!out[v.s]) out[v.s] = { c: 0, n: 0 };
+      out[v.s].c += v.c; out[v.s].n += v.n;
+    });
+  }catch(e){}
+  try{
+    attempts().forEach(function(a){
+      if (!a || !a.subj || !out[a.subj]) return;
+      out[a.subj].c += a.correct; out[a.subj].n += a.total;
+    });
+  }catch(e){}
+  const res = {};
+  Object.keys(out).forEach(function(s){ if (out[s].n > 0) res[s] = Math.round(out[s].c / out[s].n * 100); });
+  return res;
+}
+function hqDayCounts(){
+  const m = {};
+  try{ attempts().forEach(function(a){ if (a && a.tms){ const k = dstr(new Date(a.tms)); m[k] = (m[k] || 0) + 1; } }); }catch(e){}
+  return m;
+}
+function hqNow(){ return new Date(); }
+function hqCv(id, w, h){
+  const cv = document.getElementById(id); if (!cv) return null;
+  try{ cv.width = w; cv.height = h; }catch(e){}
+  return cv;
+}
+
+/* ---------- master render ---------- */
+function openHQ(){
+  hqRender();
+  const ov = $("hqOverlay"); if (ov) ov.classList.remove("hidden");
+}
+function closeHQ(){
+  const ov = $("hqOverlay"); if (ov) ov.classList.add("hidden");
+}
+function hqRender(){
+  const b = $("hqBody"); if (!b) return;
+  const att = attempts();
+  const avg = att.length ? Math.round(att.reduce(function(s,a){ return s + (a.pct||0); }, 0) / att.length) : 0;
+  const best = att.length ? Math.max.apply(null, att.map(function(a){ return a.pct||0; })) : 0;
+  const r = readinessScore();
+  const tier = (typeof readinessTier === "function") ? readinessTier(r) : { t: r === null ? "Awaiting your first paper" : "In progress", cls: "r" };
+  b.innerHTML =
+    '<div class="hq-stats">' +
+      '<div class="hs"><b>' + att.length + '</b><small>Papers sat</small></div>' +
+      '<div class="hs"><b>' + avg + '%</b><small>Average</small></div>' +
+      '<div class="hs"><b>' + best + '%</b><small>Best score</small></div>' +
+      '<div class="hs"><b>' + streakDays() + '</b><small>Day streak</small></div>' +
+      '<div class="hs"><b class="pill ' + tier.cls + '" style="font-size:.9rem;margin:2px auto">' + tier.t + '</b><small>Readiness</small></div>' +
+      '<div class="hs"><b>' + hqSubs().length + '</b><small>Subjects</small></div>' +
+    '</div>' +
+    '<div class="hq-sec"><h4>Study heatmap · last 16 weeks</h4><div class="hm" id="hqHeat"></div>' +
+      '<div class="hm-legend">less <i style="background:var(--bar-track)"></i><i style="background:rgba(201,162,95,.35)"></i><i style="background:rgba(201,162,95,.65)"></i><i style="background:#8a5f24"></i> more</div></div>' +
+    '<div class="hq-sec"><h4>Subject mastery radar</h4><div class="hq-cv"><canvas id="hqRadarCv" aria-label="Subject mastery radar"></canvas></div></div>' +
+    '<div class="hq-sec"><h4>Score trend · last 25 papers</h4><div class="hq-cv"><canvas id="hqTrendCv" aria-label="Score trend"></canvas></div></div>' +
+    '<div class="hq-sec"><h4>Weakest topics</h4><div id="hqWeak"></div></div>' +
+    '<div class="hq-sec"><h4>This month</h4><div id="hqCal"></div></div>';
+  hqHeat();
+  hqRadar();
+  hqTrend();
+  hqWeak();
+  hqCal();
+}
+
+/* ---------- heatmap ---------- */
+function hqHeat(){
+  const el = $("hqHeat"); if (!el) return;
+  try{
+    const counts = hqDayCounts();
+    const today = hqNow();
+    const monday = new Date(today); monday.setHours(0,0,0,0);
+    const dow = (monday.getDay() + 6) % 7; monday.setDate(monday.getDate() - dow);
+    const start = new Date(monday); start.setDate(start.getDate() - 15 * 7);
+    let html = "";
+    for (let wk = 0; wk < 16; wk++){
+      for (let d = 0; d < 7; d++){
+        const day = new Date(start); day.setDate(start.getDate() + wk * 7 + d);
+        if (day > today){ html += "<i></i>"; continue; }
+        const k = dstr(day), n = counts[k] || 0;
+        const isToday = dstr(day) === dstr(today);
+        const a = n === 0 ? "" : n === 1 ? "rgba(201,162,95,.35)" : n === 2 ? "rgba(201,162,95,.55)" : n <= 4 ? "rgba(201,162,95,.75)" : "#8a5f24";
+        html += "<i" + (isToday ? " class=\"today\"" : "") + (a ? " style=\"background:" + a + "\"" : "") +
+          " title=\"" + k + " · " + n + " paper" + (n === 1 ? "" : "s") + "\"></i>";
+      }
+    }
+    el.innerHTML = html;
+  }catch(e){ el.innerHTML = '<div class="hq-empty">Heatmap unavailable</div>'; }
+}
+
+/* ---------- radar ---------- */
+function hqRadar(){
+  const cv = hqCv("hqRadarCv", 560, 380);
+  if (!cv) return;
+  let x = null;
+  try{ x = cv.getContext && cv.getContext("2d"); }catch(e){}
+  if (!x || typeof x.arc !== "function") return;
+  try{
+    const subs = hqSubs(), acc = hqSubAcc(), n = Math.max(3, subs.length);
+    const cx = 270, cy = 196, R = 132, ctx = x;
+    ctx.clearRect(0, 0, 560, 380);
+    const grid = [0.25, 0.5, 0.75, 1];
+    for (let g = 0; g < grid.length; g++){
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++){
+        const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+        const rr = R * grid[g];
+        const px = cx + Math.cos(a) * rr, py = cy + Math.sin(a) * rr;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = "rgba(138,95,36,.18)"; ctx.lineWidth = 1; ctx.stroke();
+    }
+    for (let i = 0; i < n; i++){
+      const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+      ctx.beginPath(); ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+      ctx.strokeStyle = "rgba(138,95,36,.12)"; ctx.stroke();
+    }
+    ctx.beginPath();
+    subs.forEach(function(s, i){
+      const v = Math.max(0, Math.min(100, acc[s] != null ? acc[s] : 0));
+      const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+      const px = cx + Math.cos(a) * R * v / 100, py = cy + Math.sin(a) * R * v / 100;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    });
+    ctx.closePath();
+    ctx.fillStyle = "rgba(185,138,69,.30)"; ctx.fill();
+    ctx.strokeStyle = "#8a5f24"; ctx.lineWidth = 2; ctx.stroke();
+    subs.forEach(function(s, i){
+      const v = Math.max(0, Math.min(100, acc[s] != null ? acc[s] : 0));
+      const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+      const px = cx + Math.cos(a) * R * v / 100, py = cy + Math.sin(a) * R * v / 100;
+      ctx.beginPath(); ctx.arc(px, py, 3.2, 0, 6.2832);
+      ctx.fillStyle = "#8a5f24"; ctx.fill();
+      const lx = cx + Math.cos(a) * (R + 12), ly = cy + Math.sin(a) * (R + 12);
+      ctx.font = "600 9.5px Georgia, serif"; ctx.fillStyle = "#5b4a2e";
+      const short = s.length > 11 ? s.slice(0, 10) + "\u2026" : s;
+      ctx.textAlign = Math.abs(Math.cos(a)) < 0.3 ? "center" : (Math.cos(a) > 0 ? "left" : "right");
+      ctx.fillText(short, lx, ly + 3);
+      if (acc[s] != null){ ctx.textAlign = Math.abs(Math.cos(a)) < 0.3 ? "center" : (Math.cos(a) > 0 ? "right" : "left");
+        ctx.fillStyle = "#8a5f24"; ctx.fillText(String(v), lx + (Math.cos(a) > 0 ? -4 : 4), ly - 7); }
+    });
+    ctx.textAlign = "center"; ctx.font = "700 11px Georgia, serif"; ctx.fillStyle = "#8a6a30";
+    ctx.fillText("MASTERY MAP", cx, cy - R - 26);
+  }catch(e){}
+}
+
+/* ---------- trend ---------- */
+function hqTrend(){
+  const cv = hqCv("hqTrendCv", 560, 190);
+  if (!cv) return;
+  let x = null;
+  try{ x = cv.getContext && cv.getContext("2d"); }catch(e){}
+  if (!x || typeof x.arc !== "function") return;
+  try{
+    const ctx = x;
+    ctx.clearRect(0, 0, 560, 190);
+    const pts = attempts().slice(0, 25).map(function(a){ return Math.max(0, Math.min(100, a.pct || 0)); }).reverse();
+    if (!pts.length){
+      ctx.fillStyle = "#8a6a30"; ctx.font = "600 13px Georgia, serif"; ctx.textAlign = "center";
+      ctx.fillText("Finish a paper to see your trend", 280, 96);
+      return;
+    }
+    const padL = 28, padR = 12, padT = 14, padB = 22;
+    const W = 560 - padL - padR, H = 190 - padT - padB;
+    for (let g = 0; g <= 4; g++){
+      const y = padT + H - H * g / 4;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(560 - padR, y);
+      ctx.strokeStyle = "rgba(138,95,36,.16)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = "#9c8a5e"; ctx.font = "9px Georgia, serif"; ctx.textAlign = "right";
+      ctx.fillText(String(g * 25), padL - 5, y + 3);
+    }
+    const step = pts.length > 1 ? W / (pts.length - 1) : 0;
+    ctx.beginPath();
+    pts.forEach(function(v, i){ const px = padL + i * step, py = padT + H - H * v / 100; if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); });
+    ctx.strokeStyle = "#8a5f24"; ctx.lineWidth = 2.2; ctx.lineJoin = "round"; ctx.stroke();
+    ctx.lineTo(padL + (pts.length - 1) * step, padT + H); ctx.lineTo(padL, padT + H); ctx.closePath();
+    ctx.fillStyle = "rgba(185,138,69,.16)"; ctx.fill();
+    pts.forEach(function(v, i){
+      const px = padL + i * step, py = padT + H - H * v / 100;
+      ctx.beginPath(); ctx.arc(px, py, 3, 0, 6.2832); ctx.fillStyle = "#8a5f24"; ctx.fill();
+    });
+  }catch(e){}
+}
+
+/* ---------- weakest topics ---------- */
+function hqWeak(){
+  const el = $("hqWeak"); if (!el) return;
+  try{
+    const st = topicStats();
+    const keys = Object.keys(st).filter(function(k){ return st[k] && st[k].n >= 1; });
+    if (!keys.length){ el.innerHTML = '<div class="hq-empty">Finish a quiz and your weakest topics will be ranked here.</div>'; return; }
+    const bySub = {};
+    keys.forEach(function(k){
+      const v = st[k]; if (!bySub[v.s]) bySub[v.s] = [];
+      bySub[v.s].push({ t: v.t, p: Math.round(v.c / v.n * 100), n: v.n });
+    });
+    const rows = Object.keys(bySub).map(function(s){
+      const list = bySub[s].sort(function(a, b){ return a.p - b.p; }).slice(0, 3);
+      return { s: s, list: list };
+    }).sort(function(a, b){ return a.list[0].p - b.list[0].p; }).slice(0, 6);
+    let html = "";
+    rows.forEach(function(rw){
+      html += '<div class="hq-sec" style="margin-bottom:10px"><div class="hm-row">';
+      rw.list.forEach(function(t){
+        const cls = t.p >= 65 ? "g" : t.p >= 50 ? "o" : "r";
+        html += '<div class="hq-chip"><span class="hq-ico">' + subMeta(rw.s).icon + '</span>' +
+          '<span class="hq-tx"><b>' + rw.s + '</b> · ' + t.t + ' <small style="color:var(--mut)">(' + t.n + ')</small></span>' +
+          '<span class="mini"><i style="width:' + Math.max(4, t.p) + '%"></i></span>' +
+          '<span class="hq-pct pill ' + cls + '">' + t.p + '%</span></div>';
+      });
+      html += '</div></div>';
+    });
+    el.innerHTML = html +
+      '<button class="btn btn-ghost" style="margin-top:4px" onclick="closeHQ();openLab(\'map\')">🗺️ Drill weak spots in the Mastery Map</button>';
+  }catch(e){
+    el.innerHTML = '<div class="hq-empty">Topic data unavailable.</div>';
+  }
+}
+function titleCase(s){ try{ return s; }catch(e){ return null; } }
+
+/* ---------- month calendar ---------- */
+function hqCal(){
+  const el = $("hqCal"); if (!el) return;
+  try{
+    const counts = hqDayCounts();
+    const now = hqNow();
+    const y = now.getFullYear(), m = now.getMonth();
+    const first = new Date(y, m, 1), days = new Date(y, m + 1, 0).getDate();
+    const lead = (first.getDay() + 6) % 7;
+    const names = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    let html = '<div class="cal">';
+    names.forEach(function(n){ html += '<span class="cw">' + n + '</span>'; });
+    for (let i = 0; i < lead; i++) html += "<i></i>";
+    for (let d = 1; d <= days; d++){
+      const day = new Date(y, m, d), k = dstr(day);
+      const on = (counts[k] || 0) > 0;
+      const isToday = d === now.getDate();
+      html += "<i" + (on ? " class=\"on\"" : "") + (isToday ? " class=\"" + (on ? "on today" : "today") + "\"" : "") + ">" + d + "</i>";
+    }
+    html += "</div>";
+    el.innerHTML = html;
+  }catch(e){ el.innerHTML = '<div class="hq-empty">Calendar unavailable.</div>'; }
+}
+
+/* ---------- exam countdown ---------- */
+function cdGet(){ try{ return store.get("nssc_target_exam", null); }catch(e){ return null; } }
+function cdSet(label, iso){
+  try{ store.set("nssc_target_exam", { label: (label || "Exam").slice(0, 40), d: iso }); }catch(e){}
+  cdRender();
+}
+function cdClear(){ try{ store.set("nssc_target_exam", null); }catch(e){} cdRender(); }
+function cdDaysLeft(c){
+  try{
+    const t = new Date(c.d + "T00:00:00");
+    if (isNaN(t.getTime())) return null;
+    const now = hqNow(); now.setHours(0,0,0,0);
+    return Math.max(0, Math.round((t - now) / 86400000));
+  }catch(e){ return null; }
+}
+function cdRender(){
+  const el = $("cdBanner"); if (!el) return;
+  const c = cdGet();
+  if (!c || !c.d){
+    el.innerHTML = '<div class="cd-tx"><b>🎯 Exam countdown</b><small>Set your target exam date and stay on pace</small></div>' +
+      '<button class="btn btn-ghost" onclick="cdOpen()">📅 Set exam date</button><div class="cd-form hidden" id="cdForm"></div>';
+  } else {
+    const left = cdDaysLeft(c);
+    el.innerHTML =
+      '<span class="cd-num">' + (left === null ? "—" : left) + '</span>' +
+      '<div class="cd-tx"><b>' + esc(c.label) + '</b><small>' + c.d + ' · ' +
+      (left === null ? "" : (left === 0 ? "It is today — good luck!" : left === 1 ? "1 day to go" : left + " days to go")) + '</small></div>' +
+      '<button class="btn btn-ghost" onclick="cdOpen()">✏️ Edit</button>' +
+      '<button class="btn btn-ghost" onclick="cdClear()">✕ Clear</button>' +
+      '<div class="cd-form hidden" id="cdForm"></div>';
+  }
+  const f = $("cdForm");
+  if (f && !f.dataset.built){
+    f.dataset.built = "1";
+    f.innerHTML = '<input id="cdLabel" placeholder="Exam name (e.g. WASSCE)" value="' + esc(c && c.label ? c.label : "WASSCE") + '" maxlength="40" style="flex:1;min-width:140px">' +
+      '<input type="date" id="cdDate" value="' + ((c && c.d) || "") + '" style="flex:1;min-width:150px">' +
+      '<button class="btn btn-gold" onclick="var l=$(\'cdLabel\').value,d=$(\'cdDate\').value; if(!d){toast(\'Pick a date\',\'⚠️\');return;} cdSet(l,d);">Set</button>';
+  }
+}
+function cdOpen(){
+  const f = $("cdForm"); if (!f) return;
+  f.classList.toggle("hidden");
+  if (!f.classList.contains("hidden")){ const d = $("cdDate"); if (d) d.focus(); }
+}
+
+/* ---------- score card image ---------- */
+function scoreCard(){
+  if (!lastResult){ toast("Nothing to share yet", "⚠️"); return; }
+  try{
+    const c = document.createElement("canvas"); c.width = 900; c.height = 630;
+    const x = c.getContext && c.getContext("2d");
+    if (!x || typeof x.fillRect !== "function"){ toast("Image cards not supported here — use 📣 Share result", "⚠️"); return; }
+    const ctx = x;
+    const g = ctx.createLinearGradient(0, 0, 0, 630);
+    g.addColorStop(0, "#fdf9ee"); g.addColorStop(1, "#f4ead2");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 900, 630);
+    ctx.strokeStyle = "#c9a25f"; ctx.lineWidth = 6; ctx.strokeRect(26, 26, 848, 578);
+    ctx.strokeStyle = "rgba(201,162,95,.5)"; ctx.lineWidth = 1.5; ctx.strokeRect(40, 40, 820, 550);
+    ctx.fillStyle = "#32373c"; ctx.beginPath(); ctx.arc(450, 128, 62, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = "#e8c76a"; ctx.beginPath();
+    for (let i = 0; i < 10; i++){
+      const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 === 0 ? 30 : 13;
+      const px = 450 + Math.cos(a) * rr, py = 128 + Math.sin(a) * rr;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath(); ctx.fill();
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#32373c"; ctx.font = "700 44px Georgia, serif";
+    ctx.fillText("MY PERSONAL STUDY APP", 450, 258);
+    ctx.fillStyle = "#8a6a30"; ctx.font = "600 20px Georgia, serif";
+    ctx.fillText("SENIOR SECONDARY PRACTICE PAPERS", 450, 292);
+    ctx.fillStyle = "#5b4a2e"; ctx.font = "700 120px Georgia, serif";
+    ctx.fillText(lastResult.pct + "%", 450, 420);
+    ctx.fillStyle = "#8a5f24"; ctx.font = "600 26px Georgia, serif";
+    ctx.fillText("GRADE " + (lastResult.grade || "—"), 450, 462);
+    const clsT = (typeof state !== "undefined" && state.cls != null && CLASSES[state.cls]) ? CLASSES[state.cls].class : "";
+    const subjT = (typeof state !== "undefined" && state.subject) ? state.subject : "";
+    ctx.fillStyle = "#32373c"; ctx.font = "600 22px Georgia, serif";
+    ctx.fillText(lastResult.correct + " / " + lastResult.total + " correct · " + clsT + (subjT ? " · " + subjT : ""), 450, 506);
+    ctx.fillStyle = "#9c8a5e"; ctx.font = "500 17px Georgia, serif";
+    ctx.fillText(new Date().toLocaleDateString() + "  ·  learn · revise · master  ·  © merebari web", 450, 570);
+    let url = null;
+    try{ url = c.toDataURL("image/png"); }catch(e){}
+    if (typeof url === "string" && url.indexOf("data:image") === 0){
+      const a = document.createElement("a");
+      a.href = url; a.download = "my-personal-study-app-" + lastResult.pct + ".png";
+      document.body.appendChild(a); a.click(); a.remove();
+      toast("Score card saved", "🎁");
+    } else {
+      toast("Image cards not supported here — use 📣 Share result", "⚠️");
+    }
+  }catch(e){ toast("Could not build the score card", "⚠️"); }
+}
+</script>
+<script>
+/* ================= ATELIER II — hero stat count-up =================
+   Counts the hero figures up from zero on first paint. Eases, respects
+   reduced motion, never throws, never overrides user data. ATELIER-II */
+(function(){
+  "use strict";
+  function reduced(){
+    try{ return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){ return false; }
+  }
+  function parseNum(txt){
+    try{
+      const digits = String(txt || "").replace(/[^\d]/g, "");
+      const suffix = String(txt || "").replace(/[\d,\s]/g, "");
+      const n = parseInt(digits, 10);
+      if (!isFinite(n)) return null;
+      return { n: n, suffix: suffix };
+    }catch(e){ return null; }
+  }
+  function fmt(n){
+    try{ return n.toLocaleString("en-US"); }catch(e){ return String(n); }
+  }
+  function statCount(instant){
+    if (window.__statCountDone && !instant) return;
+    var els = null;
+    try{ els = document.querySelectorAll(".stats .stat b"); }catch(e){ return; }
+    if (!els || !els.length) return;
+    window.__statCountDone = true;
+    if (instant){ return; /* caller asked for the authored figures only */ }
+    if (reduced() || typeof requestAnimationFrame !== "function"){
+      return; /* leave the real figures as authored */
+    }
+    var targets = [];
+    for (var i = 0; i < els.length; i++){
+      var p = parseNum(els[i].textContent);
+      if (p && p.n > 0) targets.push({ el: els[i], n: p.n, suffix: p.suffix });
+    }
+    if (!targets.length) return;
+    var t0 = null, DUR = 950;
+    function step(t){
+      if (t0 === null) t0 = t;
+      var k = Math.min(1, (t - t0) / DUR);
+      var e = 1 - Math.pow(1 - k, 3);
+      for (var j = 0; j < targets.length; j++){
+        var tg = targets[j];
+        tg.el.textContent = fmt(Math.round(tg.n * e)) + tg.suffix;
+      }
+      if (k < 1){ try{ requestAnimationFrame(step); }catch(e){} }
+      else {
+        for (var m = 0; m < targets.length; m++){
+          targets[m].el.textContent = fmt(targets[m].n) + targets[m].suffix;
+        }
+      }
+    }
+    try{ requestAnimationFrame(step); }catch(e){}
+  }
+  function arm(){
+    try{ statCount(); }catch(e){}
+  }
+  try{
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arm);
+    else arm();
+  }catch(e){}
+  /* safety: re-arm once the bank boot has settled (values are static anyway) */
+  try{ setTimeout(arm, 1200); }catch(e){}
+  window.statCount = statCount;
 })();
 </script>
 
