@@ -1489,6 +1489,36 @@ body.guard-lock #gateOverlay{filter:none;pointer-events:none}
 .stat::after{bottom:-1px;right:-1px;border-bottom:1.5px solid rgba(201,162,95,.7);border-right:1.5px solid rgba(201,162,95,.7);border-radius:0 0 9px 0}
 .stat:hover::before,.stat:hover::after{opacity:1;width:18px;height:18px}
 
+/* ================= THE FINISHING SCHOOL ================= */
+
+/* ---- Focus mode: hide everything but the paper ---- */
+body.focus{overflow:hidden}
+body.focus .hero-copy,body.focus .stats,body.focus .cd-banner,body.focus .game-dash,
+body.focus .plan-card,body.focus .resume-banner,body.focus .daily-banner,
+body.focus .review-banner,body.focus .bank-banner,body.focus .mascot{display:none}
+body.focus .nav .spacer{flex:1}
+body.focus .hero{padding-bottom:26px}
+body.focus .wrap{margin-top:-16px}
+body.focus .card{max-width:860px;margin-left:auto;margin-right:auto}
+#focusPill{position:fixed;right:16px;bottom:18px;z-index:120;display:none;align-items:center;gap:8px;
+  background:#32373c;color:#faf3e8;border:1px solid rgba(201,162,95,.6);border-radius:999px;
+  padding:10px 16px;font-size:.8rem;font-weight:800;cursor:pointer;box-shadow:0 14px 30px -10px rgba(50,55,60,.55)}
+#focusPill:focus-visible{outline:3px solid rgba(201,162,95,.6);outline-offset:2px}
+body.focus #focusPill{display:inline-flex}
+@keyframes pillIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+body.focus #focusPill{animation:pillIn .35s cubic-bezier(.22,1,.36,1) both}
+
+/* ---- Render less, draw faster (progressive) ---- */
+@supports (content-visibility:auto){
+  .card{content-visibility:auto;contain-intrinsic-size:auto 420px}
+  .lab-tile{content-visibility:auto;contain-intrinsic-size:auto 90px}
+}
+
+/* ---- Pause ambient motion when the tab is hidden ---- */
+body.motion-paused #aurora i,body.motion-paused .hero-rule i,
+body.motion-paused .h-orb,body.motion-paused .h-ring,body.motion-paused .cube{animation-play-state:paused}
+body.motion-paused #heroSun{animation-play-state:paused}
+
 </style>
 </head>
 <div class="luxe-frame" aria-hidden="true"></div>
@@ -1607,6 +1637,7 @@ body.guard-lock #gateOverlay{filter:none;pointer-events:none}
     <button class="icon-btn" id="themeBtn" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
     <button class="icon-btn" id="fontBtn" title="Text size" aria-label="Adjust text size">Aa</button>
     <button class="icon-btn" id="motionBtn" title="Reduce motion" aria-label="Toggle reduced motion">🏃</button>
+    <button class="icon-btn" id="focusBtn" title="Focus mode — hide everything but the paper" aria-label="Toggle focus mode" aria-pressed="false">🎯</button>
     <button class="icon-btn" id="helpBtn" title="Keyboard shortcuts and help" aria-label="Keyboard shortcuts and help">?</button>
     <button class="icon-btn" id="sndBtn" title="Sound effects (off)" aria-label="Toggle sound effects">🔕</button>
     <button class="icon-btn" id="statsBtn" title="Examination record" aria-label="Open your examination record">📊</button>
@@ -1774,6 +1805,7 @@ body.guard-lock #gateOverlay{filter:none;pointer-events:none}
       <button class="btn btn-ghost" onclick="retake()">↻ Sit again</button>
       <button class="btn btn-gold" onclick="shareResult()">📣 Share result</button>
       <button class="btn btn-gold" onclick="scoreCard()">🎁 Score card</button>
+      <button class="btn btn-ghost" onclick="openHQ()">📊 Progress HQ</button>
       <button class="btn btn-ghost hidden" id="reviewBtn" onclick="showReview()">📋 Review paper</button>
       <button class="btn btn-ghost hidden" id="drillBtn" onclick="drillMistakes()">🔁 Drill my mistakes</button>
       <button class="btn btn-ghost" id="printResultBtn" onclick="printPaper()">🖨 Print paper</button>
@@ -2281,6 +2313,7 @@ function startQuiz(){
   const tim = $("qTimer");
   tim.classList.remove("hidden", "low", "crit");
   startTimer(); saveSession();
+  if ((state.mode === "exam" || state.mock) && window.armExamLock) window.armExamLock();
   toast(state.mode === "exam" ? "Examination mode — time begins now" : "Study mode — instant feedback on", "📜");
 }
 function renderQ(){
@@ -2358,6 +2391,7 @@ function nextQ(){
 }
 function quitQuiz(){ resetToClass(); }
 function resetToClass(){
+  if (window.disarmExamLock) window.disarmExamLock();
   state.cls=null; state.subject=null; state.count=null; state.quiz=[]; state.palOpen=false; state.mock=false;
   submitting = false;
   stopTimer();
@@ -2367,6 +2401,7 @@ function resetToClass(){
 /* ================= RESULTS ================= */
 let lastResult = null, submitting = false;
 function showResults(){
+  if (window.disarmExamLock) window.disarmExamLock();
   if (submitting) return;
   submitting = true;
   let correct = 0; const wrongIdx = [];
@@ -3772,7 +3807,7 @@ function buildReview(all){
 document.addEventListener("keydown", e => {
   const tag = (e.target && e.target.tagName) || "";
   if (tag === "INPUT" || tag === "TEXTAREA") return;
-  if (e.key === "Escape") { closeOverlay(); return; }
+  if (e.key === "Escape") { closeOverlay(); if (document.body.classList.contains("focus") && typeof focusOff === "function") focusOff(); return; }
   if (e.key === "?") { e.preventDefault(); openHelp(); return; }
   if (e.key === "/") { e.preventDefault(); openLibrary(); const iq = $("libQ"); if (iq) iq.focus(); return; }
   const quizVisible = !$("quizCard").classList.contains("hidden");
@@ -5590,6 +5625,34 @@ function hqCv(id, w, h){
   return cv;
 }
 
+/* ---------- average time + week in review ---------- */
+function hqAvgTime(){
+  try{
+    const a = attempts().filter(function(x){ return x && isFinite(x.t); });
+    if (!a.length) return "—";
+    let s = 0; a.forEach(function(x){ s += x.t; });
+    const avg = Math.round(s / a.length), m = Math.floor(avg / 60), sec = avg % 60;
+    return m + ":" + String(sec).padStart(2, "0");
+  }catch(e){ return "—"; }
+}
+function hqWeek(){
+  const el = $("hqWeek"); if (!el) return;
+  try{
+    const now = Date.now();
+    const a = attempts().filter(function(x){ return x && x.tms && (now - x.tms) < 7 * 86400000; });
+    if (!a.length){ el.innerHTML = '<div class="hq-empty">No papers this week — a little study each day keeps the streak alive.</div>'; return; }
+    const avg = Math.round(a.reduce(function(s,x){ return s + (x.pct || 0); }, 0) / a.length);
+    const best = Math.max.apply(null, a.map(function(x){ return x.pct || 0; }));
+    const time = a.reduce(function(s,x){ return s + (x.t || 0); }, 0);
+    const mm = Math.floor(time / 60), hh = Math.floor(mm / 60);
+    el.innerHTML = '<div class="hq-stats" style="margin-bottom:0">' +
+      '<div class="hs"><b>' + a.length + '</b><small>Papers</small></div>' +
+      '<div class="hs"><b>' + avg + '%</b><small>Average</small></div>' +
+      '<div class="hs"><b>' + best + '%</b><small>Best</small></div>' +
+      '<div class="hs"><b>' + (hh ? hh + "h " : "") + (mm % 60) + 'm</b><small>Studied</small></div></div>';
+  }catch(e){ el.innerHTML = ''; }
+}
+
 /* ---------- master render ---------- */
 function openHQ(){
   hqRender();
@@ -5612,6 +5675,7 @@ function hqRender(){
       '<div class="hs"><b>' + best + '%</b><small>Best score</small></div>' +
       '<div class="hs"><b>' + streakDays() + '</b><small>Day streak</small></div>' +
       '<div class="hs"><b class="pill ' + tier.cls + '" style="font-size:.9rem;margin:2px auto">' + tier.t + '</b><small>Readiness</small></div>' +
+      '<div class="hs"><b>' + hqAvgTime() + '</b><small>Avg time</small></div>' +
       '<div class="hs"><b>' + hqSubs().length + '</b><small>Subjects</small></div>' +
     '</div>' +
     '<div class="hq-sec"><h4>Study heatmap · last 16 weeks</h4><div class="hm" id="hqHeat"></div>' +
@@ -5619,12 +5683,14 @@ function hqRender(){
     '<div class="hq-sec"><h4>Subject mastery radar</h4><div class="hq-cv"><canvas id="hqRadarCv" aria-label="Subject mastery radar"></canvas></div></div>' +
     '<div class="hq-sec"><h4>Score trend · last 25 papers</h4><div class="hq-cv"><canvas id="hqTrendCv" aria-label="Score trend"></canvas></div></div>' +
     '<div class="hq-sec"><h4>Weakest topics</h4><div id="hqWeak"></div></div>' +
-    '<div class="hq-sec"><h4>This month</h4><div id="hqCal"></div></div>';
+    '<div class="hq-sec"><h4>This month</h4><div id="hqCal"></div></div>' +
+    '<div class="hq-sec"><h4>Week in review · last 7 days</h4><div id="hqWeek"></div></div>';
   hqHeat();
   hqRadar();
   hqTrend();
   hqWeak();
   hqCal();
+  hqWeek();
 }
 
 /* ---------- heatmap ---------- */
@@ -5966,6 +6032,82 @@ function scoreCard(){
   /* safety: re-arm once the bank boot has settled (values are static anyway) */
   try{ setTimeout(arm, 1200); }catch(e){}
   window.statCount = statCount;
+})();
+</script>
+<script>
+/* ================= THE FINISHING SCHOOL ENGINE =================
+   Focus mode · exam-exit guard · ambient-motion auto-pause.
+   All behaviours are reversible and never touch user data. FINISHING-SCHOOL */
+(function(){
+  "use strict";
+  /* ---------- focus mode ---------- */
+  function focusOn(){
+    try{
+      document.body.classList.add("focus");
+      var b = document.getElementById("focusBtn");
+      if (b){ b.classList.add("on"); b.setAttribute("aria-pressed", "true"); b.title = "Exit focus mode"; }
+      var p = document.getElementById("focusPill");
+      if (!p){
+        p = document.createElement("button");
+        p.id = "focusPill"; p.type = "button";
+        p.textContent = "\uD83C\uDFAF Focus off";
+        p.addEventListener("click", function(){ focusOff(); });
+        document.body.appendChild(p);
+      }
+      toast("Focus mode — only the paper remains", "\uD83C\uDFAF");
+    }catch(e){}
+  }
+  function focusOff(){
+    try{
+      document.body.classList.remove("focus");
+      var b = document.getElementById("focusBtn");
+      if (b){ b.classList.remove("on"); b.setAttribute("aria-pressed", "false"); b.title = "Focus mode — hide everything but the paper"; }
+      var p = document.getElementById("focusPill");
+      if (p) p.remove();
+      toast("Focus mode off", "\u2713");
+    }catch(e){}
+  }
+  function toggleFocus(){
+    try{
+      if (document.body.classList.contains("focus")) focusOff();
+      else focusOn();
+    }catch(e){}
+  }
+  window.focusOn = focusOn;
+  window.focusOff = focusOff;
+  window.toggleFocus = toggleFocus;
+  window.__focusActive = function(){ try{ return document.body.classList.contains("focus"); }catch(e){ return false; } };
+
+  /* ---------- exam-exit guard ---------- */
+  var EXAM_LOCK = false;
+  function armExamLock(){ EXAM_LOCK = true; }
+  function disarmExamLock(){ EXAM_LOCK = false; }
+  function examLockHandler(e){
+    if (!EXAM_LOCK) return;
+    try{
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    }catch(x){}
+    return "";
+  }
+  window.addEventListener("beforeunload", examLockHandler);
+  window.armExamLock = armExamLock;
+  window.disarmExamLock = disarmExamLock;
+  window.__examLockActive = function(){ return EXAM_LOCK; };
+
+  /* ---------- wire the focus button (engine runs last -> safe) ---------- */
+  try{
+    var fb = document.getElementById("focusBtn");
+    if (fb) fb.onclick = toggleFocus;
+  }catch(e){}
+
+  /* ---------- ambient-motion auto-pause ---------- */
+  function motionPause(){
+    try{ document.body.classList.toggle("motion-paused", !!document.hidden); }catch(e){}
+  }
+  document.addEventListener("visibilitychange", motionPause);
+  window.__motionPause = motionPause;
 })();
 </script>
 
