@@ -1581,6 +1581,37 @@ body.motion-paused #heroSun{animation-play-state:paused}
 /* 3D tilt (desktop, pointer-precise only) */
 .has-tilt{will-change:transform}
 
+/* ================= AI COACH + HOME DOCK ================= */
+.ai-card{margin-bottom:20px;position:relative;overflow:hidden}
+.ai-card::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 150px at 8% 0%,rgba(201,162,39,.10),transparent 60%),radial-gradient(380px 140px at 95% 100%,rgba(0,135,81,.08),transparent 60%);pointer-events:none}
+.ai-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;position:relative}
+.ai-head .ai-ico{font-size:1.55rem;filter:drop-shadow(0 2px 6px rgba(201,162,39,.45))}
+.ai-tx{flex:1;min-width:220px}
+.ai-tx h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.16em;color:var(--mut);font-weight:800;margin:0 0 2px;display:flex;align-items:center;gap:10px}
+.ai-tx h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--card-border),transparent)}
+.ai-tx small{font-size:.74rem;color:var(--mut)}
+.ai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;position:relative}
+.ai-it{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--card-border);border-radius:14px;padding:11px 12px;background:var(--panel);transition:.2s}
+.ai-it:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:var(--shadow-sm)}
+.ai-it .ai-ico{font-size:1.25rem;margin-top:1px;filter:none}
+.ai-main{flex:1;min-width:0}
+.ai-main b{display:block;font-size:.85rem;line-height:1.35}
+.ai-main small{display:block;font-size:.72rem;color:var(--mut);margin-top:1px}
+.ai-main em{display:block;font-style:italic;font-size:.68rem;color:var(--gold);margin-top:3px}
+[data-theme="dark"] .ai-main em{color:#ffd27d}
+.ai-go{flex:none;padding:8px 14px;font-size:.78rem;border-radius:11px}
+.ai-empty{font-size:.82rem;color:var(--mut);border:1px dashed var(--card-border);border-radius:14px;padding:16px;text-align:center}
+.home-dock{position:fixed;left:50%;bottom:14px;transform:translateX(-50%) translateY(90px);display:flex;gap:6px;background:var(--card-solid);border:1px solid var(--card-border);border-radius:999px;padding:7px 9px;box-shadow:0 18px 45px -14px rgba(0,0,0,.45);z-index:60;opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .3s;max-width:94vw;overflow-x:auto}
+.home-dock.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
+.hd-btn{border:none;background:transparent;color:var(--ink-2);font-family:inherit;font-size:.78rem;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 12px;border-radius:999px;cursor:pointer;transition:.2s;white-space:nowrap}
+.hd-btn span{font-size:.6rem;letter-spacing:.06em;text-transform:uppercase}
+.hd-btn:hover{background:var(--bar-track);color:var(--ink)}
+.hd-btn.on{background:rgba(201,162,39,.16);color:var(--green-d)}
+[data-theme="dark"] .hd-btn.on{color:#ffd27d}
+body.focus .home-dock{display:none}
+body.focus .ai-card{display:none}
+@media (max-width:640px){.ai-grid{grid-template-columns:1fr}.ai-go{width:100%}.home-dock{bottom:calc(10px + env(safe-area-inset-bottom))}}
+
 </style>
 </head>
 <div class="luxe-frame" aria-hidden="true"></div>
@@ -1729,8 +1760,24 @@ body.motion-paused #heroSun{animation-play-state:paused}
   <div class="hero-rule" aria-hidden="true"><i></i></div>
 </header>
 
+<nav class="home-dock" id="homeDock" aria-label="Quick navigation">
+  <button class="hd-btn on" data-hd="home" type="button">🏠<span>Home</span></button>
+  <button class="hd-btn" data-hd="coach" type="button">✨<span>AI Coach</span></button>
+  <button class="hd-btn" data-hd="practice" type="button">📚<span>Practice</span></button>
+  <button class="hd-btn" data-hd="lab" type="button">🔬<span>Study Hall</span></button>
+  <button class="hd-btn" data-hd="hq" type="button">📊<span>HQ</span></button>
+</nav>
 <!-- ============ MAIN ============ -->
 <main class="wrap" id="main">
+
+<section class="card ai-card" id="aiCoach" aria-label="AI Coach suggestions">
+  <div class="ai-head">
+    <span class="ai-ico" aria-hidden="true">✨</span>
+    <div class="ai-tx"><h2>AI Coach · suggested for you</h2><small>Ideas are computed from your own results — they change as you learn</small></div>
+    <button class="btn btn-ghost" type="button" onclick="aiRefresh()">↻ New ideas</button>
+  </div>
+  <div class="ai-grid" id="aiGrid"></div>
+</section>
 
   <div class="card" id="step-class">
     <div class="stepbar"><div class="s on" id="sb1"></div><div class="s" id="sb2"></div><div class="s" id="sb3"></div></div>
@@ -2680,6 +2727,7 @@ function onGoogleCred(resp){
     store.set("nssc_user", user);
     regProfile(user);
     if (typeof renderHeroPapers === "function") renderHeroPapers();
+    if (typeof renderAi === "function") renderAi();
     migrateAnonymousAttempts();
     renderAccountChip();
     closeOverlay();
@@ -2700,6 +2748,7 @@ function createStudyAccount(name, email){
   migrateAnonymousAttempts();
   regProfile(user);
   if (typeof renderHeroPapers === "function") renderHeroPapers();
+  if (typeof renderAi === "function") renderAi();
   renderAccountChip();
   gateCheck();
   return user;
@@ -3633,6 +3682,7 @@ function renderGameDash(){
     '<div class="g-tile"><span class="g-ico">✏️</span><div><b>' + (qd[dstr(new Date())] || 0) + '</b><small>Today · goal ' + goalTarget() + '</small></div></div>';
   if (typeof renderMistTile === "function") renderMistTile();
   if (typeof renderHeroPapers === "function") renderHeroPapers();
+  if (typeof renderAi === "function") renderAi();
 }
 function gameRewards(){
   if (!lastResult) return;
@@ -5466,6 +5516,132 @@ function labLeagueRender(){
         '<div class="lab-cta"><button class="btn btn-primary" onclick="closeLab()">Close</button></div>');
 }
 
+
+/* ================= AI COACH — home hub & suggested actions =================
+   A personal study coach that reads your own results (attempts, mistakes,
+   topics, daily paper, goals, mocks, exam date) and suggests what to do
+   next. Every idea carries a reason, and "New ideas" rotates the deck.
+   Companion to the floating Home dock (🏠 Home · ✨ AI Coach · 📚 Practice
+   · 🔬 Study Hall · 📊 HQ). */
+const AI = { rot: 0, bound: false, lastY: -1 };
+function aiToday(){ try{ return dstr(new Date()); }catch(e){ return new Date().toDateString(); } }
+function aiQ(s){ return String(s == null ? "" : s).replace(/'/g, "\\'"); }
+function aiSuggest(){
+  const out = [];
+  const mk = function(id, ico, txt, sub, why, btn, fn, pri){
+    out.push({ id: id, ico: ico, txt: txt, sub: sub, why: why, btn: btn, fn: fn, pri: pri || 0 });
+  };
+  try{
+    const att = attempts();
+    if (!att.length) mk("first", "🌱", "Sit your first paper", "3,900 questions are waiting", "because your results are still a blank page", "Begin", "bootGoPaper()", 100);
+    const due = (typeof dueReviews === "function") ? dueReviews().length : 0;
+    if (due) mk("mist", "🧠", due + " mistake" + (due > 1 ? "s" : "") + " due today", "Spaced-revision deck", "because they came back into your bank today", "Review now", "startReviews()", 90);
+    const recs = dailyRecs();
+    const today = recs[aiToday()];
+    if (!today) mk("daily", "⚡", "Daily challenge", "10 mixed questions · fresh paper", "because you have not sat today's paper yet", "Start", "startDaily()", 80);
+    else if ((today.pct || 0) < 70) mk("dailyR", "⚡", "Beat today's best · " + today.pct + "%", "Today's paper can be redone once", "because there is room to push today's score higher", "Redo", "startDaily()", 60);
+    const wt = weakTopics(3)[0];
+    if (wt) mk("topic", "🎯", wt.s + " · " + wt.t, "Weakest topic · " + wt.acc + "% accuracy", "because this is your lowest-scoring topic", "Drill", "labDrillTopic('" + aiQ(wt.s) + "','" + aiQ(wt.t) + "')", 75);
+    const ws = weakSubjects(1)[0];
+    if (ws && (!wt || ws.s !== wt.s)) mk("subj", "📘", ws.s + " examination paper", "Aim to lift " + ws.acc + "% above 65%", "because " + ws.s + " is your weakest subject", "Sit paper", "sitWeakest('" + aiQ(ws.s) + "')", 70);
+    const cd = cdGet();
+    if (cd && cd.d){
+      const left = cdDaysLeft(cd);
+      if (left !== null && left > 0 && left <= 31) mk("cd", "⏳", left + " day" + (left > 1 ? "s" : "") + " to " + cd.label, "Revision is on a clock now", "because your target exam is " + left + " day" + (left > 1 ? "s" : "") + " away", "Plan", "openHQ()", 65);
+    }
+    const wk = att.filter(function(a){ return a && a.tms && (Date.now() - a.tms) < 7 * 86400000; });
+    if (att.length && !wk.some(function(a){ return a.mock; })) mk("mock", "🎓", "Full mock exam", "Timed like the real hall · SS1–SS3", "because it has been a week since your last mock", "Mock Hall", "openLab('mock')", 55);
+    const qd = store.get(qdayKey(), {});
+    const done = qd[aiToday()] || 0, g = goalTarget();
+    if (done < g) mk("goal", "🎯", "Finish today's goal · " + done + " of " + g, "One smart paper is about half the target", "because you are short of your daily goal", "Smart paper", "smartPaper(10)", 50);
+    if (wt) mk("sheet", "📝", "Worksheet · " + wt.t, "Printable sheet + answer key", "because a printed sheet locks in " + wt.t, "Print", "worksheetTopic('" + aiQ(wt.s) + "','" + aiQ(wt.t) + "')", 45);
+    if (wk.length) mk("report", "🧾", "Parent weekly report", "A gilded PNG of this week's papers", "because you have sat " + wk.length + " paper" + (wk.length > 1 ? "s" : "") + " this week", "Generate", "weeklyReport()", 40);
+    const ps = store.get("nssc_profiles", {});
+    const pn = Object.keys(ps).length;
+    if (pn >= 2) mk("league", "🏆", "Scholar League", pn + " accounts on this device · ranked", "because you can see how you rank here", "Open", "openLab('league')", 35);
+  }catch(e){}
+  out.sort(function(a, b){ return b.pri - a.pri; });
+  return out;
+}
+function aiIdeas(){
+  const list = aiSuggest();
+  if (!list.length) return [];
+  const rest = list.slice(1);
+  if (AI.rot && rest.length){
+    const k = AI.rot % rest.length;
+    const rot = rest.slice(k).concat(rest.slice(0, k));
+    return [list[0]].concat(rot).slice(0, 5);
+  }
+  return list.slice(0, 5);
+}
+function renderAi(){
+  const g = document.getElementById("aiGrid"); if (!g) return;
+  try{
+    const ideas = aiIdeas();
+    if (!ideas.length){
+      g.innerHTML = '<div class="ai-empty">✨ Ideas appear here once you start answering — sit a paper and the coach learns what to suggest.</div>';
+      return;
+    }
+    g.innerHTML = ideas.map(function(it){
+      return '<div class="ai-it"><span class="ai-ico">' + it.ico + '</span>' +
+        '<div class="ai-main"><b>' + esc(it.txt) + '</b>' +
+        '<small>' + esc(it.sub) + '</small><em>' + esc(it.why) + '</em></div>' +
+        '<button class="btn btn-gold ai-go" onclick="' + it.fn + '">' + esc(it.btn) + '</button></div>';
+    }).join("");
+  }catch(e){}
+}
+function aiRefresh(){ try{ AI.rot = (AI.rot || 0) + 1; renderAi(); }catch(e){} }
+/* ---- floating Home dock (fixed, sits under overlays) ---- */
+function renderHomeNav(){
+  const dock = document.getElementById("homeDock"); if (!dock) return;
+  try{
+    if (!AI.bound){
+      AI.bound = true;
+      dock.querySelectorAll(".hd-btn").forEach(function(b){
+        b.addEventListener("click", function(){
+          const t = b.getAttribute("data-hd"); if (!t) return;
+          if (t === "hq"){ if (typeof openHQ === "function") openHQ(); return; }
+          let el = null;
+          if (t === "coach") el = document.getElementById("aiCoach");
+          else if (t === "practice") el = document.getElementById("step-class");
+          else if (t === "lab") el = document.getElementById("labGrid");
+          const y = t === "home" ? 0 : (el ? Math.max(0, el.getBoundingClientRect().top + (window.scrollY || document.documentElement.scrollTop || 0) - 84) : 0);
+          try{ window.scrollTo({ top: y, behavior: "smooth" }); }catch(e){ try{ window.scrollTo(0, y); }catch(e2){} }
+        });
+      });
+      var hdT = null;
+      window.addEventListener("scroll", function(){
+        if (hdT) return;
+        hdT = setTimeout(function(){ hdT = null; renderHomeNav(); }, 90);
+      }, { passive: true });
+    }
+    const y = window.scrollY || document.documentElement.scrollTop || 0;
+    dock.classList.toggle("show", y > 240);
+    const at = function(id){
+      const el = document.getElementById(id);
+      return el ? el.getBoundingClientRect().top : 1e9;
+    };
+    let cur = "home";
+    if (at("aiCoach") < 170) cur = "coach";
+    if (at("step-class") < 150) cur = "practice";
+    if (at("labGrid") < 150) cur = "lab";
+    dock.querySelectorAll(".hd-btn").forEach(function(b){
+      b.classList.toggle("on", b.getAttribute("data-hd") === cur);
+    });
+  }catch(e){}
+}
+function initHomeNav(){ try{ renderHomeNav(); }catch(e){} }
+/* ---- live refresh (banners & dash already call renderAi; this is a safety net) ---- */
+(function(){
+  try{
+    const g = document.getElementById("aiGrid");
+    if (g && !g.dataset.live){
+      g.dataset.live = "1";
+      setInterval(function(){ try{ renderAi(); }catch(e){} }, 60000);
+      try{ window.addEventListener("resize", function(){ try{ renderHomeNav(); }catch(e){} }, { passive: true }); }catch(e){}
+    }
+  }catch(e){}
+})();
 
 try { boot(); } catch (e) { showFatal("Something went wrong while starting: " + String((e && e.message) || e)); }
 </script>
