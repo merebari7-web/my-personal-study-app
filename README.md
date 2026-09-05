@@ -23,7 +23,7 @@ Copyright © merebari web · All rights reserved.
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** — cube, cuboid, sphere, cylinder, cone, pyramid, prism, **frustum & hemisphere** (9 shapes) — drag to rotate (double-click to reset), live dimension sliders, real-time volume & surface area with formulas, **anatomy facts** (faces · edges · vertices with the Euler check), auto-spin pause, **wireframe / orthographic / zoom views** (preferences persist per device), and **Solve a shape** — a shape-quiz mode with worked solutions that earns XP for correct answers and banks wrong ones into your mistake bank · links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🏠 Home + ✨ AI Coach | A floating **home dock** (🏠 Home · ✨ AI Coach · 📚 Practice · 🔬 Study Hall · 📊 HQ) that appears as you scroll, highlights where you are, and jumps you around the app · an **AI Coach** card at the top of the home screen suggests up to five things to do next — spaced-revision due deck, daily challenge, weakest subject & topic drills, mock exam, exam-countdown plan, daily goal, printable worksheet, parent report, first paper — each with a *why* ("because …") and a one-tap action; **↻ New ideas** rotates the deck while keeping the most urgent suggestion pinned. All suggestions are computed on-device from your own results and refresh after every paper and sign-in |
 | 👩‍🏫 The Professors' Standard | Built so teachers and professors recommend it worldwide: **🧠 metacognitive calibration** — after every study-mode answer students rate how sure they were (😕 🙂 😎) and Progress HQ compares confidence with actual accuracy per subject (well-calibrated / overconfident / underconfident verdicts); **🖨 printable exam papers** — subject + class + 10/20/30 questions, exam-style paper with the mark scheme on its own page, for class tests and homework; **👩‍🏫 For Educators hub** — research-based pedagogy (retrieval practice · spaced repetition · interleaving · feedback · mastery · calibration, with citations), classroom lesson plans, accessibility statement, privacy-on-device promise, printable educator guide and a one-tap recommend/share; **🔤 accessibility panel** — dyslexia-friendly readable text, high-contrast mode, text size, read-aloud, reduced motion in one place (persisted); richer CSV export (grade, time, mode, source) for your own analysis |
-| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **593.1 KB** and about **260 KiB gzipped** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
+| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **594.8 KB** and **257.2 KiB gzipped** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
 | 📶 Install-free & offline (PWA) | A small service worker (HTTPS only, on-device only) caches the app after the first visit: it re-opens instantly and **keeps working with zero network** — flip on airplane mode after one visit and every feature, bank and progress store still runs. While online the network is tried first so every release reaches you on the next visit. No install, no account, no app store |
 | 📘 Revision notes (formula & fact cards) | For **all 78 topics across the 13 subjects** — exam-style formulas and facts teachers will recognise (quadratic formula, SOH-CAH-TOA, OIL RIG, Ohm's law, monohybrid 3:1…). Opened from the Report Card lab or **straight from your results screen** (one tap on a missed paper), and printable as a single card or a whole-subject pack for the class. Topic names match the app's own topic tracker, so notes always appear where a student just failed |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
@@ -94,5 +94,150 @@ The question bank and all app content carry `© merebari web`. Three layers keep
 The same build is packaged as a Windows desktop app (`MyPersonalStudyApp.exe` via Neutralino) — see the release area of this repo once you add it, or ask the maintainer.
 
 ---
+
+---
+
+## 🌊 v5.0 — The Century Wave
+
+**Five upgrades in one wave**, built on a new question-bank transport (delimiter-packed wire form with an in-page decoder — no JSON-to-browser re-compression, decode is ~40 ms):
+
+| New | Details |
+|---|---|
+| 🏃 **Century run** | One tap on the length card starts a **100-question marathon across the whole syllabus** — three classes, 13 subjects, no timer, instant explanations, full confidence calibration. Finish it to earn the **Century runner** badge (and watch it appear in the dashboard). |
+| 🌙 **Night mode** | Easy-on-the-eyes dark theme — the whole palette (ink, canvas, gold, cards, hero) re-tunes at once. Toggle it from the **accessibility panel**, it persists with your other accessibility settings, and paper printing stays on light. |
+| 📄 **Exam paper → CSV** | The exam-paper printer now also exports the **paper as a CSV** (question, A–D, answer, explanation) for Excel or Google Sheets — set class tests and mark them in a spreadsheet. |
+| 📤 **Share a result** | The results screen now has **Share result** — a ready-to-paste summary (subject, class, score, grade, date) for teachers, parents and WhatsApp study groups. |
+| ✅ **Revision tracker** | Every revision card now has a **Mark as revised** toggle, with a live progress line (e.g. “🏅 12 of 78 topic cards revised”) in the Report Card lab — so the 78-card library becomes an actual revision checklist. |
+
+**How it stays small:** the bank is now delimiter-packed **before** deflate (no JSON quotes/braces in the stream), which keeps the app at **594.8 KB on disk / 257.2 KiB gzipped** — under the 260 KiB wire budget — and the test suite grew to **133 checks, all green**.
+
+---
+
+## 🗺 Upgrade roadmap — 100 upgrades
+
+The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipped and tested in the app; ⬜ items are the honest backlog. The plan runs in waves — each wave ships a batch, and the tests keep guarding the 260 KiB wire budget.
+
+### A. The quiz core
+1. ✅ Timed examination mode (36 s per question, auto-submit)
+2. ✅ Study mode with instant marking and explanations
+3. ✅ Smart paper mode — prioritises your weakest subjects
+4. ✅ Question library — search all 3,900 questions, reveal answers, star bookmarks
+5. ✅ Mock examination hall — 25/50/100 questions, exam pace or 30/60/90 min
+6. ✅ Exam integrity monitoring — tab-switch events recorded on the report
+7. ✅ Review screen — jump-to-any-question grid before submitting
+8. ✅ Smart selection — **1–4 / A–D** keys answer, **N / Enter / →** next, **←** back
+9. ✅ Full keyboard shortcuts — `?` help, `/` focus library, `Esc` close, `F` flag, `P` print, `R` restart
+10. ✅ Century run — 100-question mixed-syllabus marathon (v5.0)
+11. ✅ Per-question elapsed-time recording and average-time review
+12. ⬜ Adaptive difficulty — question hardness estimates so the paper tunes itself to you
+
+### B. Memory science
+13. ✅ Spaced repetition — mistakes return after 1 → 3 → 7 → 14 days
+14. ✅ Four correct reviews = mastered (graduates out of the mistake bank)
+15. ✅ Mistake Master tile with live “due today” counter
+16. ✅ Daily challenge — deterministic 10-question paper, new every day
+17. ✅ Review session mode — the due-deck gets its own report line
+18. ✅ Metacognitive calibration — confidence ratings compared with accuracy
+19. ✅ Per-topic performance tracking behind every paper
+20. ✅ Mastery Map — subject × topic heat-map, tap to drill
+21. ✅ Topic worksheets — printable, your past wrong-answers pulled in first
+22. ⬜ Interleaved papers — mixing two topics per paper on purpose
+
+### C. Study Hall
+23. ✅ Flashcard decks — whole bank or your mistakes, flip-to-recall
+24. ✅ Rapid Fire — 30–90 s sprints with streaks
+25. ✅ Spelling Lab — type-the-answer with typo tolerance
+26. ✅ Progress Report Card — printable for parents & teachers
+27. ✅ Revision notes — 78 formula & fact cards (13 subjects × 6 topics)
+28. ✅ Notes from the results screen — one tap on any missed paper
+29. ✅ Print a single card or a whole-subject pack
+30. ✅ Revision tracker — mark cards revised, live progress (v5.0)
+31. ✅ 3D Shape Lab — 9 solids, formulas, Euler anatomy, shape-quiz mode
+32. ⬜ Audio flashcards — hear the question spoken while you revise
+
+### D. Progress HQ
+33. ✅ 16-week study heatmap
+34. ✅ 13-subject mastery radar
+35. ✅ Score trend chart
+36. ✅ Weakest-topics ranking (tap through to drill)
+37. ✅ Monthly calendar of papers
+38. ✅ Readiness verdict per class
+39. ✅ Week in Review — papers, average, best, time over 7 days
+40. ✅ Average-time tile
+41. ✅ Exam-readiness score — topics + mastery + consistency
+42. ⬜ Per-question item analysis (which options trap you most)
+
+### E. Teachers & parents
+43. ✅ Printable exam papers — paper + separate mark scheme page
+44. ✅ Exam paper **CSV export** for Excel / Sheets (v5.0)
+45. ✅ For Educators hub — research-based pedagogy with citations
+46. ✅ Printable educator guide
+47. ✅ Parent weekly report — gilded PNG download
+48. ✅ Classroom lesson plans
+49. ✅ One-tap recommend/share for teachers
+50. ✅ AI Coach — up to five suggestions with reasons, refreshable
+51. ✅ Scholar League — on-device leaderboard with medals
+52. ⬜ Class-ready: print a full-term practice pack (papers + worksheets + notes)
+
+### F. Accessibility & comfort
+53. ✅ Accessibility panel — 5 settings: text size, readable, high contrast, read-aloud, reduced motion
+54. ✅ Night mode — dark theme, persisted with a11y settings (v5.0)
+55. ✅ Read-aloud with speech synthesis
+56. ✅ Dyslexia-friendly readable text
+57. ✅ High-contrast mode
+58. ✅ Reduced-motion mode — ambient animation pauses
+59. ✅ Focus mode — hide everything but the paper
+60. ✅ `Esc` exits overlays everywhere
+61. ⬜ Font choice — pick a preferred typeface for the whole app
+62. ⬜ Tap-target audit — guaranteed 44 px touch targets on every control
+
+### G. Motivation & game
+63. ✅ Study points, scholar levels, merits
+64. ✅ 12+ badges (first paper, perfect score, hat-trick, Centurion, Certificate earner…)
+65. ✅ Century runner badge (v5.0)
+66. ✅ Streaks — 3-day scholar, week of fire
+67. ✅ Daily goals — questions per day, 7-day calendar
+68. ✅ Game HUD + dashboard tiles
+69. ✅ Certificate — download a personalised PDF/PNG
+70. ✅ Confetti-style award moments on results
+71. ✅ Trophy finish screen with grade seal
+72. ⬜ Monthly milestone review — a “best month” recap card
+
+### H. Reliability & engineering
+73. ✅ 3,900-question generated bank with per-question explanations
+74. ✅ Build-time verification — round-trip, duplicates, shape, separator checks
+75. ✅ Delimiter-packed bank transport — faster decode, smaller wire (v5.0)
+76. ✅ SHA-256 integrity fingerprint — tamper-lock with visible guard state
+77. ✅ Object.freeze on the bank + verifyBankIntact checks
+78. ✅ Offline service worker — works with zero network after one visit
+79. ✅ PWA manifest + favicon
+80. ✅ 133-check automated test suite (was 127) — all green (v5.0)
+81. ✅ Gzip budget — 257.2 KiB, 2.9 KiB under the 260 KiB gate (v5.0)
+82. ✅ Backup & restore — JSON export, merge or replace
+83. ✅ Backup & restore — sign-in sync between devices (Google)
+84. ✅ Desktop app build (Windows exe + zip)
+85. ⬜ Batch-edit the bank safely — regenerate a subject without touching its neighbours
+86. ⬜ Brotli-aware check — confirm the deploy host serves the smaller encoding
+
+### I. Publishing & reach
+87. ✅ GitHub Pages deployment with branch protection
+88. ✅ sitemap.xml + robots.txt + Search Console verification
+89. ✅ Open Graph / Twitter social preview image
+90. ✅ Study content lock — interaction locks documented with honest limits
+91. ✅ This roadmap, maintained with each wave
+92. ⬜ Search Console submission + index monitoring
+93. ⬜ Lighthouse CI run in the repo (performance, a11y, PWA)
+94. ⬜ A short “how to study with this app” video link for students
+
+### J. The next wave (open)
+95. ⬜ Sound design — subtle correct/wrong tones (audio off by default)
+96. ⬜ Exam countdown card — days to a chosen exam date
+97. ⬜ Two-player “quiz me” mode — pass the device, fastest hand wins
+98. ⬜ Question difficulty tags and a “tough papers only” toggle
+99. ⬜ Localised option — a second language for stems and explanations
+100. ⬜ Suggest-a-question — students submit questions for the next release
+
+**_How to read the roadmap:_** ✅ items are already in the shipped app (the roadmap doubles as the feature index). ⬜ items are queued exactly as labelled — nothing on this list is fictional, and every future wave keeps the suite green and the bank intact.
+
 
 **© merebari web** · Made for learners of the Senior Secondary Curriculum.
