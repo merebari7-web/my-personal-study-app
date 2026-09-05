@@ -1519,6 +1519,12 @@ body.motion-paused #aurora i,body.motion-paused .hero-rule i,
 body.motion-paused .h-orb,body.motion-paused .h-ring,body.motion-paused .cube{animation-play-state:paused}
 body.motion-paused #heroSun{animation-play-state:paused}
 
+/* ================= PERFECTION — worksheet answer key (print only) ================= */
+#printSheet .ps-ans{margin-top:16px;font-size:9.5pt}
+#printSheet .ps-ans b{letter-spacing:.04em}
+#printSheet .ps-ans div{margin:3px 0}
+@media screen{#printSheet .ps-ans{font-size:10pt}}
+
 </style>
 </head>
 <div class="luxe-frame" aria-hidden="true"></div>
@@ -1661,6 +1667,7 @@ body.motion-paused #heroSun{animation-play-state:paused}
       <div class="stat"><b>13</b><span>Subjects</span></div><div class="stat"><b>100×</b><span>Per subject</span></div>
       <div class="stat"><b>3</b><span>Classes</span></div>
       <div class="stat"><b>100%</b><span>Fully explained</span></div>
+      <div class="stat"><b id="heroPapers">0</b><span>Papers sat</span></div>
     </div>
   </div>
   <div class="hero-rule" aria-hidden="true"><i></i></div>
@@ -1689,6 +1696,7 @@ body.motion-paused #heroSun{animation-play-state:paused}
   <button class="lab-tile" onclick="openLab('backup')"><b class="li">💾</b><span class="lt">Backup &amp; Restore</span><small class="lc">Export or restore all your progress</small></button>
   <button class="lab-tile" onclick="openLab('league')"><b class="li">🏆</b><span class="lt">Scholar League</span><small class="lc">Every account on this device, ranked</small></button>
   <button class="lab-tile" onclick="openHQ()"><b class="li">📈</b><span class="lt">Progress HQ</span><small class="lc">Heatmap · radar · trend · readiness</small></button>
+  <button class="lab-tile" onclick="startReviews()"><b class="li">🧠</b><span class="lt">Mistake Master</span><small class="lc" id="mistDue">Checking what is due…</small></button>
 </div>
 
     <div class="plan-card" id="planCard"></div>
@@ -1806,6 +1814,7 @@ body.motion-paused #heroSun{animation-play-state:paused}
       <button class="btn btn-gold" onclick="shareResult()">📣 Share result</button>
       <button class="btn btn-gold" onclick="scoreCard()">🎁 Score card</button>
       <button class="btn btn-ghost" onclick="openHQ()">📊 Progress HQ</button>
+      <button class="btn btn-ghost" onclick="weeklyReport()">📅 Weekly report</button>
       <button class="btn btn-ghost hidden" id="reviewBtn" onclick="showReview()">📋 Review paper</button>
       <button class="btn btn-ghost hidden" id="drillBtn" onclick="drillMistakes()">🔁 Drill my mistakes</button>
       <button class="btn btn-ghost" id="printResultBtn" onclick="printPaper()">🖨 Print paper</button>
@@ -1904,7 +1913,8 @@ body.motion-paused #heroSun{animation-play-state:paused}
 </div>
 <div class="overlay hidden" id="hqOverlay" onclick="if(event.target===this)closeHQ()">
   <div class="modal modal-wide">
-    <div class="row" style="align-items:center;margin-bottom:12px"><h3 style="margin:0">📈 Progress HQ</h3><span style="flex:1"></span><button class="btn btn-ghost" style="padding:7px 14px" onclick="closeHQ()">✕ Close</button></div>
+    <div class="row" style="align-items:center;margin-bottom:12px"><h3 style="margin:0">📈 Progress HQ</h3><span style="flex:1"></span><button class="btn btn-gold" style="padding:7px 14px" onclick="weeklyReport()">📅 Parent report</button>
+    <button class="btn btn-ghost" style="padding:7px 14px" onclick="closeHQ()">✕ Close</button></div>
     <div id="hqBody"></div>
   </div>
 </div>
@@ -2613,6 +2623,7 @@ function onGoogleCred(resp){
     user = { id:"g_"+payload.sub, name: payload.name || "Student", email: payload.email || "", picture: payload.picture || null, provider:"google", joined: Date.now() };
     store.set("nssc_user", user);
     regProfile(user);
+    if (typeof renderHeroPapers === "function") renderHeroPapers();
     migrateAnonymousAttempts();
     renderAccountChip();
     closeOverlay();
@@ -2632,6 +2643,7 @@ function createStudyAccount(name, email){
   store.set("nssc_user", user);
   migrateAnonymousAttempts();
   regProfile(user);
+  if (typeof renderHeroPapers === "function") renderHeroPapers();
   renderAccountChip();
   gateCheck();
   return user;
@@ -3563,6 +3575,8 @@ function renderGameDash(){
     '<div class="g-tile"><span class="g-ico">🎖</span><div><b>' + getCoins() + '</b><small>Merits</small></div></div>' +
     '<div class="g-tile"><span class="g-ico">🔥</span><div><b>' + streakDays() + '</b><small>Day streak</small></div></div>' +
     '<div class="g-tile"><span class="g-ico">✏️</span><div><b>' + (qd[dstr(new Date())] || 0) + '</b><small>Today · goal ' + goalTarget() + '</small></div></div>';
+  if (typeof renderMistTile === "function") renderMistTile();
+  if (typeof renderHeroPapers === "function") renderHeroPapers();
 }
 function gameRewards(){
   if (!lastResult) return;
@@ -5684,13 +5698,15 @@ function hqRender(){
     '<div class="hq-sec"><h4>Score trend · last 25 papers</h4><div class="hq-cv"><canvas id="hqTrendCv" aria-label="Score trend"></canvas></div></div>' +
     '<div class="hq-sec"><h4>Weakest topics</h4><div id="hqWeak"></div></div>' +
     '<div class="hq-sec"><h4>This month</h4><div id="hqCal"></div></div>' +
-    '<div class="hq-sec"><h4>Week in review · last 7 days</h4><div id="hqWeek"></div></div>';
+    '<div class="hq-sec"><h4>Week in review · last 7 days</h4><div id="hqWeek"></div></div>' +
+    '<div class="hq-sec"><h4>By class</h4><div id="hqCls"></div></div>';
   hqHeat();
   hqRadar();
   hqTrend();
   hqWeak();
   hqCal();
   hqWeek();
+  hqCls();
 }
 
 /* ---------- heatmap ---------- */
@@ -6108,6 +6124,175 @@ function scoreCard(){
   }
   document.addEventListener("visibilitychange", motionPause);
   window.__motionPause = motionPause;
+})();
+</script>
+<script>
+/* ================= PERFECTION — mistake master, worksheets, reports ================= */
+
+/* ---- Mistake Master tile: live "due today" count ---- */
+function renderMistTile(){
+  try{
+    const s = document.getElementById("mistDue");
+    if (!s) return;
+    const n = (typeof dueReviews === "function") ? dueReviews().length : 0;
+    s.textContent = n ? "\uD83D\uDD25 " + n + " due today \u00b7 clean them all" : "\u2705 Nothing due today \u2014 great memory";
+  }catch(e){}
+}
+
+/* ---- live hero "papers sat" stat ---- */
+function renderHeroPapers(){
+  try{
+    const el = document.getElementById("heroPapers");
+    if (!el) return;
+    el.textContent = attempts().length;
+  }catch(e){}
+}
+
+/* ---- printable topic worksheet ---- */
+function worksheetTopic(subj, topic){
+  try{
+    const wrong = {};
+    try{ store.get("nssc_mistakes", []).forEach(function(m){ if (m && m.q) wrong[m.q] = 1; }); }catch(e){}
+    const seen = {}, pool = [];
+    CLASSES.forEach(function(c){
+      (c.questions || []).forEach(function(q){
+        if (q.s === subj && q.t === topic && !seen[q.q]){ seen[q.q] = 1; pool.push(q); }
+      });
+    });
+    if (!pool.length){ toast("No questions for that topic yet", "\u26A0\uFE0F"); return; }
+    pool.sort(function(a, b){ return ((wrong[b.q] ? 1 : 0) - (wrong[a.q] ? 1 : 0)); });
+    const qs = pool.slice(0, 10);
+    const old = document.getElementById("printSheet"); if (old) old.remove();
+    const sh = document.createElement("div"); sh.id = "printSheet";
+    let html = '<div class="ps-head"><h1>MY PERSONAL STUDY APP</h1>' +
+      '<div class="ps-sub">Topic worksheet \u00b7 ' + esc(subj) + ' \u2014 ' + esc(topic) + '</div>' +
+      '<div class="ps-sub">' + qs.length + ' questions \u00b7 answer key at the end \u00b7 \u00a9 merebari web</div></div>' +
+      '<div class="ps-rule"></div>' +
+      '<div class="ps-cand"><span>Name \u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026</span><span>Date \u2026\u2026\u2026\u2026\u2026\u2026</span></div>' +
+      '<p class="ps-instr"><b>Instructions:</b> Answer all questions. Each question carries one mark. Do not look at the answer key until you finish.</p>';
+    qs.forEach(function(q, i){
+      html += '<div class="ps-q"><b>' + (i + 1) + '.</b> ' + esc(q.q).replace(/&lt;u&gt;/g, "<u>").replace(/&lt;\/u&gt;/g, "</u>") +
+        '<div class="ps-opts">' + q.o.map(function(o, j){ return '<div>' + LETTERS[j] + '. ' + esc(o) + '</div>'; }).join("") + '</div></div>';
+    });
+    html += '<div class="ps-rule"></div><div class="ps-ans"><b>ANSWER KEY</b>' +
+      qs.map(function(q, i){ return '<div><b>' + (i + 1) + '</b> \u00b7 <b>' + LETTERS[q.a] + '</b> \u2014 ' + esc(q.e).slice(0, 130) + '</div>'; }).join("") +
+      '</div><div class="ps-end">\u2014 END OF WORKSHEET \u2014</div>';
+    sh.innerHTML = html;
+    document.body.appendChild(sh);
+    document.body.classList.add("printing");
+    const done = function(){ document.body.classList.remove("printing"); sh.remove(); window.removeEventListener("afterprint", done); };
+    window.addEventListener("afterprint", done);
+    try{ window.print(); }catch(e){}
+    setTimeout(done, 120000);
+  }catch(e){ toast("Could not build the worksheet", "\u26A0\uFE0F"); }
+}
+
+/* ---- parent weekly report image ---- */
+function weeklyReport(){
+  try{
+    const c = document.createElement("canvas"); c.width = 1000; c.height = 700;
+    const x = c.getContext && c.getContext("2d");
+    if (!x || typeof x.fillRect !== "function"){ toast("Image reports not supported here \u2014 use \U0001F4E3 Share", "\u26A0\uFE0F"); return; }
+    const ctx = x;
+    const now = Date.now();
+    const wk = attempts().filter(function(a){ return a && a.tms && (now - a.tms) < 7 * 86400000; });
+    const all = attempts();
+    const avg = wk.length ? Math.round(wk.reduce(function(s, a){ return s + (a.pct || 0); }, 0) / wk.length) : 0;
+    const best = wk.length ? Math.max.apply(null, wk.map(function(a){ return a.pct || 0; })) : 0;
+    const time = wk.reduce(function(s, a){ return s + (a.t || 0); }, 0);
+    const acc = (typeof hqSubAcc === "function") ? hqSubAcc() : {};
+    const entries = Object.keys(acc).map(function(s){ return { s: s, v: acc[s] }; }).sort(function(a, b){ return b.v - a.v; });
+    const top = entries[0], low = entries[entries.length - 1];
+    const g = ctx.createLinearGradient(0, 0, 0, 700);
+    g.addColorStop(0, "#fdf9ee"); g.addColorStop(1, "#f2e7cd");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 1000, 700);
+    ctx.strokeStyle = "#c9a25f"; ctx.lineWidth = 6; ctx.strokeRect(22, 22, 956, 656);
+    ctx.strokeStyle = "rgba(201,162,95,.5)"; ctx.lineWidth = 1.5; ctx.strokeRect(36, 36, 928, 628);
+    ctx.textAlign = "center";
+    /* crest */
+    ctx.fillStyle = "#32373c"; ctx.beginPath(); ctx.arc(500, 110, 46, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = "#e8c76a"; ctx.beginPath();
+    for (let i = 0; i < 10; i++){
+      const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 === 0 ? 22 : 9.5;
+      const px = 500 + Math.cos(a) * rr, py = 110 + Math.sin(a) * rr;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#32373c"; ctx.font = "700 34px Georgia, serif";
+    ctx.fillText("WEEKLY REPORT", 500, 196);
+    ctx.fillStyle = "#8a6a30"; ctx.font = "600 17px Georgia, serif";
+    ctx.fillText("MY PERSONAL STUDY APP \u00b7 " + new Date().toLocaleDateString(), 500, 226);
+    /* stat blocks */
+    const cells = [
+      ["Papers", String(wk.length)], ["Average", avg + "%"], ["Best", best + "%"],
+      ["Streak", String(streakDays()) + "d"], ["Time", Math.floor(time / 60) + "m"], ["Total papers", String(all.length)]
+    ];
+    const cw = 148, cg = 14, x0 = 500 - (cw * 3 + cg * 2) / 2;
+    cells.forEach(function(cl, i){
+      const cx = x0 + (i % 3) * (cw + cg), cy = 258 + Math.floor(i / 3) * 108;
+      ctx.fillStyle = "rgba(50,55,60,.05)";
+      ctx.strokeStyle = "rgba(201,162,95,.55)"; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(cx, cy, cw, 92, 14) : ctx.rect(cx, cy, cw, 92); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "#32373c"; ctx.font = "800 30px Georgia, serif"; ctx.fillText(cl[1], cx + cw / 2, cy + 44);
+      ctx.fillStyle = "#8a6a30"; ctx.font = "600 12px Georgia, serif"; ctx.fillText(String(cl[0]).toUpperCase(), cx + cw / 2, cy + 70);
+    });
+    /* subjects */
+    ctx.font = "600 16px Georgia, serif";
+    if (top && top.v > 0){
+      ctx.fillStyle = "#32373c"; ctx.fillText("Strongest: " + top.s + " \u00b7 " + top.v + "%", 500, 490);
+    } else { ctx.fillStyle = "#8a6a30"; ctx.fillText("No subject data this week", 500, 490); }
+    if (low && low.s !== (top && top.s)){ ctx.fillStyle = "#8a5f24"; ctx.fillText("Focus next: " + low.s + " \u00b7 " + low.v + "%", 500, 520); }
+    const verdict = avg >= 70 ? "Outstanding week \u2014 keep this pace!" : avg >= 50 ? "A solid week \u2014 push a little higher." : "A gentle week \u2014 every paper counts. Start today.";
+    ctx.fillStyle = "#6b4a16"; ctx.font = "italic 600 17px Georgia, serif"; ctx.fillText(verdict, 500, 566);
+    ctx.fillStyle = "#9c8a5e"; ctx.font = "500 14px Georgia, serif";
+    ctx.fillText("learn \u00b7 revise \u00b7 master \u00b7 \u00a9 merebari web", 500, 640);
+    let url = null;
+    try{ url = c.toDataURL("image/png"); }catch(e){}
+    if (typeof url === "string" && url.indexOf("data:image") === 0){
+      const a = document.createElement("a");
+      a.href = url; a.download = "weekly-report.png";
+      document.body.appendChild(a); a.click(); a.remove();
+      toast("Weekly report saved", "\uD83D\uDCC5");
+    } else { toast("Image reports not supported here \u2014 use \U0001F4E3 Share", "\u26A0\uFE0F"); }
+  }catch(e){ toast("Could not build the report", "\u26A0\uFE0F"); }
+}
+
+/* ---- HQ: by-class readiness ---- */
+function hqCls(){
+  const el = $("hqCls"); if (!el) return;
+  try{
+    const by = {};
+    attempts().forEach(function(a){ if (a && a.cls) (by[a.cls] = by[a.cls] || []).push(a); });
+    const names = Object.keys(by);
+    if (!names.length){ el.innerHTML = '<div class="hq-empty">No papers yet \u2014 finish one to see readiness per class.</div>'; return; }
+    el.innerHTML = names.map(function(k){
+      const list = by[k];
+      const avg = Math.round(list.reduce(function(s, a){ return s + (a.pct || 0); }, 0) / list.length);
+      const best = Math.max.apply(null, list.map(function(a){ return a.pct || 0; }));
+      const verdict = avg >= 70 ? "Strong" : avg >= 50 ? "Building" : "Needs work";
+      return '<div class="hq-chip"><span class="hq-ico">\uD83C\uDF93</span>' +
+        '<span class="hq-tx"><b>' + esc(k) + '</b> \u00b7 ' + list.length + ' paper' + (list.length > 1 ? "s" : "") + ' \u00b7 best ' + best + '%</span>' +
+        '<span class="hq-pct pill ' + (avg >= 70 ? "g" : avg >= 50 ? "o" : "r") + '">' + avg + '% \u00b7 ' + verdict + '</span></div>';
+    }).join("");
+  }catch(e){ el.innerHTML = '<div class="hq-empty">Class data unavailable.</div>'; }
+}
+
+/* ---- live hooks wired after the app is up (guarded everywhere) ---- */
+(function(){
+  try{
+    const fb = document.getElementById("mistDue");
+    if (fb && !fb.dataset.live){
+      fb.dataset.live = "1";
+      setInterval(function(){ try{ renderMistTile(); }catch(e){} }, 60000);
+    }
+  }catch(e){}
+  try{
+    const hp = document.getElementById("heroPapers");
+    if (hp && !hp.dataset.live){
+      hp.dataset.live = "1";
+      setInterval(function(){ try{ renderHeroPapers(); }catch(e){} }, 45000);
+    }
+  }catch(e){}
 })();
 </script>
 
