@@ -1612,6 +1612,53 @@ body.focus .home-dock{display:none}
 body.focus .ai-card{display:none}
 @media (max-width:640px){.ai-grid{grid-template-columns:1fr}.ai-go{width:100%}.home-dock{bottom:calc(10px + env(safe-area-inset-bottom))}}
 
+/* ================= THE PROFESSORS' STANDARD ================= */
+/* ---- metacognition confidence bar ---- */
+#calBar{margin-top:10px}
+.cal-inner{display:flex;flex-wrap:wrap;align-items:center;gap:8px;border:1px dashed var(--card-border);border-radius:12px;padding:9px 11px;background:var(--panel)}
+.cal-q{font-size:.76rem;font-weight:800;color:var(--ink-2);margin-right:4px}
+.cal-btn{border:1.5px solid var(--chip-border);background:var(--chip-bg);color:var(--ink);border-radius:99px;padding:6px 12px;font-size:.76rem;font-weight:700;cursor:pointer;transition:.18s}
+.cal-btn:hover{border-color:var(--gold);transform:translateY(-1px)}
+.cal-skip{border:none;background:none;color:var(--mut);font-size:.72rem;cursor:pointer;text-decoration:underline;margin-left:auto}
+.cal-done{color:var(--green-d);border-color:rgba(0,135,81,.4);background:rgba(0,135,81,.06);font-size:.78rem}
+[data-theme="dark"] .cal-done{color:#7dffc4}
+.cal-chip{display:inline-block;border:1px solid var(--card-border);border-radius:99px;padding:3px 10px;font-size:.7rem;font-weight:800;color:var(--ink-2);margin:2px 2px 0 0}
+/* ---- a11y panel ---- */
+.a11y-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;border:1px solid var(--card-border);border-radius:12px;padding:11px 13px;margin-bottom:10px;background:var(--panel)}
+.a11y-row> b{flex:1 1 130px;font-size:.86rem}
+.a11y-state{font-size:.72rem;font-weight:900;color:var(--gold);flex:none}
+.a11y-note{flex:1 1 100%;font-size:.72rem;color:var(--mut);margin:0}
+/* ---- educator hub ---- */
+.edu-sec{border:1px solid var(--card-border);border-radius:14px;padding:12px 14px;margin-bottom:12px;background:var(--panel)}
+.edu-sec h4{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:900;margin:0 0 7px}
+.edu-sec ul{margin:0;padding:0 0 0 18px}
+.edu-sec li{font-size:.82rem;line-height:1.7;color:var(--ink-2);margin-bottom:3px}
+.edu-sec li b{color:var(--ink)}
+/* ---- printable exam paper ---- */
+#printSheet .ps-key{page-break-before:always}
+.paper-form{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 4px}
+.paper-form label{font-size:.78rem;font-weight:800;color:var(--ink-2);display:flex;flex-direction:column;gap:4px}
+.paper-form select{border:2px solid var(--chip-border);background:var(--chip-bg);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:.84rem;font-family:inherit}
+.lab-sec{margin-top:14px;border-top:1px solid var(--card-border);padding-top:12px}
+/* ---- footer links ---- */
+.foot-links{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 18px;margin:10px 0 6px}
+.foot-links button{border:none;background:none;color:var(--green-d);font-family:inherit;font-size:.8rem;font-weight:800;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+[data-theme="dark"] .foot-links button{color:#4fd391}
+.foot-links button:hover{color:var(--gold)}
+/* ---- accessibility modes ---- */
+html.ao-readable body{font-family:Verdana,'Segoe UI',Tahoma,Geneva,sans-serif;letter-spacing:.025em;line-height:1.75}
+html.ao-readable .qtext{line-height:1.65}
+html.ao-readable .opt{letter-spacing:.015em}
+html.ao-readable .explain{font-family:inherit}
+html.ao-readable .s3-formula code,html.ao-readable .s3-fig .sf code,html.ao-readable .s3-fig .sf{font-family:inherit}
+html.ao-contrast{--ink:#000;--ink-2:#1c2b45;--mut:#3f4636;--bg:#ffffff;--bg-2:#f1f1ea;--card:#ffffff;--card-solid:#ffffff;--card-border:#222222;--chip-bg:#ffffff;--chip-border:#222222;--panel:#f3f3ec;--bar-track:#d8d8cc;--opt-bg:#ffffff;--opt-border:#222222;--ring:#b9b9a8}
+html.ao-contrast[data-theme="dark"]{--ink:#ffffff;--ink-2:#ffffff;--mut:#e6e2cf;--bg:#000000;--bg-2:#080808;--card:#000000;--card-solid:#000000;--card-border:#ffffff;--chip-bg:#000000;--chip-border:#ffffff;--panel:#101010;--bar-track:#333333;--opt-bg:#000000;--opt-border:#ffffff;--ring:#444444}
+html.ao-contrast .opt{border-width:2px;border-color:#222}
+html.ao-contrast[data-theme="dark"] .opt{border-color:#fff}
+html.ao-contrast .card{background:var(--card-solid)}
+/* ---- print: keep the educator guide tidy ---- */
+@media print{#printSheet .ps-key{page-break-before:always}}
+
 </style>
 </head>
 <div class="luxe-frame" aria-hidden="true"></div>
@@ -1729,6 +1776,7 @@ body.focus .ai-card{display:none}
     <div class="hud" id="hudCoins" title="Merits — earned from papers, spent on the revision wheel">🎖 <b id="coinN">0</b></div>
     <button class="icon-btn" id="themeBtn" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
     <button class="icon-btn" id="fontBtn" title="Text size" aria-label="Adjust text size">Aa</button>
+    <button class="icon-btn" id="a11yBtn" title="Accessibility — readable text, high contrast and more" aria-label="Accessibility options">🔤</button>
     <button class="icon-btn" id="motionBtn" title="Reduce motion" aria-label="Toggle reduced motion">🏃</button>
     <button class="icon-btn" id="focusBtn" title="Focus mode — hide everything but the paper" aria-label="Toggle focus mode" aria-pressed="false">🎯</button>
     <button class="icon-btn" id="helpBtn" title="Keyboard shortcuts and help" aria-label="Keyboard shortcuts and help">?</button>
@@ -1744,7 +1792,7 @@ body.focus .ai-card{display:none}
     </div>
   </nav>
   <div class="hero-copy">
-    <div class="hero-badge"><span class="dot"></span> MY PERSONAL STUDY APP · Senior Secondary Curriculum · SS1–SS3</div>
+    <div class="hero-badge"><span class="dot"></span> MY PERSONAL STUDY APP · Senior Secondary Curriculum · SS1–SS3 · study science: retrieval · spacing · interleaving</div>
     <h1>Learn, revise, and master every subject<span class="h1-sub">3,900 curriculum questions with full worked explanations · SS1 · SS2 · SS3 · aligned to the national syllabus</span></h1>
     <svg class="flourish" viewBox="0 0 320 28" aria-hidden="true"><defs><linearGradient id="flGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a67c1e"/><stop offset=".5" stop-color="#f0d9a6"/><stop offset="1" stop-color="#a67c1e"/></linearGradient></defs><path class="fl-line" d="M12 14 C 60 4, 92 24, 160 14 C 228 4, 260 24, 308 14"/><path class="fl-dia" d="M160 8 l5.5 6 -5.5 6 -5.5 -6z" fill="#c9a25f"/></svg>
     <p class="tag">Candidates are to answer questions from each paper as instructed. 3,900 verified questions — 100 per subject, per class — with instant marking and full explanations. Sign in to keep a record of your results.</p>
@@ -1843,6 +1891,7 @@ body.focus .ai-card{display:none}
     <div class="qtext" id="qText" aria-live="polite"></div>
     <div class="opts" id="qOpts" role="radiogroup" aria-label="Answer options"></div>
     <div class="explain" id="qExplain" role="status" aria-live="polite"></div>
+    <div id="calBar" aria-live="polite"></div>
     <div class="palette hidden" id="palette" aria-label="Question palette">
       <div class="pal-head"><span>Question palette</span><button class="btn btn-ghost" style="padding:6px 12px;font-size:.68rem" onclick="togglePalette()">✕ Close</button></div>
       <div class="pal-grid" id="palGrid"></div>
@@ -1947,6 +1996,8 @@ body.focus .ai-card{display:none}
   Sign in to keep a record of your results. Every answer carries a full explanation.<br>
   <span class="note">Styled after the traditional university examination paper · Not affiliated with the University of Oxford.</span><br>
   <span class="note hidden" id="fsev">🔒 Question bank verified · 3,900 questions · SHA-256 ✓</span>
+  <span class="note">Built on the study science professors recommend — retrieval practice · spaced repetition · interleaving · feedback · calibration.</span><br>
+  <div class="foot-links" id="eduLinks"><button type="button" onclick="eduOpen()">👩‍🏫 For educators</button><button type="button" onclick="a11yOpen()">🔤 Accessibility</button><button type="button" onclick="recommendApp()">📣 Recommend this app</button><button type="button" onclick="openLab('backup')">💾 Your data, exported</button></div>
 </footer>
 
 <!-- ============ STUDY HALL: flashcards · rapid fire · spelling · report card ============ -->
@@ -2037,6 +2088,23 @@ body.focus .ai-card{display:none}
       <div><kbd>Esc</kbd><span>Close any panel</span></div>
     </div>
     <p class="note" style="margin-top:12px">Study mode marks answers instantly with a full explanation; examination mode is timed (36 s per question) and marks at submission.</p>
+  </div>
+</div>
+<div class="overlay hidden" id="a11yOverlay" onclick="if(event.target===this)a11yClose()">
+  <div class="modal">
+    <button class="x icon-btn" onclick="a11yClose()">✕</button>
+    <h3>🔤 Accessibility</h3>
+    <p class="note" style="margin:4px 0 12px">Every learner reads differently — tune the app to fit. Settings are saved on this device.</p>
+    <div id="a11yBody"></div>
+  </div>
+</div>
+<div class="overlay hidden" id="eduOverlay" onclick="if(event.target===this)eduClose()">
+  <div class="modal modal-wide">
+    <div class="row" style="align-items:center;margin-bottom:12px"><h3 style="margin:0">👩‍🏫 For educators</h3><span style="flex:1"></span>
+    <button class="btn btn-gold" style="padding:7px 14px" onclick="printEduGuide()">🖨 Educator guide</button>
+    <button class="btn btn-ghost" style="padding:7px 14px" onclick="recommendApp()">📣 Recommend</button>
+    <button class="btn btn-ghost" style="padding:7px 14px" onclick="eduClose()">✕ Close</button></div>
+    <div id="eduBody"></div>
   </div>
 </div>
 <div class="overlay hidden" id="wheelOverlay" onclick="if(event.target===this)closeWheel()">
@@ -2452,10 +2520,12 @@ function renderQ(){
     box.appendChild(b);
   });
   $("qExplain").classList.remove("show");
+  if (typeof calReset === "function") calReset();
   $("nextBtn").classList.add("hidden");
   if ($("flagBtn")) { $("flagBtn").classList.toggle("flag-on", !!state.flags[state.idx]); $("flagBtn").setAttribute("aria-pressed", state.flags[state.idx] ? "true" : "false"); }
   renderBmk();
   const mrb = $("mockReviewBtn"); if (mrb) mrb.classList.toggle("hidden", !state.mock);
+  const spb = $("speakBtn"); if (spb) spb.classList.toggle("hidden", !!state.mock);
   try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
   renderPalette(); updateTimerUI();
   state.qStart = Date.now();
@@ -2485,6 +2555,7 @@ function pick(i){
     ex.innerHTML = (i===q.a ? `<b class="ok-c">✅ Correct!</b>` : `<b class="no-c">❌ Incorrect.</b>`)
       + ` The correct answer is <b>${LETTERS[q.a]}</b> — ${esc(q.e)}`;
     ex.classList.add("show");
+    if (typeof calOffer === "function") calOffer(i === q.a);
     sfx(i === q.a ? "ok" : "no");
     if (firstPick && i === q.a){ xpAdd(10); sparkAt(btns[i], 26); }
   }
@@ -2524,6 +2595,7 @@ function showResults(){
   const clsLbl = state.reviewing ? "Review session" : state.daily ? "Daily Challenge" : CLASSES[state.cls].class;
   const subjLbl = state.reviewing ? "Spaced revision" : state.daily ? "Mixed syllabus" : (state.subject || "All subjects");
   lastResult = { correct, total: state.quiz.length, pct, wrongIdx, grade:g.letter, timeUsed:usedTime(), sp:subjectScores(), cls:clsLbl, subj:subjLbl, daily: !!state.daily, mock: !!state.mock, intg: (state.intg||0) };
+  if (typeof calBuild === "function") lastResult.calc = calBuild();
   const ring = document.querySelector(".ring-fg"), C = 2*Math.PI*52;
   ring.style.strokeDashoffset = C;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ ring.style.strokeDashoffset = C*(1-pct/100); }));
@@ -2774,7 +2846,7 @@ function openAccount(){
   $("accountOverlay").classList.remove("hidden");
 }
 function closeOverlay(){
-  ["accountOverlay","historyOverlay","statsOverlay","submitCheckOverlay","libraryOverlay","certOverlay","helpOverlay","wheelOverlay","levelOverlay","hqOverlay"].forEach(id => { const el = $(id); if (el) el.classList.add("hidden"); });
+  ["accountOverlay","historyOverlay","statsOverlay","submitCheckOverlay","libraryOverlay","certOverlay","helpOverlay","wheelOverlay","levelOverlay","hqOverlay","a11yOverlay","eduOverlay"].forEach(id => { const el = $(id); if (el) el.classList.add("hidden"); });
 }
 
 /* history */
@@ -2784,7 +2856,7 @@ function recordAttempt(){
   const subj = state.reviewing ? "Spaced revision" : state.daily ? "Mixed syllabus" : (state.subject || "All subjects");
   const att = attempts();
   att.unshift({ d:new Date().toLocaleString(), tms:Date.now(), cls, subj, total:lastResult.total, correct:lastResult.correct,
-    pct:lastResult.pct, grade:lastResult.grade, mode:state.mode, t:lastResult.timeUsed, sp:lastResult.sp, daily: !!state.daily, rev: !!state.reviewing, mock: !!state.mock, intg: (state.intg||0) });
+    pct:lastResult.pct, grade:lastResult.grade, mode:state.mode, t:lastResult.timeUsed, sp:lastResult.sp, daily: !!state.daily, rev: !!state.reviewing, mock: !!state.mock, intg: (state.intg||0), calc: lastResult.calc || null });
   store.set("nssc_attempts_"+uid(), att.slice(0, 200));
 }
 function pctPill(p){ return `<span class="pill ${p>=65?"g":p>=50?"o":"r"}">${p}%</span>`; }
@@ -2821,7 +2893,7 @@ function clearHistory(){
 }
 function exportCSV(){
   const att = attempts(); if(!att.length) return;
-  const rows = [["Date","Class","Subject","Correct","Total","Percent"], ...att.map(a=>[a.d,a.cls,a.subj,a.correct,a.total,a.pct])];
+  const rows = [["Date","Class","Subject","Correct","Total","Percent","Grade","Time (s)","Mode","Source"], ...att.map(a=>[a.d,a.cls,a.subj,a.correct,a.total,a.pct,a.grade||"",a.t||"",a.mode||"",a.daily?"daily":a.rev?"review":a.mock?"mock":"study"])];
   const csv = "data:text/csv;charset=utf-8," + encodeURIComponent(rows.map(r=>r.join(",")).join("\n"));
   const a = document.createElement("a");
   a.href = csv; a.download = "nssc_results.csv"; a.click();
@@ -3546,6 +3618,7 @@ function applyAccess(){
     document.documentElement.classList.toggle("rmotion", rm);
     const mb = $("motionBtn");
     if (mb) { mb.textContent = rm ? "🐢" : "🏃"; mb.title = rm ? "Reduced motion (on)" : "Reduce motion (off)"; }
+    try { if (typeof a11yApply === "function") a11yApply(); } catch (e) {}
   } catch (e) {}
 }
 function cycleFont(){
@@ -4451,7 +4524,7 @@ function labReportRender(){
       '<div class="rep-sig"><div>Parent / Guardian · signature</div><div>Student · signature</div></div>' +
       '<div class="rep-foot">Generated by MY PERSONAL STUDY APP · Copyright © merebari web · All rights reserved.</div>' +
     "</div>" +
-    '<div class="lab-printhide lab-cta"><button class="btn btn-primary" onclick="printReport()">🖨 Print / Save PDF</button><button class="btn btn-ghost" onclick="exportCSV()">⬇ CSV</button><button class="btn btn-ghost" onclick="closeLab()">Close</button></div>';
+    '<div class="lab-printhide lab-cta"><button class="btn btn-primary" onclick="printReport()">🖨 Print / Save PDF</button><button class="btn btn-ghost" onclick="exportCSV()">⬇ CSV</button><button class="btn btn-ghost" onclick="examPaperUI()">🖨 Exam paper</button><button class="btn btn-ghost" onclick="closeLab()">Close</button></div>';
 }
 function printReport(){
   document.body.classList.add("report-print");
@@ -5643,6 +5716,288 @@ function initHomeNav(){ try{ renderHomeNav(); }catch(e){} }
   }catch(e){}
 })();
 
+/* ================= THE PROFESSORS' STANDARD =================
+   Teaching-toolkit wave: metacognitive confidence & calibration,
+   printable exam papers for the classroom, a For Educators hub with
+   research-based pedagogy + a printable guide + recommend-share, and
+   accessibility modes (readable text, high contrast) in one panel.
+   All on-device, offline, no servers — the same study science used in
+   classrooms worldwide. */
+
+/* ---------- 1 · confidence & calibration (metacognition) ---------- */
+function calReset(){
+  try{
+    const b = document.getElementById("calBar");
+    if (b) b.innerHTML = "";
+    state._calPending = null;
+  }catch(e){}
+}
+function calOffer(ok){
+  try{
+    if (state.mode === "exam" || state.mock) return;
+    state._calPending = [state.idx, ok ? 1 : 0];
+    const b = document.getElementById("calBar");
+    if (!b) return;
+    b.innerHTML =
+      '<div class="cal-inner"><span class="cal-q">🧠 Metacognition — how sure were you?</span>' +
+      '<button class="cal-btn" onclick="calPick(0)" title="I was guessing">😕 Guessed</button>' +
+      '<button class="cal-btn" onclick="calPick(1)" title="I had a feeling">🙂 Fairly sure</button>' +
+      '<button class="cal-btn" onclick="calPick(2)" title="I knew it">😎 Certain</button>' +
+      '<button class="cal-skip" onclick="calSkip()">Not now</button></div>';
+  }catch(e){}
+}
+function calPick(l){
+  try{
+    if (!state._calPending) return;
+    state.cal = state.cal || [];
+    state.cal[state._calPending[0]] = [Math.max(0, Math.min(2, l | 0)), state._calPending[1]];
+    state._calPending = null;
+    const k = ["😕 Guessed", "🙂 Fairly sure", "😎 Certain"][l] || "😕";
+    toast("Noted — " + k.split(" ")[0] + ". Calibration lives in Progress HQ", "🧠");
+    const b = document.getElementById("calBar");
+    if (b) b.innerHTML = '<div class="cal-inner cal-done">🧠 Confidence saved — thank you. Calibration is tracked in 📈 Progress HQ.</div>';
+  }catch(e){}
+}
+function calSkip(){ try{ state._calPending = null; const b = document.getElementById("calBar"); if (b) b.innerHTML = ""; }catch(e){} }
+function calBuild(){
+  try{
+    if (!state.cal || !state.quiz) return null;
+    const agg = {};
+    state.cal.forEach(function(c, i){
+      if (!c || !state.quiz[i]) return;
+      const q = state.quiz[i];
+      const ok = state.answers[i] === q.a ? 1 : 0;
+      if (!agg[q.s]) agg[q.s] = [[0, 0], [0, 0], [0, 0]];
+      const cell = agg[q.s][c[0]];
+      cell[0] += ok; cell[1] += 1;
+    });
+    let n = 0;
+    Object.keys(agg).forEach(function(s){ agg[s].forEach(function(cell){ n += cell[1]; }); });
+    return n ? agg : null;
+  }catch(e){ return null; }
+}
+function hqCalib(){
+  const el = document.getElementById("hqCalib"); if (!el) return;
+  try{
+    const by = {};
+    attempts().forEach(function(a){
+      if (!a || !a.calc) return;
+      Object.keys(a.calc).forEach(function(s){
+        const rows = a.calc[s];
+        if (!by[s]) by[s] = [[0, 0], [0, 0], [0, 0]];
+        for (let l = 0; l < 3; l++){
+          if (rows[l]){ by[s][l][0] += rows[l][0] || 0; by[s][l][1] += rows[l][1] || 0; }
+        }
+      });
+    });
+    const subs = Object.keys(by);
+    if (!subs.length){
+      el.innerHTML = '<div class="hq-empty">No confidence ratings yet — after each answer in study mode, tell the app how sure you were 😕 🙂 😎. Matching your confidence to your accuracy builds self-awareness.</div>';
+      return;
+    }
+    el.innerHTML = subs.map(function(s){
+      const rows = by[s];
+      const acc = function(l){ return rows[l][1] ? Math.round(rows[l][0] / rows[l][1] * 100) : null; };
+      const acc0 = acc(0), acc1 = acc(1), acc2 = acc(2);
+      const n = rows[0][1] + rows[1][1] + rows[2][1];
+      let verdict, cls;
+      if (n < 8){ verdict = "Keep rating"; cls = "o"; }
+      else if (acc2 !== null && acc2 >= 70 && (acc0 === null || acc0 <= 45)){ verdict = "Well calibrated ✓"; cls = "g"; }
+      else if (acc2 !== null && acc2 < 60){ verdict = "Overconfident — check answers before submitting"; cls = "r"; }
+      else if (acc0 !== null && acc0 >= 65){ verdict = "Underconfident — trust your recall"; cls = "o"; }
+      else { verdict = "Building — keep rating"; cls = "o"; }
+      const chip = function(lv, l, name){
+        const a = acc(l);
+        return '<span class="cal-chip">' + lv + " " + name + (a === null ? " · —" : " · " + a + "%") + "</span>";
+      };
+      return '<div class="hq-chip" style="flex-wrap:wrap"><span class="hq-tx" style="flex:1 1 220px"><b>' + esc(s) + '</b> · ' + n + ' rated answers</span>' +
+        chip("😕", 0, "guessed") + chip("🙂", 1, "fairly") + chip("😎", 2, "certain") +
+        '<span class="hq-pct pill ' + cls + '">' + esc(verdict) + '</span></div>';
+    }).join("");
+  }catch(e){ el.innerHTML = '<div class="hq-empty">Calibration data unavailable.</div>'; }
+}
+
+/* ---------- 2 · printable exam paper (classroom tool) ---------- */
+function examPaperUI(){
+  try{
+    const lab = document.getElementById("labBody"); if (!lab) return;
+    let old = document.getElementById("examPaperBox"); if (old) old.remove();
+    const d = document.createElement("div"); d.id = "examPaperBox";
+    const subs = Object.keys(SUBJECT_META || {});
+    d.innerHTML =
+      '<div class="lab-sec"><h4 class="s3-lbl">🖨 Printable exam paper · classroom tool</h4>' +
+      '<div class="paper-form"><label>Subject <select id="epSub">' +
+        subs.map(function(s){ return '<option value="' + esc(s) + '">' + esc(s) + "</option>"; }).join("") +
+      '</select></label><label>Class <select id="epCls">' +
+        (typeof CLASSES !== "undefined" ? CLASSES : []).map(function(c, i){ return '<option value="' + i + '">' + esc(c.class) + "</option>"; }).join("") +
+      '</select></label><label>Questions <select id="epN"><option>10</option><option selected>20</option><option>30</option></select></label>' +
+      '</div><p class="rep-note">Prints a real exam-style paper with a mark scheme on a separate page — use it for class tests, mock exercises or homework.</p>' +
+      '<button class="btn btn-gold" onclick="printExamPaper(document.getElementById(\'epSub\').value, +document.getElementById(\'epCls\').value, +document.getElementById(\'epN\').value)">🖨 Print paper + mark scheme</button></div>';
+    lab.appendChild(d);
+  }catch(e){ toast("Could not open the paper printer", "⚠️"); }
+}
+function printExamPaper(subj, cls, count){
+  try{
+    if (typeof CLASSES === "undefined" || !CLASSES.length){ toast("The question bank is still loading", "⏳"); return; }
+    const c = CLASSES[cls] || CLASSES[0];
+    let pool = c.questions || [];
+    if (subj && subj !== "__all" && subj !== "All subjects") pool = pool.filter(function(q){ return q.s === subj; });
+    if (!pool.length){ toast("No questions for that selection", "⚠️"); return; }
+    const n = Math.max(5, Math.min(50, count || 20));
+    const picked = shuffle(pool).slice(0, n);
+    const clsLbl = esc(c.class), subjLbl = esc(subj === "__all" || !subj ? "All subjects" : subj);
+    const minutes = Math.round(n * 1.25);
+    const old = document.getElementById("printSheet"); if (old) old.remove();
+    const sh = document.createElement("div"); sh.id = "printSheet";
+    let html = '<div class="ps-head"><h1>MY PERSONAL STUDY APP</h1>' +
+      '<div class="ps-sub">EXAMINATION PAPER · ' + clsLbl + ' · ' + subjLbl + '</div>' +
+      '<div class="ps-sub">' + n + ' questions · ' + minutes + ' minutes · 1 mark each · © merebari web</div></div>' +
+      '<div class="ps-rule"></div>' +
+      '<div class="ps-cand"><span>Name ……………………</span><span>Date ……………</span></div>' +
+      '<p class="ps-instr"><b>Instructions:</b> Answer ALL questions. Each question carries one mark. Choose the best option — A, B, C or D. Do not turn to the mark scheme until the paper is collected.</p>';
+    picked.forEach(function(q, i){
+      html += '<div class="ps-q"><b>' + (i + 1) + '.</b> ' + esc(q.q).replace(/&lt;u&gt;/g, "<u>").replace(/&lt;\/u&gt;/g, "</u>") +
+        '<div class="ps-opts">' + q.o.map(function(o, j){ return '<div>' + LETTERS[j] + '. ' + esc(o) + '</div>'; }).join("") + '</div></div>';
+    });
+    html += '<div class="ps-key"><div class="ps-rule"></div><div class="ps-ans"><b>MARK SCHEME · for the examiner</b>' +
+      picked.map(function(q, i){ return '<div><b>' + (i + 1) + '</b> · <b>' + LETTERS[q.a] + '</b> — ' + esc(q.e).slice(0, 120) + '</div>'; }).join("") +
+      '</div><div class="ps-end">— END OF MARK SCHEME —</div></div>';
+    sh.innerHTML = html;
+    document.body.appendChild(sh);
+    document.body.classList.add("printing");
+    const done = function(){ document.body.classList.remove("printing"); sh.remove(); window.removeEventListener("afterprint", done); };
+    window.addEventListener("afterprint", done);
+    try{ window.print(); }catch(e){}
+    setTimeout(done, 120000);
+    toast("Exam paper ready for print", "🖨");
+  }catch(e){ toast("Could not build the paper", "⚠️"); }
+}
+
+/* ---------- 3 · accessibility panel ---------- */
+function a11yGet(){ try{ return store.get("nssc_acc", {}) || {}; }catch(e){ return {}; } }
+function a11yApply(){
+  try{
+    const a = a11yGet();
+    const d = document.documentElement;
+    d.classList.toggle("ao-readable", !!a.readable);
+    d.classList.toggle("ao-contrast", !!a.contrast);
+  }catch(e){}
+}
+function a11yToggle(k){
+  try{
+    const a = a11yGet();
+    a[k] = !a[k];
+    store.set("nssc_acc", a);
+    a11yApply();
+    toast(k === "readable" ? (a.readable ? "Readable text on" : "Readable text off") : (a.contrast ? "High contrast on" : "High contrast off"), "🔤");
+    a11yRender();
+  }catch(e){}
+}
+function a11yRender(){
+  try{
+    const a = a11yGet();
+    const st = function(b){ return b ? "On ✓" : "Off"; };
+    const sz = [100, 112, 125, 138][+store.get("nssc_font", 0) || 0];
+    const rm = !!store.get("nssc_rmotion", false);
+    const box = document.getElementById("a11yBody"); if (!box) return;
+    box.innerHTML =
+      '<div class="a11y-row"><b>Text size</b><span class="a11y-state">' + sz + '%</span>' +
+      '<button class="btn btn-ghost" style="padding:7px 12px" onclick="cycleFont();setTimeout(a11yRender,30)">Aa Cycle</button></div>' +
+      '<div class="a11y-row"><b>Readable text</b><span class="a11y-state">' + st(a.readable) + '</span>' +
+      '<p class="a11y-note">Dyslexia-friendly spacing — wider letters, clearer font, open line height.</p>' +
+      '<button class="btn ' + (a.readable ? "btn-gold" : "btn-ghost") + '" style="padding:7px 12px" onclick="a11yToggle(\'readable\')">' + (a.readable ? "On ✓" : "Turn on") + '</button></div>' +
+      '<div class="a11y-row"><b>High contrast</b><span class="a11y-state">' + st(a.contrast) + '</span>' +
+      '<p class="a11y-note">Stronger ink, deeper backgrounds and bolder borders for low-vision comfort.</p>' +
+      '<button class="btn ' + (a.contrast ? "btn-gold" : "btn-ghost") + '" style="padding:7px 12px" onclick="a11yToggle(\'contrast\')">' + (a.contrast ? "On ✓" : "Turn on") + '</button></div>' +
+      '<div class="a11y-row"><b>Read questions aloud</b><span class="a11y-state">Per question</span><p class="a11y-note">Press 🔊 Read on any question (or the R key).</p><button class="btn btn-ghost" style="padding:7px 12px" onclick="var b=document.getElementById(\'qText\'); if(b&&typeof speakQ===\'function\')speakQ();">▶ Try it</button></div>' +
+      '<div class="a11y-row"><b>Reduce motion</b><span class="a11y-state">' + st(rm) + '</span>' +
+      '<button class="btn ' + (rm ? "btn-gold" : "btn-ghost") + '" style="padding:7px 12px" onclick="toggleMotion();setTimeout(a11yRender,30)">' + (rm ? "On ✓" : "Turn on") + '</button></div>';
+  }catch(e){}
+}
+function a11yOpen(){ try{ const ov = document.getElementById("a11yOverlay"); if (ov) ov.classList.remove("hidden"); a11yRender(); }catch(e){} }
+function a11yClose(){ const ov = document.getElementById("a11yOverlay"); if (ov) ov.classList.add("hidden"); }
+
+/* ---------- 4 · For Educators hub ---------- */
+function eduOpen(){
+  try{
+    const ov = document.getElementById("eduOverlay"); if (ov) ov.classList.remove("hidden");
+    eduRender();
+  }catch(e){}
+}
+function eduClose(){ const ov = document.getElementById("eduOverlay"); if (ov) ov.classList.add("hidden"); }
+function eduRender(){
+  try{
+    const box = document.getElementById("eduBody"); if (!box) return;
+    box.innerHTML =
+      '<div class="edu-sec"><h4>Why educators recommend it</h4><ul>' +
+      '<li><b>Retrieval practice</b> — every paper is a recall test, the highest-evidence study method (Roediger &amp; Karpicke, 2006).</li>' +
+      '<li><b>Spaced repetition</b> — mistakes return after 1 → 3 → 7 → 14 days, fighting the Ebbinghaus forgetting curve.</li>' +
+      '<li><b>Interleaving</b> — smart papers mix subjects and topics, exactly the mixing effect that builds lasting learning.</li>' +
+      '<li><b>Immediate feedback + worked explanations</b> — every question is explained, so errors become instruction.</li>' +
+      '<li><b>Mastery &amp; readiness tracking</b> — topic heat-map, per-class readiness and an exam-readiness score.</li>' +
+      '<li><b>Metacognitive calibration</b> — students rate their confidence; Progress HQ compares it with actual accuracy.</li></ul></div>' +
+      '<div class="edu-sec"><h4>In your classroom</h4><ul>' +
+      '<li><b>Warm-up:</b> a 10-question smart paper opens any lesson.</li>' +
+      '<li><b>Pen-and-paper tests:</b> print an exam paper + mark scheme from the Report Card lab.</li>' +
+      '<li><b>Homework:</b> printable topic worksheets with answer keys.</li>' +
+      '<li><b>Revision clinics:</b> Mistake Master, Mastery Map, Mock Hall for timed practice.</li>' +
+      '<li><b>Evidence:</b> CSV export of every result for your own analysis.</li></ul></div>' +
+      '<div class="edu-sec"><h4>Accessibility</h4><ul>' +
+      '<li>Read-aloud on every question (🔊 / R key) · text size · dyslexia-friendly readable text · high contrast · dark mode · reduced motion.</li>' +
+      '<li>Keyboard-only operation (1–4, F, P, N, R, Enter, Esc) and screen-reader-friendly markup.</li></ul></div>' +
+      '<div class="edu-sec"><h4>Trust &amp; privacy</h4><ul>' +
+      '<li>100% on-device: no accounts needed, no servers, no ads, no tracking. Works offline.</li>' +
+      '<li>Your data stays yours — export or restore it any time; the question bank is integrity-verified (SHA-256).</li></ul></div>' +
+      '<div class="edu-sec"><h4>Curriculum note</h4><ul>' +
+      '<li>Built for the West African senior-secondary syllabus (SS1–SS3, WAEC/NECO-style). The learning methods — retrieval, spacing, interleaving, feedback — are universal and transfer to any national or international system, including IGCSE and IB.</li></ul></div>';
+  }catch(e){}
+}
+function printEduGuide(){
+  try{
+    const old = document.getElementById("printSheet"); if (old) old.remove();
+    const sh = document.createElement("div"); sh.id = "printSheet";
+    sh.innerHTML =
+      '<div class="ps-head"><h1>MY PERSONAL STUDY APP</h1><div class="ps-sub">EDUCATOR GUIDE · how it teaches · privacy · how to use it in class</div><div class="ps-sub">© merebari web · free for classroom use</div></div>' +
+      '<div class="ps-rule"></div>' +
+      '<div class="ps-q"><b>1.</b> How the app teaches<span style="display:block;font-weight:400;margin-top:4px">Retrieval practice (every paper is a recall test), spaced repetition (mistakes return 1→3→7→14 days), interleaving (mixed subject &amp; topic papers), immediate feedback with full worked explanations, mastery tracking (topic heat-map, readiness score, per-class readiness), and metacognitive calibration (confidence ratings compared with accuracy).</span></div>' +
+      '<div class="ps-q"><b>2.</b> In your classroom<span style="display:block;font-weight:400;margin-top:4px">Warm-up papers to open lessons · printable exam papers with mark schemes (Report Card lab → Exam paper) · topic worksheets with answer keys · Mock Hall for timed practice with integrity monitoring · CSV export of results for analysis · weekly parent reports.</span></div>' +
+      '<div class="ps-q"><b>3.</b> Accessibility<span style="display:block;font-weight:400;margin-top:4px">Read-aloud on every question (🔊 or R), adjustable text size, dyslexia-friendly readable text, high-contrast mode, dark mode, reduced motion, keyboard-only operation and screen-reader-friendly markup.</span></div>' +
+      '<div class="ps-q"><b>4.</b> Trust &amp; privacy<span style="display:block;font-weight:400;margin-top:4px">Runs entirely on the device — no account needed, no servers, no ads, no tracking; works offline. Students own their data and can export/restore it. The question bank is integrity-verified (SHA-256 fingerprint).</span></div>' +
+      '<div class="ps-q"><b>5.</b> Curriculum note<span style="display:block;font-weight:400;margin-top:4px">Built for the West African senior-secondary syllabus (SS1–SS3). The study science is universal: retrieval, spacing, interleaving and feedback transfer to any examination system worldwide.</span></div>' +
+      '<div class="ps-end">— END OF GUIDE —</div>';
+    document.body.appendChild(sh);
+    document.body.classList.add("printing");
+    const done = function(){ document.body.classList.remove("printing"); sh.remove(); window.removeEventListener("afterprint", done); };
+    window.addEventListener("afterprint", done);
+    try{ window.print(); }catch(e){}
+    setTimeout(done, 120000);
+  }catch(e){ toast("Could not print the guide", "⚠️"); }
+}
+function recommendApp(){
+  try{
+    const txt = "MY PERSONAL STUDY APP — free, offline revision for senior secondary students: 3,900 explained questions, spaced revision, mock exams, printable classroom papers, and the study science professors recommend (retrieval, spacing, interleaving). No ads, no accounts needed: https://merebari7-web.github.io/my-personal-study-app/";
+    if (navigator.share){ navigator.share({ title: "MY PERSONAL STUDY APP", text: txt }).catch(function(){}); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ toast("Teacher recommendation copied — share it anywhere", "📣"); }).catch(function(){ toast("Could not copy — share the address directly", "📣"); });
+      return;
+    }
+    toast("Share this address: merebari7-web.github.io/my-personal-study-app", "📣");
+  }catch(e){ toast("Sharing not supported here", "⚠️"); }
+}
+
+/* ---------- boot-time wiring ---------- */
+(function(){
+  try{ a11yApply(); }catch(e){}
+  try{
+    const ai = document.getElementById("a11yBtn");
+    if (ai && !ai.onclick) ai.onclick = function(){ a11yOpen(); };
+  }catch(e){}
+  try{
+    const sp = document.getElementById("speakBtn");
+    if (sp){ sp.title = "Read this question aloud"; }
+  }catch(e){}
+})();
+
 try { boot(); } catch (e) { showFatal("Something went wrong while starting: " + String((e && e.message) || e)); }
 </script>
 <!-- Compressed question bank (decompressed at load time) -->
@@ -6190,6 +6545,7 @@ function hqRender(){
     '<div class="hq-sec"><h4>Weakest topics</h4><div id="hqWeak"></div></div>' +
     '<div class="hq-sec"><h4>This month</h4><div id="hqCal"></div></div>' +
     '<div class="hq-sec"><h4>Week in review · last 7 days</h4><div id="hqWeek"></div></div>' +
+    '<div class="hq-sec"><h4>Confidence &amp; calibration</h4><div id="hqCalib"></div></div>' +
     '<div class="hq-sec"><h4>By class</h4><div id="hqCls"></div></div>';
   hqHeat();
   hqRadar();
@@ -6198,6 +6554,7 @@ function hqRender(){
   hqCal();
   hqWeek();
   hqCls();
+  if (typeof hqCalib === "function") hqCalib();
 }
 
 /* ---------- heatmap ---------- */
