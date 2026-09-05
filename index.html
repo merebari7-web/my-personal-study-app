@@ -1525,6 +1525,62 @@ body.motion-paused #heroSun{animation-play-state:paused}
 #printSheet .ps-ans div{margin:3px 0}
 @media screen{#printSheet .ps-ans{font-size:10pt}}
 
+/* ================= 3D LAB + TILT ================= */
+.s3-wrap{display:flex;flex-direction:column;gap:14px}
+.s3-stage{position:relative;display:flex;justify-content:center;border:1px solid var(--card-border);border-radius:16px;background:radial-gradient(120% 90% at 50% 0%,var(--panel),var(--card-solid));padding:6px;touch-action:none}
+.s3-stage canvas{cursor:grab;max-width:100%}
+.s3-stage canvas:active{cursor:grabbing}
+.s3-hint{position:absolute;bottom:9px;left:0;right:0;text-align:center;font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);pointer-events:none}
+.s3-info{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.s3-fig{border:1px solid var(--card-border);border-radius:14px;padding:12px 13px;background:var(--panel)}
+.s3-fig h4{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:900;margin:0 0 6px}
+.s3-fig b{font-size:1.5rem;color:var(--green-d);font-variant-numeric:tabular-nums;display:block;line-height:1.15}
+[data-theme="dark"] .s3-fig b{color:#7dffc4}
+.s3-fig .sf{font-size:.72rem;color:var(--ink-2);margin-top:3px}
+.s3-fig .sf code{font-family:Georgia,serif;background:var(--bar-track);border-radius:6px;padding:1px 6px;color:var(--ink)}
+.s3-formula{margin-top:2px}
+.s3-formula h4{margin-bottom:4px}
+.s3-formula ul{margin:0;padding:0;list-style:none}
+.s3-formula li{font-size:.82rem;line-height:1.75;color:var(--ink-2)}
+.s3-formula li b{color:var(--ink)}
+.s3-formula code{font-family:Georgia,serif;font-size:.88rem;background:var(--bar-track);border-radius:6px;padding:1px 6px;color:var(--green-d)}
+[data-theme="dark"] .s3-formula code{color:#7dffc4}
+.s3-sliders{display:flex;flex-direction:column;gap:9px;border:1px solid var(--card-border);border-radius:14px;padding:12px 13px;background:var(--panel)}
+.s3-sl{display:flex;align-items:center;gap:10px}
+.s3-sl label{font-size:.74rem;font-weight:800;width:64px;flex:none;color:var(--ink-2)}
+.s3-sl input[type=range]{flex:1;accent-color:var(--green)}
+.s3-sl output{font-size:.82rem;font-weight:900;width:38px;text-align:right;font-variant-numeric:tabular-nums;color:var(--green-d)}
+[data-theme="dark"] .s3-sl output{color:#7dffc4}
+.s3-blurb{font-size:.8rem;color:var(--ink-2);line-height:1.55;border-left:3px solid var(--gold);padding:2px 0 2px 11px;margin:0}
+.s3-mini{display:flex;gap:6px;flex-wrap:wrap}
+.s3-mini .lab-tab{font-size:.74rem;padding:6px 11px}
+@media (max-width:640px){
+  .s3-info{grid-template-columns:1fr}
+  .s3-fig b{font-size:1.25rem}
+}
+/* ================= SOLVE A SHAPE ================= */
+.s3-quiz .s3-qhead{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:10px}
+.s3-quiz .s3-qhead b{font-size:.95rem}
+.s3-qsub{font-size:.68rem;color:var(--mut)}
+.s3-qtext{font-size:.78rem;color:var(--ink-2);background:var(--panel);border:1px solid var(--card-border);border-radius:9px;padding:8px 10px;margin:0 0 12px}
+.s3-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px}
+.s3-opt{border:1px solid var(--card-border);background:var(--bg);color:var(--txt);border-radius:9px;padding:9px 10px;font-size:.75rem;text-align:left;cursor:pointer;transition:transform .12s,border-color .12s,box-shadow .12s}
+.s3-opt:hover{transform:translateY(-1px);border-color:var(--gold);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.s3-opt.right{border-color:#2b8a3e;background:rgba(43,138,62,.12)}
+.s3-opt.wrong{border-color:#c92a2a;background:rgba(201,42,42,.12)}
+.s3-opt.dim{opacity:.5}
+.s3-opt[disabled]{cursor:default}
+.s3-qres{border-radius:11px;padding:12px 14px;font-size:.78rem;margin-bottom:12px}
+.s3-qres.ok{background:rgba(43,138,62,.1);border:1px solid rgba(43,138,62,.4)}
+.s3-qres.no{background:rgba(201,42,42,.09);border:1px solid rgba(201,42,42,.4)}
+.s3-steps{margin-top:9px;padding:9px 11px;background:var(--bg);border:1px dashed var(--card-border);border-radius:9px;font-size:.72rem;color:var(--mut)}
+.s3-steps b{display:block;color:var(--txt);margin-bottom:5px;font-size:.73rem}
+.s3-steps code{color:var(--gold);font-size:.72rem}
+.s3-steps > div + div{margin-top:5px}
+
+/* 3D tilt (desktop, pointer-precise only) */
+.has-tilt{will-change:transform}
+
 </style>
 </head>
 <div class="luxe-frame" aria-hidden="true"></div>
@@ -4540,35 +4596,48 @@ function labMapRender(){
 /* ================= 3D SHAPES LAB =================
    Dependency-free software 3D: rotate / project / painter's algorithm on a
    2D canvas. Interactive with drag, live sliders & formulas. Educational
-   tie-in: Mathematics · Mensuration. */
+   tie-in: Mathematics · Mensuration.
+   v2: frustum + hemisphere shapes, wireframe & orthographic views, zoom,
+   anatomy facts (faces/edges/vertices, Euler), "Solve a shape" quiz with
+   XP + mistake-bank integration, and persisted preferences. */
 const S3 = {
   shape: "cube", auto: true, drag: false,
   rotX: 0.42, rotY: 0.62, zoom: 1,
+  wire: false, persp: true,
+  qz: null, qzStreak: 0, qzBest: 0,
   raf: 0, last: 0, idle: 0, px: 0, py: 0,
   seen: {}
 };
 const S3_SHAPES = [
   { id: "cube", name: "Cube", icon: "🟦", params: [{ k: "a", label: "side a", min: 2, max: 8, def: 4 }],
     vol: function(P){ return P.a * P.a * P.a; }, area: function(P){ return 6 * P.a * P.a; },
-    vtxt: "V = a³", atxt: "SA = 6a²", blurb: "Every edge is equal. Dice, boxes and storage bins are cubes (or cuboids) — the shape of packed goods and shipping containers.", topic: "Mensuration" },
+    vtxt: "V = a\u00B3", atxt: "SA = 6a\u00B2", blurb: "Every edge is equal. Dice, boxes and storage bins are cubes (or cuboids) — the shape of packed goods and shipping containers.", topic: "Mensuration" },
   { id: "cuboid", name: "Cuboid", icon: "📦", params: [{ k: "l", label: "length l", min: 2, max: 8, def: 5 }, { k: "w", label: "width w", min: 2, max: 8, def: 3 }, { k: "h", label: "height h", min: 2, max: 8, def: 2.5 }],
     vol: function(P){ return P.l * P.w * P.h; }, area: function(P){ return 2 * (P.l * P.w + P.l * P.h + P.w * P.h); },
-    vtxt: "V = l × w × h", atxt: "SA = 2(lw + lh + wh)", blurb: "A box with three different edge lengths — bricks, books and classrooms are cuboids. Volume tells you what fits inside.", topic: "Mensuration" },
+    vtxt: "V = l \u00D7 w \u00D7 h", atxt: "SA = 2(lw + lh + wh)", blurb: "A box with three different edge lengths — bricks, books and classrooms are cuboids. Volume tells you what fits inside.", topic: "Mensuration" },
   { id: "sphere", name: "Sphere", icon: "🔮", params: [{ k: "r", label: "radius r", min: 1, max: 4, def: 2 }],
     vol: function(P){ return (4 / 3) * Math.PI * P.r * P.r * P.r; }, area: function(P){ return 4 * Math.PI * P.r * P.r; },
-    vtxt: "V = 4⁄3 πr³", atxt: "SA = 4πr²", blurb: "Perfectly round — balls, globes and water droplets. The sphere packs the most volume in the least surface area of any shape.", topic: "Mensuration" },
-  { id: "cylinder", name: "Cylinder", icon: "🥫", params: [{ k: "r", label: "radius r", min: 1, max: 4, def: 2 }, { k: "h", label: "height h", min: 1, max: 8, def: 4 }],
+    vtxt: "V = 4\u20443 \u03C0r\u00B3", atxt: "SA = 4\u03C0r\u00B2", blurb: "Perfectly round — balls, globes and water droplets. The sphere packs the most volume in the least surface area of any shape.", topic: "Mensuration" },
+  { id: "cylinder", name: "Cylinder", icon: "🥭", params: [{ k: "r", label: "radius r", min: 1, max: 4, def: 2 }, { k: "h", label: "height h", min: 1, max: 8, def: 4 }],
     vol: function(P){ return Math.PI * P.r * P.r * P.h; }, area: function(P){ return 2 * Math.PI * P.r * P.r + 2 * Math.PI * P.r * P.h; },
-    vtxt: "V = πr²h", atxt: "SA = 2πr² + 2πrh", blurb: "Circles stacked into a solid — tins of milk, pipes and pillars. The curved side unwraps into a rectangle.", topic: "Mensuration" },
+    vtxt: "V = \u03C0r\u00B2h", atxt: "SA = 2\u03C0r\u00B2 + 2\u03C0rh", blurb: "Circles stacked into a solid — tins of milk, pipes and pillars. The curved side unwraps into a rectangle.", topic: "Mensuration" },
   { id: "cone", name: "Cone", icon: "🍦", params: [{ k: "r", label: "radius r", min: 1, max: 4, def: 2 }, { k: "h", label: "height h", min: 1, max: 8, def: 4.5 }],
     vol: function(P){ return (1 / 3) * Math.PI * P.r * P.r * P.h; }, area: function(P){ return Math.PI * P.r * P.r + Math.PI * P.r * Math.sqrt(P.r * P.r + P.h * P.h); },
-    vtxt: "V = 1⁄3 πr²h", atxt: "SA = πr² + πrl", blurb: "Exactly one third of its cylinder — traffic cones, party hats and ice-cream cones. The slant height l = √(r² + h²).", topic: "Mensuration" },
+    vtxt: "V = 1\u20433 \u03C0r\u00B2h", atxt: "SA = \u03C0r\u00B2 + \u03C0rl", blurb: "Exactly one third of its cylinder — traffic cones, party hats and ice-cream cones. The slant height l = \u221A(r\u00B2 + h\u00B2).", topic: "Mensuration" },
   { id: "pyramid", name: "Pyramid", icon: "🔺", params: [{ k: "a", label: "base a", min: 2, max: 8, def: 4 }, { k: "h", label: "height h", min: 1, max: 8, def: 4 }],
     vol: function(P){ return (1 / 3) * P.a * P.a * P.h; }, area: function(P){ return P.a * P.a + 2 * P.a * Math.sqrt(P.h * P.h + (P.a / 2) * (P.a / 2)); },
-    vtxt: "V = 1⁄3 a²h", atxt: "SA = a² + 2al", blurb: "One third of its box — the Great Pyramid of Giza. Square base, four triangular faces meeting at the apex.", topic: "Mensuration" },
+    vtxt: "V = 1\u20433 a\u00B2h", atxt: "SA = a\u00B2 + 2al", blurb: "One third of its box — the Great Pyramid of Giza. Square base, four triangular faces meeting at the apex.", topic: "Mensuration" },
   { id: "prism", name: "Triangular prism", icon: "📐", params: [{ k: "a", label: "side a", min: 2, max: 8, def: 4 }, { k: "h", label: "length h", min: 1, max: 8, def: 5 }],
     vol: function(P){ return (Math.sqrt(3) / 4) * P.a * P.a * P.h; }, area: function(P){ return (Math.sqrt(3) / 2) * P.a * P.a + 3 * P.a * P.h; },
-    vtxt: "V = (√3⁄4)a²h", atxt: "SA = (√3⁄2)a² + 3ah", blurb: "A triangle pushed through space — tent frames, Toblerone and roof trusses. Volume = area of the triangle × length.", topic: "Mensuration" }
+    vtxt: "V = (\u221A3\u20444)a\u00B2h", atxt: "SA = (\u221A3\u20442)a\u00B2 + 3ah", blurb: "A triangle pushed through space — tent frames, Toblerone and roof trusses. Volume = area of the triangle \u00D7 length.", topic: "Mensuration" },
+  { id: "frustum", name: "Frustum", icon: "🪣", params: [{ k: "a", label: "base a", min: 2, max: 8, def: 4 }, { k: "b", label: "top b", min: 1, max: 6, def: 2 }, { k: "h", label: "height h", min: 1, max: 8, def: 3 }],
+    vol: function(P){ return (P.h / 3) * (P.a * P.a + P.b * P.b + P.a * P.b); },
+    area: function(P){ const l = Math.sqrt(P.h * P.h + ((P.a - P.b) / 2) * ((P.a - P.b) / 2)); return P.a * P.a + P.b * P.b + 2 * (P.a + P.b) * l; },
+    vtxt: "V = h\u20443 (a\u00B2 + ab + b\u00B2)", atxt: "SA = a\u00B2 + b\u00B2 + 2(a + b)l",
+    blurb: "A pyramid with the top cut off — buckets, lampshades and grain heaps. Slant height l = \u221A(h\u00B2 + ((a \u2212 b)\u20442)\u00B2). A favourite WAEC question.", topic: "Mensuration" },
+  { id: "hemisphere", name: "Hemisphere", icon: "🌗", params: [{ k: "r", label: "radius r", min: 1, max: 4, def: 2 }],
+    vol: function(P){ return (2 / 3) * Math.PI * P.r * P.r * P.r; }, area: function(P){ return 3 * Math.PI * P.r * P.r; },
+    vtxt: "V = 2\u20443 \u03C0r\u00B3", atxt: "SA = 3\u03C0r\u00B2", blurb: "Half a sphere — bowls, domes and half-orange peels. Total surface = curved 2\u03C0r\u00B2 + flat circular base \u03C0r\u00B2 = 3\u03C0r\u00B2.", topic: "Mensuration" }
 ];
 function s3Shape(id){ for (var i = 0; i < S3_SHAPES.length; i++) if (S3_SHAPES[i].id === id) return S3_SHAPES[i]; return S3_SHAPES[0]; }
 function s3Params(id){ const P = {}; s3Shape(id).params.forEach(function(p){ P[p.k] = p.def; }); return P; }
@@ -4603,9 +4672,10 @@ function s3Build(id, P){
     outs.v = [[0, hh, 0]];
     for (let j = 0; j < segs; j++){ const th = 2 * Math.PI * j / segs; outs.v.push([r * Math.cos(th), hh, r * Math.sin(th)]); }
     for (let j = 0; j < segs; j++){ const th = 2 * Math.PI * j / segs; outs.v.push([r * Math.cos(th), -hh, r * Math.sin(th)]); }
+    outs.v.push([0, -hh, 0]);
     for (let j = 0; j < segs; j++){ const a2 = 1 + j, b2 = 1 + ((j + 1) % segs), c2 = 1 + segs + ((j + 1) % segs), d2 = 1 + segs + j; quad(a2, b2, c2, d2); }
     for (let j = 0; j < segs; j++) tri(0, 1 + ((j + 1) % segs), 1 + j);
-    for (let j = 0; j < segs; j++) tri(1 + segs, 1 + segs + j, 1 + segs + ((j + 1) % segs));
+    for (let j = 0; j < segs; j++) tri(1 + segs + segs, 1 + segs + j, 1 + segs + ((j + 1) % segs));
   } else if (id === "cone"){
     const segs = 18, r = P.r, hh = P.h / 2;
     outs.v = [[0, hh, 0]];
@@ -4625,6 +4695,24 @@ function s3Build(id, P){
       [0, -hh, 2 * R], [P.a, -hh, -R], [-P.a, -hh, -R]
     ];
     outs.f = [[0, 1, 2], [5, 4, 3], [0, 3, 4, 1], [1, 4, 5, 2], [2, 5, 3, 0]];
+  } else if (id === "frustum"){
+    const a = P.a / 2, b = P.b / 2, hh = P.h / 2;
+    outs.v = [[-a, -hh, -a], [a, -hh, -a], [a, -hh, a], [-a, -hh, a], [-b, hh, -b], [b, hh, -b], [b, hh, b], [-b, hh, b]];
+    outs.f = [[0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7], [0, 1, 2, 3], [4, 5, 6, 7]];
+  } else if (id === "hemisphere"){
+    const rings = 5, segs = 16, r = P.r;
+    outs.v = [[0, r, 0]];
+    for (let i = 1; i < rings; i++){
+      const phi = (Math.PI / 2) * i / rings, y = r * Math.cos(phi), rr = r * Math.sin(phi);
+      for (let j = 0; j < segs; j++){ const th = 2 * Math.PI * j / segs; outs.v.push([rr * Math.cos(th), y, rr * Math.sin(th)]); }
+    }
+    const top = 0, ringAt = function(i, j){ return 1 + (i - 1) * segs + (j % segs); };
+    for (let j = 0; j < segs; j++) tri(top, ringAt(1, j), ringAt(1, j + 1));
+    for (let i = 1; i < rings - 1; i++) for (let j = 0; j < segs; j++)
+      quad(ringAt(i, j), ringAt(i, j + 1), ringAt(i + 1, j + 1), ringAt(i + 1, j));
+    const ring = [];
+    for (let j = segs - 1; j >= 0; j--) ring.push(ringAt(rings - 1, j));
+    outs.f.push(ring);
   }
   return outs;
 }
@@ -4659,7 +4747,7 @@ function s3Draw(){
     if (fi.length >= 3) n = s3Norm(a[0], a[1], a[2], b[0], b[1], b[2], c2[0], c2[1], c2[2]);
     return { fi: fi, z: sz / fi.length, n: n, k: k };
   }).sort(function(q1, q2){ return q1.z - q2.z; });
-  const scl = f / (f + 2.6) * (0.62 * W) * S3.zoom;
+  const scl = (S3.persp ? f / (f + 2.6) : 0.63) * (0.62 * W) * S3.zoom;
   const base = dark ? [64, 200, 140] : [15, 107, 79];
   const gold = dark ? [255, 210, 125] : [184, 145, 47];
   ctx.lineJoin = "round";
@@ -4672,12 +4760,25 @@ function s3Draw(){
       if (i2 === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     });
     ctx.closePath();
-    ctx.fillStyle = "rgba(" + col[0] + "," + col[1] + "," + col[2] + "," + (0.28 + shade * 0.6).toFixed(3) + ")";
-    ctx.fill();
-    ctx.strokeStyle = dark ? "rgba(230,240,255,.5)" : "rgba(20,35,70,.4)";
-    ctx.lineWidth = 1.1 * dpr;
-    ctx.stroke();
+    if (!S3.wire){
+      ctx.fillStyle = "rgba(" + col[0] + "," + col[1] + "," + col[2] + "," + (0.28 + shade * 0.6).toFixed(3) + ")";
+      ctx.fill();
+      ctx.strokeStyle = dark ? "rgba(230,240,255,.5)" : "rgba(20,35,70,.4)";
+      ctx.lineWidth = 1.1 * dpr;
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle = dark ? "rgba(255,222,140,.75)" : "rgba(166,124,30,.75)";
+      ctx.lineWidth = 1.2 * dpr;
+      ctx.stroke();
+    }
   });
+  if (S3.wire){
+    ctx.fillStyle = dark ? "#ffd98c" : "#a67c1e";
+    pts.forEach(function(p){
+      const px = cx + p[0] * scl, py = cy - p[1] * scl;
+      ctx.beginPath(); ctx.arc(px, py, 2 * dpr, 0, 6.2832); ctx.fill();
+    });
+  }
 }
 function s3Loop(ts){
   S3.raf = 0;
@@ -4691,39 +4792,98 @@ function s3Loop(ts){
   S3.raf = (window.requestAnimationFrame || function(f){ setTimeout(f, 33); })(s3Loop);
 }
 function s3Stop(){ if (S3.raf){ (window.cancelAnimationFrame || clearTimeout)(S3.raf); S3.raf = 0; } }
+/* ---- preferences (persisted per device) ---- */
+function s3PrefsKey(){ return "nssc_s3_prefs"; }
+function s3PrefsSave(){
+  try{
+    if (typeof store === "undefined") return;
+    store.set(s3PrefsKey(), { shape: S3.shape, auto: S3.auto, zoom: S3.zoom, wire: S3.wire, persp: S3.persp, params: S3.params });
+  }catch(e){}
+}
+function s3PrefsLoad(){
+  try{
+    if (S3.prefsLoaded) return;
+    S3.prefsLoaded = true;
+    if (typeof store === "undefined") return;
+    const p = store.get(s3PrefsKey(), null);
+    if (!p || typeof p !== "object") return;
+    if (S3_SHAPES.some(function(s){ return s.id === p.shape; })) S3.shape = p.shape;
+    if (typeof p.auto === "boolean") S3.auto = p.auto;
+    if (typeof p.zoom === "number") S3.zoom = Math.max(0.5, Math.min(1.8, p.zoom));
+    if (typeof p.wire === "boolean") S3.wire = p.wire;
+    if (typeof p.persp === "boolean") S3.persp = p.persp;
+    if (p.params && typeof p.params === "object" && !Array.isArray(p.params)) S3.params = p.params;
+  }catch(e){}
+}
+function s3Zoom(d){
+  try{ S3.zoom = Math.max(0.5, Math.min(1.8, Math.round((S3.zoom + d) * 20) / 20)); }catch(e){}
+  const z = $("s3Zoom"); if (z) z.value = S3.zoom;
+  s3PrefsSave(); s3Draw();
+}
+/* ---- anatomy facts: faces / edges / vertices + Euler ---- */
+function s3Facts(id, P){
+  try{
+    const g = s3Build(id, P);
+    const es = {};
+    g.f.forEach(function(fi){
+      for (let i = 0; i < fi.length; i++){
+        let a = fi[i], b = fi[(i + 1) % fi.length];
+        if (b < a){ const t = a; a = b; b = t; }
+        es[a + "-" + b] = 1;
+      }
+    });
+    return { f: g.f.length, e: Object.keys(es).length, v: g.v.length };
+  }catch(e){ return { f: 0, e: 0, v: 0 }; }
+}
 function s3Render(){
   const B = $("labBody"); if (!B) return;
   if (S3.autoInit === undefined){
     S3.autoInit = true;
     try { if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) S3.auto = false; } catch (e) {}
   }
+  if (!S3.qz) s3PrefsLoad();
+  const qActive = !!S3.qz;
   const sh = s3Shape(S3.shape);
   S3.params = S3.params || {};
   sh.params.forEach(function(p){ if (typeof S3.params[p.k] !== "number") S3.params[p.k] = p.def; });
   const vol = s3Vol(S3.shape, S3.params), area = s3Area(S3.shape, S3.params);
+  const fac = s3Facts(S3.shape, S3.params);
   const f3 = function(n){ return (Math.round(n * 100) / 100).toLocaleString(); };
+  const euler = fac.v - fac.e + fac.f;
   B.innerHTML =
-    '<div class="lab-head"><span class="lab-ico">🧊</span><h3>3D Shape Lab</h3><span class="lab-sub">Drag to rotate · sliders change the dimensions live · Mathematics — Mensuration</span></div>' +
-    '<div class="s3-mini">' + S3_SHAPES.map(function(s){
-      return '<button class="lab-tab' + (s.id === S3.shape ? " on" : "") + '" onclick="S3.shape=\'' + s.id + '\';S3.params=s3Params(\'' + s.id + '\');s3Render()">' + s.icon + " " + s.name + "</button>";
-    }).join("") + "</div>" +
-    '<div class="s3-wrap">' +
-      '<div class="s3-stage"><canvas id="s3Canvas" width="340" height="300" aria-label="Interactive 3D ' + esc(sh.name) + '"></canvas><span class="s3-hint">' + (S3.auto ? "auto-rotating · drag to spin · double-click to reset" : "drag to spin") + "</span></div>" +
-      '<div class="s3-sliders">' + sh.params.map(function(p){
-        return '<div class="s3-sl"><label for="s3p_' + p.k + '">' + esc(p.label) + '</label><input type="range" id="s3p_' + p.k + '" min="' + p.min + '" max="' + p.max + '" step="0.5" value="' + S3.params[p.k] + '" oninput="S3.params[\'' + p.k + '\']=parseFloat(this.value);s3Sync()"><output id="s3o_' + p.k + '">' + S3.params[p.k] + "</output></div>";
+    '<div class="lab-head"><span class="lab-ico">🧊</span><h3>3D Shape Lab</h3><span class="lab-sub">Drag to rotate \u00B7 sliders change the dimensions live \u00B7 Mathematics \u2014 Mensuration</span></div>' +
+    '<div class="s3-stage"><canvas id="s3Canvas" width="340" height="300" aria-label="Interactive 3D ' + esc(sh.name) + '"></canvas><span class="s3-hint">' + (S3.auto ? "auto-rotating \u00B7 drag to spin \u00B7 double-click to reset" : "drag to spin") + "</span></div>" +
+    '<div id="s3Explore"' + (qActive ? ' class="hidden"' : "") + '>' +
+      '<div class="s3-mini">' + S3_SHAPES.map(function(s){
+        return '<button class="lab-tab' + (s.id === S3.shape ? " on" : "") + '" onclick="S3.shape=\'' + s.id + '\';S3.params=s3Params(\'' + s.id + '\');s3PrefsSave();s3Render()">' + s.icon + " " + s.name + "</button>";
       }).join("") + "</div>" +
-      '<div class="s3-info">' +
-        '<div class="s3-fig"><h4>Volume</h4><b>' + f3(vol) + " <small style=\"font-size:.6em;color:var(--mut)\">units³</small></b><div class=\"sf\">Formula: <code>" + esc(sh.vtxt) + "</code></div></div>" +
-        '<div class="s3-fig"><h4>Surface area</h4><b>' + f3(area) + " <small style=\"font-size:.6em;color:var(--mut)\">units²</small></b><div class=\"sf\">Formula: <code>" + esc(sh.atxt) + "</code></div></div>" +
-        '<div class="s3-formula"><h4 class="s3-lbl">Why it works</h4><ul><li>' + esc(sh.blurb) + "</li></ul></div>" +
-        '<div class="s3-formula"><h4 class="s3-lbl">Exam hint</h4><ul><li>“How many of these fit?” → divide volumes. “How much paper to wrap it?” → surface area. Read the unit: <b>³ = volume, ² = area</b>.</li></ul></div>' +
+      '<div class="s3-wrap">' +
+        '<div class="s3-sliders">' + sh.params.map(function(p){
+          return '<div class="s3-sl"><label for="s3p_' + p.k + '">' + esc(p.label) + '</label><input type="range" id="s3p_' + p.k + '" min="' + p.min + '" max="' + p.max + '" step="0.5" value="' + S3.params[p.k] + '" oninput="S3.params[\'' + p.k + '\']=parseFloat(this.value);s3Sync()"><output id="s3o_' + p.k + '">' + S3.params[p.k] + "</output></div>";
+        }).join("") + "</div>" +
+        '<div class="s3-info">' +
+          '<div class="s3-fig"><h4>Volume</h4><b>' + f3(vol) + ' <small style="font-size:.6em;color:var(--mut)">units\u00B3</small></b><div class="sf">Formula: <code>' + esc(sh.vtxt) + "</code></div></div>" +
+          '<div class="s3-fig"><h4>Surface area</h4><b>' + f3(area) + ' <small style="font-size:.6em;color:var(--mut)">units\u00B2</small></b><div class="sf">Formula: <code>' + esc(sh.atxt) + "</code></div></div>" +
+          '<div class="s3-formula"><h4 class="s3-lbl">Anatomy</h4><ul><li><b>' + fac.f + '</b> faces \u00B7 <b>' + fac.e + '</b> edges \u00B7 <b>' + fac.v + '</b> vertices \u00B7 Euler V \u2212 E + F = <b>' + euler + '</b>' + (euler === 2 ? " \u2713 (closed solid)" : "") + "</li></ul></div>" +
+          '<div class="s3-formula"><h4 class="s3-lbl">Why it works</h4><ul><li>' + esc(sh.blurb) + "</li></ul></div>" +
+          '<div class="s3-formula"><h4 class="s3-lbl">Exam hint</h4><ul><li>\u201CHow many of these fit?\u201D \u2192 divide volumes. \u201CHow much paper to wrap it?\u201D \u2192 surface area. Read the unit: <b>\u00B3 = volume, \u00B2 = area</b>.</li></ul></div>' +
+        "</div>" +
+        '<p class="s3-blurb">Try <b>Solve a shape</b> below to be quizzed on any of these solids \u2014 correct answers earn XP, wrong ones go into your mistake bank for revision.</p>' +
       "</div>" +
-      '<p class="s3-blurb">Every figure here links to the question bank — test yourself with the real Mensuration paper when you are ready.</p>' +
     "</div>" +
-    '<div class="lab-cta">' +
-      '<button class="btn btn-ghost" onclick="S3.auto=!S3.auto;s3Render()">' + (S3.auto ? "⏸ Pause spin" : "▶ Auto-spin") + "</button>" +
-      '<button class="btn btn-ghost" onclick="S3.rotX=0.42;S3.rotY=0.62;s3Render()">↺ Reset view</button>' +
-      '<button class="btn btn-primary" onclick="labDrillTopic(\'Mathematics\',\'Mensuration\')">🎯 Quiz me · Mensuration</button>' +
+    '<div class="s3-quiz hidden" id="s3Quiz"></div>' +
+    '<div id="s3Tools"' + (qActive ? ' class="hidden"' : "") + '>' +
+      '<button class="btn btn-ghost s3-tb" onclick="S3.auto=!S3.auto;s3PrefsSave();s3Render()">' + (S3.auto ? "\u23F8 Pause spin" : "\u25B6 Auto-spin") + "</button>" +
+      '<button class="btn btn-ghost s3-tb" onclick="S3.persp=!S3.persp;s3PrefsSave();s3Render()">' + (S3.persp ? "\u2B1B Orthographic" : "🎥 Perspective") + "</button>" +
+      '<button class="btn btn-ghost s3-tb" onclick="S3.wire=!S3.wire;s3PrefsSave();s3Render()">' + (S3.wire ? "🎨 Shaded" : "🕸 Wireframe") + "</button>" +
+      '<span class="s3-zoom"><button class="btn btn-ghost s3-tb" onclick="s3Zoom(-0.15)">\u2212</button>' +
+        '<input type="range" id="s3Zoom" min="0.5" max="1.8" step="0.05" value="' + S3.zoom + '" oninput="S3.zoom=parseFloat(this.value);s3PrefsSave();s3Draw()" aria-label="Zoom">' +
+        '<button class="btn btn-ghost s3-tb" onclick="s3Zoom(0.15)">+</button></span>' +
+      '<button class="btn btn-ghost s3-tb" onclick="S3.rotX=0.42;S3.rotY=0.62;s3Render()">\u21BA Reset view</button>' +
+    "</div>" +
+    '<div class="lab-cta"' + (qActive ? ' style="display:none"' : "") + '>' +
+      '<button class="btn btn-gold" onclick="s3QuizStart()">🎲 Solve a shape</button>' +
+      '<button class="btn btn-primary" onclick="labDrillTopic(\'Mathematics\',\'Mensuration\')">🎯 Quiz me \u00B7 Mensuration</button>' +
     "</div>";
   const cv = $("s3Canvas");
   if (cv) cv.onpointerdown = function(ev){ S3.drag = true; S3.px = ev.clientX; S3.py = ev.clientY; };
@@ -4740,6 +4900,7 @@ function s3Render(){
     S3.studied = S3.studied || []; S3.studied.push(S3.shape);
     const st = labStats(); st.s3seen = st.s3seen || []; if (st.s3seen.indexOf(S3.shape) < 0) st.s3seen.push(S3.shape); labSave(st);
   }
+  if (qActive) s3QuizRender();
   s3Stop(); S3.last = 0;
   S3.raf = (window.requestAnimationFrame || function(f){ setTimeout(f, 33); })(s3Loop);
 }
@@ -4751,9 +4912,162 @@ function s3Sync(){
   const vol = s3Vol(S3.shape, S3.params), area = s3Area(S3.shape, S3.params);
   const f3 = function(n){ return (Math.round(n * 100) / 100).toLocaleString(); };
   const figs = $("labBody") ? $("labBody").querySelectorAll(".s3-fig b") : [];
-  if (figs[0]) figs[0].innerHTML = f3(vol) + ' <small style="font-size:.6em;color:var(--mut)">units³</small>';
-  if (figs[1]) figs[1].innerHTML = f3(area) + ' <small style="font-size:.6em;color:var(--mut)">units²</small>';
+  if (figs[0]) figs[0].innerHTML = f3(vol) + ' <small style="font-size:.6em;color:var(--mut)">units\u00B3</small>';
+  if (figs[1]) figs[1].innerHTML = f3(area) + ' <small style="font-size:.6em;color:var(--mut)">units\u00B2</small>';
+  s3PrefsSave();
   s3Draw();
+}
+/* ================= SOLVE A SHAPE — quiz + XP + mistake bank ================= */
+function s3Round2(n){ return Math.round(n * 100) / 100; }
+function s3QuizPickNum(){ return [2, 3, 4, 5, 6][Math.floor(Math.random() * 5)]; }
+function s3QuizUsesPi(id){ return id === "sphere" || id === "cylinder" || id === "cone" || id === "hemisphere"; }
+function s3QuizHasR(id){ return id === "sphere" || id === "cylinder" || id === "cone" || id === "hemisphere"; }
+function s3QuizHasThird(id){ return id === "cone" || id === "pyramid" || id === "frustum"; }
+function s3QuizOpts(exact, id, P, ask){
+  const cands = [];
+  function push(v){ const r = s3Round2(v); if (isFinite(r) && r > 0 && cands.indexOf(r) < 0) cands.push(r); }
+  push(exact);
+  if (s3QuizUsesPi(id)){
+    push(exact * (3.14 / Math.PI));
+    push(exact / Math.PI);
+  }
+  if (s3QuizHasR(id)){
+    push(exact * (ask === "v" ? (id === "sphere" || id === "hemisphere" ? 8 : (id === "cylinder" || id === "cone") ? 4 : 2) : 4));
+  }
+  if (s3QuizHasThird(id)) push(exact * 1.5);
+  const other = ask === "v" ? s3Area(id, P) : s3Vol(id, P);
+  push(other);
+  push(exact * 2);
+  push(exact * 0.5);
+  let k = 1;
+  while (cands.length < 4 && k < 14){ push(exact + k * 0.75 * (Math.random() < 0.5 ? 1 : -1)); k++; }
+  const opts = cands.slice(0, 4).map(function(v){ return { v: v, t: v.toLocaleString() }; });
+  opts.sort(function(a, b){ return a.v - b.v; });
+  return opts;
+}
+function s3QuizQText(qz){
+  const sh = s3Shape(qz.sh);
+  const dims = sh.params.map(function(p){ return p.label + " = " + qz.P[p.k]; }).join(", ");
+  const what = qz.ask === "v" ? "volume" : "surface area";
+  return "Find the " + what + " of the " + sh.name.toLowerCase() + " shown \u2014 " + dims + " (units).";
+}
+function s3QuizSub(q){
+  const P = q.P, id = q.sh;
+  const fmt = function(n){ return (Math.round(n * 100) / 100).toString(); };
+  if (q.ask === "v"){
+    if (id === "cube") return "V = " + fmt(P.a) + "\u00B3 = " + fmt(P.a * P.a * P.a);
+    if (id === "cuboid") return "V = " + fmt(P.l) + " \u00D7 " + fmt(P.w) + " \u00D7 " + fmt(P.h) + " = " + fmt(P.l * P.w * P.h);
+    if (id === "sphere") return "V = 4/3 \u00D7 \u03C0 \u00D7 " + fmt(P.r) + "\u00B3 \u2248 " + fmt((4 / 3) * Math.PI * Math.pow(P.r, 3));
+    if (id === "cylinder") return "V = \u03C0 \u00D7 " + fmt(P.r) + "\u00B2 \u00D7 " + fmt(P.h) + " \u2248 " + fmt(Math.PI * P.r * P.r * P.h);
+    if (id === "cone") return "V = 1/3 \u00D7 \u03C0 \u00D7 " + fmt(P.r) + "\u00B2 \u00D7 " + fmt(P.h) + " \u2248 " + fmt((1 / 3) * Math.PI * P.r * P.r * P.h);
+    if (id === "pyramid") return "V = 1/3 \u00D7 " + fmt(P.a) + "\u00B2 \u00D7 " + fmt(P.h) + " = " + fmt((1 / 3) * P.a * P.a * P.h);
+    if (id === "prism") return "V = (\u221A3/4) \u00D7 " + fmt(P.a) + "\u00B2 \u00D7 " + fmt(P.h) + " \u2248 " + fmt((Math.sqrt(3) / 4) * P.a * P.a * P.h);
+    if (id === "frustum") return "V = " + fmt(P.h) + "/3 \u00D7 (" + fmt(P.a) + "\u00B2 + " + fmt(P.a) + "\u00D7" + fmt(P.b) + " + " + fmt(P.b) + "\u00B2) = " + fmt((P.h / 3) * (P.a * P.a + P.a * P.b + P.b * P.b));
+    if (id === "hemisphere") return "V = 2/3 \u00D7 \u03C0 \u00D7 " + fmt(P.r) + "\u00B3 \u2248 " + fmt((2 / 3) * Math.PI * Math.pow(P.r, 3));
+  } else {
+    if (id === "cube") return "SA = 6 \u00D7 " + fmt(P.a) + "\u00B2 = " + fmt(6 * P.a * P.a);
+    if (id === "cuboid") return "SA = 2(" + fmt(P.l) + "\u00D7" + fmt(P.w) + " + " + fmt(P.l) + "\u00D7" + fmt(P.h) + " + " + fmt(P.w) + "\u00D7" + fmt(P.h) + ") = " + fmt(2 * (P.l * P.w + P.l * P.h + P.w * P.h));
+    if (id === "sphere") return "SA = 4 \u00D7 \u03C0 \u00D7 " + fmt(P.r) + "\u00B2 \u2248 " + fmt(4 * Math.PI * P.r * P.r);
+    if (id === "cylinder") return "SA = 2\u03C0" + fmt(P.r) + "\u00B2 + 2\u03C0" + fmt(P.r) + "\u00D7" + fmt(P.h) + " \u2248 " + fmt(2 * Math.PI * P.r * P.r + 2 * Math.PI * P.r * P.h);
+    if (id === "cone"){ const l = Math.sqrt(P.r * P.r + P.h * P.h); return "SA = \u03C0" + fmt(P.r) + "\u00B2 + \u03C0" + fmt(P.r) + "\u00D7" + fmt(Math.round(l * 100) / 100) + " \u2248 " + fmt(Math.PI * P.r * P.r + Math.PI * P.r * l); }
+    if (id === "pyramid"){ const l = Math.sqrt(P.h * P.h + (P.a / 2) * (P.a / 2)); return "SA = " + fmt(P.a) + "\u00B2 + 2\u00D7" + fmt(P.a) + "\u00D7" + fmt(Math.round(l * 100) / 100) + " \u2248 " + fmt(P.a * P.a + 2 * P.a * l); }
+    if (id === "prism") return "SA = (\u221A3/2) \u00D7 " + fmt(P.a) + "\u00B2 + 3 \u00D7 " + fmt(P.a) + "\u00D7" + fmt(P.h) + " \u2248 " + fmt((Math.sqrt(3) / 2) * P.a * P.a + 3 * P.a * P.h);
+    if (id === "frustum"){ const l = Math.sqrt(P.h * P.h + ((P.a - P.b) / 2) * ((P.a - P.b) / 2)); return "SA = " + fmt(P.a) + "\u00B2 + " + fmt(P.b) + "\u00B2 + 2(" + fmt(P.a) + "+" + fmt(P.b) + ")" + fmt(Math.round(l * 100) / 100) + " \u2248 " + fmt(P.a * P.a + P.b * P.b + 2 * (P.a + P.b) * l); }
+    if (id === "hemisphere") return "SA = 3\u03C0" + fmt(P.r) + "\u00B2 \u2248 " + fmt(3 * Math.PI * P.r * P.r);
+  }
+  return "";
+}
+function s3QuizStart(){
+  try{
+    const pool = ["cube", "cuboid", "sphere", "cylinder", "cone", "pyramid", "prism", "frustum", "hemisphere"];
+    const id = pool[Math.floor(Math.random() * pool.length)];
+    const sh = s3Shape(id);
+    const P = {};
+    sh.params.forEach(function(p){ P[p.k] = s3QuizPickNum() * (Math.random() < 0.3 ? 2 : 1) * 0.5; });
+    sh.params.forEach(function(p){ P[p.k] = Math.max(p.min, Math.min(p.max, P[p.k])); });
+    const ask = Math.random() < 0.5 ? "v" : "a";
+    const exact = ask === "v" ? s3Vol(id, P) : s3Area(id, P);
+    const qz = { sh: id, P: P, ask: ask, ans: exact, opts: [], aIdx: -1, pick: -1, done: false };
+    qz.opts = s3QuizOpts(exact, id, P, ask);
+    for (let i = 0; i < qz.opts.length; i++){
+      if (Math.abs(s3Round2(qz.opts[i].v) - s3Round2(exact)) < 0.005){ qz.aIdx = i; break; }
+    }
+    S3.qz = qz;
+    S3.shape = id; S3.params = P;
+    s3Render();
+  }catch(e){ S3.qz = null; }
+}
+function s3QuizRender(){
+  const q = S3.qz; if (!q) return;
+  const box = $("s3Quiz"); if (!box) return;
+  box.classList.remove("hidden");
+  const ex = $("s3Explore"); if (ex) ex.classList.add("hidden");
+  const tl = $("s3Tools"); if (tl) tl.classList.add("hidden");
+  const sh = s3Shape(q.sh);
+  const f3 = function(n){ return (Math.round(n * 100) / 100).toLocaleString(); };
+  let html =
+    '<div class="s3-qhead"><b>🎲 Solve a shape</b><span class="s3-qsub">' + (S3.qzStreak > 0 ? "🔥 streak " + S3.qzStreak + " \u00B7 best " + Math.max(S3.qzBest, S3.qzStreak) : "answer shape questions to earn XP") + "</span></div>" +
+    '<p class="s3-qtext">' + esc(s3QuizQText(q)) + "</p>" +
+    '<div class="s3-opts">' +
+      q.opts.map(function(o, i){
+        let cls = "s3-opt";
+        if (q.done){ if (i === q.aIdx) cls += " right"; else if (i === q.pick) cls += " wrong"; else cls += " dim"; }
+        return '<button class="' + cls + '" onclick="s3QuizPick(' + i + ')"' + (q.done ? " disabled" : "") + '>' + LETTERS[i] + ". " + esc(o.t) + "</button>";
+      }).join("") +
+    "</div>" +
+    (q.done ?
+      '<div class="s3-qres ' + (q.pick === q.aIdx ? "ok" : "no") + '">' +
+        (q.pick === q.aIdx ? "\u2705 Correct! +" + (10 + Math.min(S3.qzStreak, 5)) + " XP \u2014 keep going!" : "\u274C Not quite \u2014 it is now in your mistake bank.") +
+        '<div class="s3-steps"><b>Worked solution</b>' +
+        '<div>Formula: <code>' + esc(sh.vtxt) + "</code>" + (q.ask === "a" ? ' &nbsp;\u00B7&nbsp; <code>' + esc(sh.atxt) + "</code>" : "") + "</div>" +
+        "<div>" + esc(s3QuizSub(q)) + "</div>" +
+        "<div>Answer \u2248 <b>" + f3(q.ans) + " " + (q.ask === "v" ? "units\u00B3" : "units\u00B2") + "</b></div></div>" +
+        '<div class="row" style="margin-top:12px"><button class="btn btn-gold" onclick="s3QuizNext()">Next question \u2192</button>' +
+        '<button class="btn btn-ghost" onclick="s3QuizExit()">\u2715 Exit quiz</button></div></div>' :
+      "");
+  box.innerHTML = html;
+}
+function s3QuizPick(i){
+  const q = S3.qz; if (!q || q.done) return;
+  q.pick = i; q.done = true;
+  const ok = i === q.aIdx;
+  try{
+    if (ok){
+      S3.qzStreak++;
+      if (S3.qzStreak > S3.qzBest) S3.qzBest = S3.qzStreak;
+      const gain = 10 + Math.min(S3.qzStreak, 5);
+      if (typeof xpAdd === "function") xpAdd(gain);
+      if (typeof sfx === "function") sfx("ok");
+      const st = labStats(); st.s3quiz = st.s3quiz || { n: 0, c: 0, best: 0 };
+      st.s3quiz.n++; st.s3quiz.c++; st.s3quiz.best = Math.max(st.s3quiz.best, S3.qzBest); labSave(st);
+    } else {
+      S3.qzStreak = 0;
+      if (typeof sfx === "function") sfx("no");
+      try{
+        const bank = store.get("nssc_mistakes", []);
+        const qq = s3QuizQText(q);
+        const exists = bank.some(function(m){ return m && m.q === qq; });
+        if (!exists){
+          bank.unshift({ s: "Mathematics", q: qq,
+            o: q.opts.map(function(o){ return o.t + " " + (q.ask === "v" ? "units\u00B3" : "units\u00B2"); }),
+            a: q.aIdx,
+            e: "Worked solution: " + s3QuizSub(q) + " \u2192 \u2248 " + s3Round2(q.ans) + " " + (q.ask === "v" ? "units\u00B3" : "units\u00B2"),
+            cls: "SS1", at: Date.now(), r: 0 });
+          store.set("nssc_mistakes", bank.slice(0, 400));
+          if (typeof renderReviewBanner === "function") renderReviewBanner();
+        }
+      }catch(e){}
+      const st = labStats(); st.s3quiz = st.s3quiz || { n: 0, c: 0, best: 0 };
+      st.s3quiz.n++; labSave(st);
+    }
+  }catch(e){}
+  s3QuizRender();
+}
+function s3QuizNext(){
+  try{ S3.qz = null; s3QuizStart(); }catch(e){}
+}
+function s3QuizExit(){
+  try{ S3.qz = null; s3Render(); }catch(e){}
 }
 /* ---- 3D tilt cards (desktop pointer only; respects reduced motion) ---- */
 let tiltEl = null;
@@ -5151,6 +5465,7 @@ function labLeagueRender(){
       : '<p class="lab-note">No scholars on this device yet. Sit a paper to join the league — every study account earns its place.</p>' +
         '<div class="lab-cta"><button class="btn btn-primary" onclick="closeLab()">Close</button></div>');
 }
+
 
 try { boot(); } catch (e) { showFatal("Something went wrong while starting: " + String((e && e.message) || e)); }
 </script>
