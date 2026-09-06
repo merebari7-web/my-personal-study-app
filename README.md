@@ -23,7 +23,7 @@ Copyright © merebari web · All rights reserved.
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** — cube, cuboid, sphere, cylinder, cone, pyramid, prism, **frustum & hemisphere** (9 shapes) — drag to rotate (double-click to reset), live dimension sliders, real-time volume & surface area with formulas, **anatomy facts** (faces · edges · vertices with the Euler check), auto-spin pause, **wireframe / orthographic / zoom views** (preferences persist per device), and **Solve a shape** — a shape-quiz mode with worked solutions that earns XP for correct answers and banks wrong ones into your mistake bank · links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🏠 Home + ✨ AI Coach | A floating **home dock** (🏠 Home · ✨ AI Coach · 📚 Practice · 🔬 Study Hall · 📊 HQ) that appears as you scroll, highlights where you are, and jumps you around the app · an **AI Coach** card at the top of the home screen suggests up to five things to do next — spaced-revision due deck, daily challenge, weakest subject & topic drills, mock exam, exam-countdown plan, daily goal, printable worksheet, parent report, first paper — each with a *why* ("because …") and a one-tap action; **↻ New ideas** rotates the deck while keeping the most urgent suggestion pinned. All suggestions are computed on-device from your own results and refresh after every paper and sign-in |
 | 👩‍🏫 The Professors' Standard | Built so teachers and professors recommend it worldwide: **🧠 metacognitive calibration** — after every study-mode answer students rate how sure they were (😕 🙂 😎) and Progress HQ compares confidence with actual accuracy per subject (well-calibrated / overconfident / underconfident verdicts); **🖨 printable exam papers** — subject + class + 10/20/30 questions, exam-style paper with the mark scheme on its own page, for class tests and homework; **👩‍🏫 For Educators hub** — research-based pedagogy (retrieval practice · spaced repetition · interleaving · feedback · mastery · calibration, with citations), classroom lesson plans, accessibility statement, privacy-on-device promise, printable educator guide and a one-tap recommend/share; **🔤 accessibility panel** — dyslexia-friendly readable text, high-contrast mode, text size, read-aloud, reduced motion in one place (persisted); richer CSV export (grade, time, mode, source) for your own analysis |
-| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **592.4 KB** (411.6 KB app shell + 180.8 KB bank asset) and **252.6 KiB gzipped combined** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
+| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **593.1 KB** (412.3 KB app shell + 180.8 KB bank asset) and **252.8 KiB gzipped combined** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
 | 📶 Install-free & offline (PWA) | A small service worker (HTTPS only, on-device only) caches the app after the first visit: it re-opens instantly and **keeps working with zero network** — flip on airplane mode after one visit and every feature, bank and progress store still runs. While online the network is tried first so every release reaches you on the next visit. No install, no account, no app store |
 | 📘 Revision notes (formula & fact cards) | For **all 78 topics across the 13 subjects** — exam-style formulas and facts teachers will recognise (quadratic formula, SOH-CAH-TOA, OIL RIG, Ohm's law, monohybrid 3:1…). Opened from the Report Card lab or **straight from your results screen** (one tap on a missed paper), and printable as a single card or a whole-subject pack for the class. Topic names match the app's own topic tracker, so notes always appear where a student just failed |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
@@ -211,8 +211,8 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 77. ✅ Object.freeze on the bank + verifyBankIntact checks
 78. ✅ Offline service worker — works with zero network after one visit
 79. ✅ PWA manifest + favicon
-80. ✅ 150-check automated test suite (was 127) — all green (v7.0)
-81. ✅ Gzip budget — 252.6 KiB combined (app + bank), held under the 260 KiB gate through v7.0
+80. ✅ 156-check automated test suite (was 127) — all green (v7.1)
+81. ✅ Gzip budget — 252.8 KiB combined (app + bank), held under the 260 KiB gate through v7.1
 82. ✅ Backup & restore — JSON export, merge or replace
 83. ✅ Backup & restore — sign-in sync between devices (Google)
 84. ✅ Desktop app build (Windows exe + zip)
@@ -243,6 +243,25 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 ---
 
 
+## 🔧 v7.1 — The Bug-Fix Wave
+
+**A full adversarial audit (`quiz/_bughunt.js`: corrupted storage, junk-typed data, missing browser APIs, empty deques, injection attempts) found 21 real robustness bugs — all fixed, all regression-checked.**
+
+| Fix | What was wrong |
+|---|---|
+| 🧹 Corrupt attempt records | `null`/primitive entries in stored results crashed the HQ, stats and history screens — `attempts()` now sanitises every read. |
+| 🔢 `NaN%` everywhere | Non-numeric `pct`/`t`/`tp` values flowed into every `Math.max`/`Math.round` — all aggregates now coerce (`+pct||0`) and skip non-finite rows (mocked "Best score", "Average", pace rows, day counts, best-month card). |
+| 📅 Countdown past dates | A date in the past read **“It is today — good luck!”** — now it says the date has passed. |
+| 📄 Zero-question paper | `startQuiz` with a 0/null count crashed the question card — it falls back to a 10-question paper. |
+| 🔒 Quote escaping | `esc()` never escaped `"`/`'`, so names could break out of HTML attributes — now fully escaped. |
+| 💾 Corrupt session | Resume dropped malformed question rows instead of crashing; the resume banner tolerates a bad session. |
+| 🎰 Wheel / 3D quiz / library | Out-of-range wheel segments, arg-less lab-quiz calls and missing elements in library toggles are all guarded. |
+| 🗣 No-speech / no-audio browsers | Flashcards and sound effects degrade to a toast instead of throwing. |
+| ✅ Suite integrity | The mock-exam auto-submit check's async body was silently unhandled (a masked failure) — it now truly awaits, plus 6 new regression checks (138–143). |
+
+**Budget discipline:** same bank payload (byte-identical), combined gzip **252.8 KiB** (headroom 7.3 KiB), **156 checks all green**, `quiz/_bughunt.js` 0 failures.
+
+---
 ## 🎓 v7.0 — The Split-Bank Wave
 
 **The biggest architectural change in the project: the question bank moves out of the page — and the wave of features is funded by it. The bank's content is byte-identical (same 3,900 questions, same delimiter-packed form, same SHA-256 fingerprint over the packed text — the integrity self-check is untouched).**
