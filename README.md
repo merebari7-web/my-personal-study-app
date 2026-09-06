@@ -23,7 +23,7 @@ Copyright © merebari web · All rights reserved.
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** — cube, cuboid, sphere, cylinder, cone, pyramid, prism, **frustum & hemisphere** (9 shapes) — drag to rotate (double-click to reset), live dimension sliders, real-time volume & surface area with formulas, **anatomy facts** (faces · edges · vertices with the Euler check), auto-spin pause, **wireframe / orthographic / zoom views** (preferences persist per device), and **Solve a shape** — a shape-quiz mode with worked solutions that earns XP for correct answers and banks wrong ones into your mistake bank · links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🏠 Home + ✨ AI Coach | A floating **home dock** (🏠 Home · ✨ AI Coach · 📚 Practice · 🔬 Study Hall · 📊 HQ) that appears as you scroll, highlights where you are, and jumps you around the app · an **AI Coach** card at the top of the home screen suggests up to five things to do next — spaced-revision due deck, daily challenge, weakest subject & topic drills, mock exam, exam-countdown plan, daily goal, printable worksheet, parent report, first paper — each with a *why* ("because …") and a one-tap action; **↻ New ideas** rotates the deck while keeping the most urgent suggestion pinned. All suggestions are computed on-device from your own results and refresh after every paper and sign-in |
 | 👩‍🏫 The Professors' Standard | Built so teachers and professors recommend it worldwide: **🧠 metacognitive calibration** — after every study-mode answer students rate how sure they were (😕 🙂 😎) and Progress HQ compares confidence with actual accuracy per subject (well-calibrated / overconfident / underconfident verdicts); **🖨 printable exam papers** — subject + class + 10/20/30 questions, exam-style paper with the mark scheme on its own page, for class tests and homework; **👩‍🏫 For Educators hub** — research-based pedagogy (retrieval practice · spaced repetition · interleaving · feedback · mastery · calibration, with citations), classroom lesson plans, accessibility statement, privacy-on-device promise, printable educator guide and a one-tap recommend/share; **🔤 accessibility panel** — dyslexia-friendly readable text, high-contrast mode, text size, read-aloud, reduced motion in one place (persisted); richer CSV export (grade, time, mode, source) for your own analysis |
-| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **594.8 KB** and **257.2 KiB gzipped** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
+| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **603.4 KB** and **259.9 KiB gzipped** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
 | 📶 Install-free & offline (PWA) | A small service worker (HTTPS only, on-device only) caches the app after the first visit: it re-opens instantly and **keeps working with zero network** — flip on airplane mode after one visit and every feature, bank and progress store still runs. While online the network is tried first so every release reaches you on the next visit. No install, no account, no app store |
 | 📘 Revision notes (formula & fact cards) | For **all 78 topics across the 13 subjects** — exam-style formulas and facts teachers will recognise (quadratic formula, SOH-CAH-TOA, OIL RIG, Ohm's law, monohybrid 3:1…). Opened from the Report Card lab or **straight from your results screen** (one tap on a missed paper), and printable as a single card or a whole-subject pack for the class. Topic names match the app's own topic tracker, so notes always appear where a student just failed |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
@@ -141,7 +141,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 19. ✅ Per-topic performance tracking behind every paper
 20. ✅ Mastery Map — subject × topic heat-map, tap to drill
 21. ✅ Topic worksheets — printable, your past wrong-answers pulled in first
-22. ⬜ Interleaved papers — mixing two topics per paper on purpose
+22. ✅ Interleaved papers — topics mixed throughout a paper (v6.0, Rohrer & Taylor 2007)
 
 ### C. Study Hall
 23. ✅ Flashcard decks — whole bank or your mistakes, flip-to-recall
@@ -211,8 +211,8 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 77. ✅ Object.freeze on the bank + verifyBankIntact checks
 78. ✅ Offline service worker — works with zero network after one visit
 79. ✅ PWA manifest + favicon
-80. ✅ 133-check automated test suite (was 127) — all green (v5.0)
-81. ✅ Gzip budget — 257.2 KiB, 2.9 KiB under the 260 KiB gate (v5.0)
+80. ✅ 139-check automated test suite (was 127) — all green (v6.0)
+81. ✅ Gzip budget — 259.9 KiB, held under the 260 KiB gate through v6.0
 82. ✅ Backup & restore — JSON export, merge or replace
 83. ✅ Backup & restore — sign-in sync between devices (Google)
 84. ✅ Desktop app build (Windows exe + zip)
@@ -239,5 +239,25 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 
 **_How to read the roadmap:_** ✅ items are already in the shipped app (the roadmap doubles as the feature index). ⬜ items are queued exactly as labelled — nothing on this list is fictional, and every future wave keeps the suite green and the bank intact.
 
+
+---
+
+## 🎓 v6.0 — The Professors' Wave
+
+**Six upgrades that speak the language of learning science** — so teachers and teacher-educators can see exactly *why* the app works, and recommend it with evidence:
+
+| New | The science behind it |
+|---|---|
+| 🔄 **Interleaved papers** | A toggle on the length card mixes topics *throughout* a paper (study mode). Mixing, not blocking, is what builds durable learning — Rohrer & Taylor (*Instructional Science*, 2007). |
+| ⏱ **Pace by topic** | Seconds-per-question, aggregated per topic on the printable report card — feedback on *fluency*, the second half of mastery (automaticity + accuracy). |
+| 🧠 **Reflection journal** | Every paper now has a **SMART goal** — automatically “Beat your last score” (or “First paper”) — and results invite two short reflection lines (learned / next). Entries live in a journal on the report card, printable with the report. This is *self-regulated learning* in action: plan → do → reflect (Zimmerman, 2002). |
+| 🪜 **Learning paths** | The Mastery Map now shows each subject as its **syllabus progression** — the teaching order — with every topic tappable to drill. Scaffolding and prerequisite structure, visible at a glance. |
+| 🔬 **Strategy chips + sources** | Results now show *which evidence-based strategies this paper used* (retrieval ✓, spacing ✓, interleaving ✓, calibration ✓) plus a one-line citation. Students learn *about* learning. |
+| 📚 **Sources & further reading** | The Educators hub now cites the actual literature: Roediger & Karpicke (2006) · Dunlosky et al. (2013) · Rohrer & Taylor (2007) · Hattie & Timperley (2007) · Flavell (1979) · Zimmerman (2002) · Bjork (1994) — and the printable educator guide carries the same sources. |
+
+**Budget discipline:** the wave landed at **259.9 KiB gzipped** (from 257.2) — still under the 260 KiB gate, with the test suite grown to **139 checks, all green** (the bank payload is untouched; every new feature was written tight, and the manual goal picker was replaced by a smarter automatic one).
+
+
+---
 
 **© merebari web** · Made for learners of the Senior Secondary Curriculum.
