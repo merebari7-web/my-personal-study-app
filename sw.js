@@ -2,8 +2,11 @@
    it re-opens instantly and works with zero network (airplane mode). While
    online the network is tried first so updates arrive on the next visit.
    Bump NSS_V on every release. */
-const NSS_V = "nssc-v20250905";
+const NSS_V = "nssc-v20250906"; /* v8.0 — Exam-Room Labs release */
 const NSS_CORE = ["./", "./index.html", "./sw.js"];
+/* labs.js is NOT in NSS_CORE on purpose: the runtime fetch handler below caches
+   it the first time it is requested online, so an offline first-visit install
+   (which must never fail) stays independent of it. */
 
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(NSS_V).then(function (c) {
