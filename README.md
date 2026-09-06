@@ -23,7 +23,7 @@ Copyright © merebari web · All rights reserved.
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** — cube, cuboid, sphere, cylinder, cone, pyramid, prism, **frustum & hemisphere** (9 shapes) — drag to rotate (double-click to reset), live dimension sliders, real-time volume & surface area with formulas, **anatomy facts** (faces · edges · vertices with the Euler check), auto-spin pause, **wireframe / orthographic / zoom views** (preferences persist per device), and **Solve a shape** — a shape-quiz mode with worked solutions that earns XP for correct answers and banks wrong ones into your mistake bank · links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🏠 Home + ✨ AI Coach | A floating **home dock** (🏠 Home · ✨ AI Coach · 📚 Practice · 🔬 Study Hall · 📊 HQ) that appears as you scroll, highlights where you are, and jumps you around the app · an **AI Coach** card at the top of the home screen suggests up to five things to do next — spaced-revision due deck, daily challenge, weakest subject & topic drills, mock exam, exam-countdown plan, daily goal, printable worksheet, parent report, first paper — each with a *why* ("because …") and a one-tap action; **↻ New ideas** rotates the deck while keeping the most urgent suggestion pinned. All suggestions are computed on-device from your own results and refresh after every paper and sign-in |
 | 👩‍🏫 The Professors' Standard | Built so teachers and professors recommend it worldwide: **🧠 metacognitive calibration** — after every study-mode answer students rate how sure they were (😕 🙂 😎) and Progress HQ compares confidence with actual accuracy per subject (well-calibrated / overconfident / underconfident verdicts); **🖨 printable exam papers** — subject + class + 10/20/30 questions, exam-style paper with the mark scheme on its own page, for class tests and homework; **👩‍🏫 For Educators hub** — research-based pedagogy (retrieval practice · spaced repetition · interleaving · feedback · mastery · calibration, with citations), classroom lesson plans, accessibility statement, privacy-on-device promise, printable educator guide and a one-tap recommend/share; **🔤 accessibility panel** — dyslexia-friendly readable text, high-contrast mode, text size, read-aloud, reduced motion in one place (persisted); richer CSV export (grade, time, mode, source) for your own analysis |
-| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **603.4 KB** and **259.9 KiB gzipped** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
+| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **598.9 KB** and **259.7 KiB gzipped** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
 | 📶 Install-free & offline (PWA) | A small service worker (HTTPS only, on-device only) caches the app after the first visit: it re-opens instantly and **keeps working with zero network** — flip on airplane mode after one visit and every feature, bank and progress store still runs. While online the network is tried first so every release reaches you on the next visit. No install, no account, no app store |
 | 📘 Revision notes (formula & fact cards) | For **all 78 topics across the 13 subjects** — exam-style formulas and facts teachers will recognise (quadratic formula, SOH-CAH-TOA, OIL RIG, Ohm's law, monohybrid 3:1…). Opened from the Report Card lab or **straight from your results screen** (one tap on a missed paper), and printable as a single card or a whole-subject pack for the class. Topic names match the app's own topic tracker, so notes always appear where a student just failed |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
@@ -233,7 +233,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 95. ⬜ Sound design — subtle correct/wrong tones (audio off by default)
 96. ⬜ Exam countdown card — days to a chosen exam date
 97. ⬜ Two-player “quiz me” mode — pass the device, fastest hand wins
-98. ⬜ Question difficulty tags and a “tough papers only” toggle
+98. ✅ Question difficulty tags and a “tough papers only” toggle
 99. ⬜ Localised option — a second language for stems and explanations
 100. ⬜ Suggest-a-question — students submit questions for the next release
 
@@ -242,6 +242,20 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 
 ---
 
+
+## 🎓 v6.1 — The Hard-Questions Wave
+
+**Questions finally tell you how hard they are — and you can ask for only the hard ones.**
+
+| New | What it does |
+|---|---|
+| ⭐ **Difficulty tags** | Every question carries a deterministic difficulty rating (1–3 stars) derived from its own content — easy · medium · hard. Shown beside the subject on the question card, so you always know the weight of the question you're facing. |
+| 🔥 **Tough paper toggle** | On the length card: *study mode only* — the paper is drawn purely from the hard (★★★) questions, falling back to medium-plus when a selection is too thin. Exam mode, daily challenges and review sessions are never affected. |
+
+**Budget discipline:** the wave landed at **259.7 KiB gzipped** (from 259.9) — every byte of the new feature was funded by removing genuinely dead CSS (an orphaned `.gbtn` button skin, a leftover `.hero .gp` effect, an unused `.hero h1 em` rule and a lone `.btn-ghost.big` selector, all verified unreferenced by a full in-browser state walk), the test suite grew to **141 checks, all green** (139 + tough-paper filter + difficulty stars), and the build pipeline is verified to reproduce the shipped app byte-for-byte from `quiz/template.html`.
+
+
+---
 ## 🎓 v6.0 — The Professors' Wave
 
 **Six upgrades that speak the language of learning science** — so teachers and teacher-educators can see exactly *why* the app works, and recommend it with evidence:
