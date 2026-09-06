@@ -272,7 +272,7 @@
      🏆 1 · RECORDS HALL — personal bests from your own papers
      ============================================================ */
   function paperRows() {
-    return attemptsAll().filter(function (a) { return a && !a.rev; });
+    return attemptsAll().filter(function (a) { return a && !a.rev && typeof a === "object" && !Array.isArray(a) && isFinite(+a.pct) && isFinite(+a.tms); });
   }
   function bestStreak(papers) {
     var days = {};
@@ -345,13 +345,13 @@
       '<div class="lx-stats">'
       + "<div><b>" + fmtNum(papers.length) + "</b><small>Papers</small></div>"
       + "<div><b>" + (avg ? Math.round(avg) + "%" : "—") + "</b><small>Average</small></div>"
-      + "<div><b>" + (top ? Math.round(top.pct) + "%" : "—") + "</b><small>Best score</small></div>"
+      + "<div><b>" + (top ? Math.round(+top.pct||0) + "%" : "—") + "</b><small>Best score</small></div>"
       + "<div><b>" + fmtNum(sumQ) + "</b><small>Questions</small></div>"
       + "<div><b>" + (sumT ? fmtTime(sumT) : "—") + "</b><small>Time studied</small></div>"
       + '<div><b>' + (streak.days || "—") + "</b><small>Day streak</small></div>"
       + "</div>"
       + '<div class="lx-cats">'
-      + '<div class="lx-cat"><h4>🥇 Highest score</h4>' + (best.length ? row3(best.slice(0, 3), function (p) { return Math.round(p.pct) + "% — " + esc(p.subj || "All subjects"); }) : '<p class="note">No papers yet.</p>') + "</div>"
+      + '<div class="lx-cat"><h4>🥇 Highest score</h4>' + (best.length ? row3(best.slice(0, 3), function (p) { return Math.round(+p.pct||0) + "% — " + esc(p.subj || "All subjects"); }) : '<p class="note">No papers yet.</p>') + "</div>"
       + '<div class="lx-cat"><h4>⚡ Fastest perfect paper</h4>' + (perfect.length ? row3(perfect, function (p) { return "100% in " + fmtTime(p.t); }) : '<p class="note">Finish a 10+ question paper at 100% to set a time to beat.</p>') + "</div>"
       + '<div class="lx-cat"><h4>🔥 Longest daily streak</h4>' + (streak.days ? row3([{ tms: dayFromKey(streak.end).getTime(), subj: streak.days + " consecutive days with a paper", cls: "" }], function (p) { return streak.days + " days in a row"; }) : '<p class="note">Study on consecutive days to light the flame.</p>') + "</div>"
       + '<div class="lx-cat"><h4>📚 Most questions in a day</h4>' + (dayTot.length ? dayTot.slice(0, 3).map(function (d, i) { return '<div class="lx-row lx-pod"><span class="lx-med">' + medals(i) + "</span><span class='lx-flex1'><b>" + fmtNum(d.tot) + " questions</b><small>" + prettyDate(dayFromKey(d.k).getTime()) + " · " + d.n + " paper" + (d.n > 1 ? "s" : "") + "</small></span></div>"; }).join("") : '<p class="note">No papers yet.</p>') + "</div>"
@@ -369,7 +369,7 @@
     var avg = Math.round(papers.reduce(function (s, p) { return s + (+p.pct || 0); }, 0) / papers.length);
     var txt = "MY PERSONAL STUDY APP — progress snapshot\n"
       + "Papers: " + papers.length + " · Questions answered: " + fmtNum(sumQ) + "\n"
-      + "Average score: " + avg + "% · Best paper: " + Math.round(best.pct) + "% (" + esc(best.subj || "All subjects") + ")\n"
+      + "Average score: " + avg + "% · Best paper: " + Math.round(+best.pct||0) + "% (" + esc(best.subj || "All subjects") + ")\n"
       + "Updated: " + new Date().toLocaleString("en-GB") + " · © merebari web";
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {

@@ -149,7 +149,7 @@ def main():
         from zopfli.zlib import compress as zopfli_zlib
         z = zopfli_zlib(packed)
     except Exception:
-        z = zlib.compress(packed, 9)
+        raise SystemExit("zopfli is required for a deterministic bank build - pip install zopfli")
     b64 = base64.b64encode(z).decode("ascii")
 
     # Self-verify: the packed form must round-trip to the validated full data
@@ -185,15 +185,21 @@ def main():
     out = tpl.replace(m.group(0), "")
     assert '<script src="bank.js"></script>' in out, "bank.js script tag missing"
     with open("bank.js", "w", encoding="utf-8") as f:
-        f.write(bank_js)
+        f.write(bank_js.strip("\n"))
 
-    # revision notes ride as app JS (gzip-friendly) instead of inside the bank payload
+    # revision notes ride as app JS — but only if the template does not already
+    # carry its own (v8+ guarded builds supply notes elsewhere); never dupe data.
     assert "</body>" in out
-    rnotes_js = "const RNOTES = " + json.dumps(NOTES, ensure_ascii=False, separators=(",", ":")) + ";"
-    out = out.replace("</body>", '<script>/* REVISION NOTES DATA */' + rnotes_js + "</script>\n</body>", 1)
+    if "REVISION NOTES DATA" not in out and "RNOTES" not in out:
+        rnotes_js = "const RNOTES = " + json.dumps(NOTES, ensure_ascii=False, separators=(",", ":")) + ";"
+        out = out.replace("</body>", '<script>/* REVISION NOTES DATA */' + rnotes_js + "</script>\n</body>", 1)
 
     # make sure the app script really comes BEFORE the payload blob
     app_at = out.index("/* ================= CONFIG")
+    assert app_at < out.index('<script src="bank.js"></script>')
+    # cosmetic cleanup so an unchanged build reproduces the committed artifact
+    out = out.replace("/* ================= CONFIG */", "", 1)
+    out = out.replace('<script src="bank.js"></script>\n\n', '<script src="bank.js"></script>\n')
     data_at = out.index('<script src="bank.js"></script>')
     assert app_at < data_at, "app script must precede the bank asset"
 
@@ -205,7 +211,10 @@ def main():
         f.write(packed_text)
 
     # companion service worker (offline/install-free re-open)
-    sw_src = open(os.path.join(HERE, "sw.js"), encoding="utf-8").read()
+    sw_path = os.path.join(HERE, "sw.js")
+    if not os.path.exists(sw_path):
+        sw_path = os.path.join(HERE, "..", "sw.js")
+    sw_src = open(sw_path, encoding="utf-8").read()
     with open("sw.js", "w", encoding="utf-8") as f:
         f.write(sw_src)
 
