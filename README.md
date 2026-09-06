@@ -23,7 +23,7 @@ Copyright © merebari web · All rights reserved.
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** — cube, cuboid, sphere, cylinder, cone, pyramid, prism, **frustum & hemisphere** (9 shapes) — drag to rotate (double-click to reset), live dimension sliders, real-time volume & surface area with formulas, **anatomy facts** (faces · edges · vertices with the Euler check), auto-spin pause, **wireframe / orthographic / zoom views** (preferences persist per device), and **Solve a shape** — a shape-quiz mode with worked solutions that earns XP for correct answers and banks wrong ones into your mistake bank · links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🏠 Home + ✨ AI Coach | A floating **home dock** (🏠 Home · ✨ AI Coach · 📚 Practice · 🔬 Study Hall · 📊 HQ) that appears as you scroll, highlights where you are, and jumps you around the app · an **AI Coach** card at the top of the home screen suggests up to five things to do next — spaced-revision due deck, daily challenge, weakest subject & topic drills, mock exam, exam-countdown plan, daily goal, printable worksheet, parent report, first paper — each with a *why* ("because …") and a one-tap action; **↻ New ideas** rotates the deck while keeping the most urgent suggestion pinned. All suggestions are computed on-device from your own results and refresh after every paper and sign-in |
 | 👩‍🏫 The Professors' Standard | Built so teachers and professors recommend it worldwide: **🧠 metacognitive calibration** — after every study-mode answer students rate how sure they were (😕 🙂 😎) and Progress HQ compares confidence with actual accuracy per subject (well-calibrated / overconfident / underconfident verdicts); **🖨 printable exam papers** — subject + class + 10/20/30 questions, exam-style paper with the mark scheme on its own page, for class tests and homework; **👩‍🏫 For Educators hub** — research-based pedagogy (retrieval practice · spaced repetition · interleaving · feedback · mastery · calibration, with citations), classroom lesson plans, accessibility statement, privacy-on-device promise, printable educator guide and a one-tap recommend/share; **🔤 accessibility panel** — dyslexia-friendly readable text, high-contrast mode, text size, read-aloud, reduced motion in one place (persisted); richer CSV export (grade, time, mode, source) for your own analysis |
-| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **593.1 KB** (412.3 KB app shell + 180.8 KB bank asset) and **252.8 KiB gzipped combined** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
+| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **593.9 KB** (413.1 KB app shell + 180.9 KB bank asset) and **253.1 KiB gzipped combined** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
 | 📶 Install-free & offline (PWA) | A small service worker (HTTPS only, on-device only) caches the app after the first visit: it re-opens instantly and **keeps working with zero network** — flip on airplane mode after one visit and every feature, bank and progress store still runs. While online the network is tried first so every release reaches you on the next visit. No install, no account, no app store |
 | 📘 Revision notes (formula & fact cards) | For **all 78 topics across the 13 subjects** — exam-style formulas and facts teachers will recognise (quadratic formula, SOH-CAH-TOA, OIL RIG, Ohm's law, monohybrid 3:1…). Opened from the Report Card lab or **straight from your results screen** (one tap on a missed paper), and printable as a single card or a whole-subject pack for the class. Topic names match the app's own topic tracker, so notes always appear where a student just failed |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
@@ -177,7 +177,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 49. ✅ One-tap recommend/share for teachers
 50. ✅ AI Coach — up to five suggestions with reasons, refreshable
 51. ✅ Scholar League — on-device leaderboard with medals
-52. ⬜ Class-ready: print a full-term practice pack (papers + worksheets + notes)
+52. ✅ Class-ready: print a full-term practice pack — 12-week plan + 13 papers + 39 worksheets + subject notes, zipped per class (v7.2)
 
 ### F. Accessibility & comfort
 53. ✅ Accessibility panel — 5 settings: text size, readable, high contrast, read-aloud, reduced motion
@@ -211,12 +211,12 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 77. ✅ Object.freeze on the bank + verifyBankIntact checks
 78. ✅ Offline service worker — works with zero network after one visit
 79. ✅ PWA manifest + favicon
-80. ✅ 156-check automated test suite (was 127) — all green (v7.1)
-81. ✅ Gzip budget — 252.8 KiB combined (app + bank), held under the 260 KiB gate through v7.1
+80. ✅ 156-check automated test suite (was 127) — all green (v7.2)
+81. ✅ Gzip budget — 253.1 KiB combined (app + bank), held under the 260 KiB gate through v7.2
 82. ✅ Backup & restore — JSON export, merge or replace
 83. ✅ Backup & restore — sign-in sync between devices (Google)
 84. ✅ Desktop app build (Windows exe + zip)
-85. ⬜ Batch-edit the bank safely — regenerate a subject without touching its neighbours
+85. ✅ Batch-edit the bank safely — `quiz/bank_edit.py` patches questions by stem and verifies every unedited subject stays byte-identical (v7.2)
 86. ⬜ Brotli-aware check — confirm the deploy host serves the smaller encoding
 
 ### I. Publishing & reach
@@ -226,7 +226,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 90. ✅ Study content lock — interaction locks documented with honest limits
 91. ✅ This roadmap, maintained with each wave
 92. ⬜ Search Console submission + index monitoring
-93. ⬜ Lighthouse CI run in the repo (performance, a11y, PWA)
+93. ✅ Lighthouse CI — GitHub Actions audit of the live site with quality floors + report artifact (v7.2)
 94. ⬜ A short “how to study with this app” video link for students
 
 ### J. The next wave (open)
@@ -235,7 +235,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 97. ⬜ Two-player “quiz me” mode — pass the device, fastest hand wins
 98. ✅ Question difficulty tags and a “tough papers only” toggle
 99. ⬜ Localised option — a second language for stems and explanations
-100. ⬜ Suggest-a-question — students submit questions for the next release
+100. ✅ Suggest-a-question — footer link opens a prefilled GitHub issue; template + label ready (v7.2)
 
 **_How to read the roadmap:_** ✅ items are already in the shipped app (the roadmap doubles as the feature index). ⬜ items are queued exactly as labelled — nothing on this list is fictional, and every future wave keeps the suite green and the bank intact.
 
@@ -243,6 +243,20 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 ---
 
 
+## 🧰 v7.2 — The Classroom Wave
+
+**Four roadmap items shipped in one release — every one of them zero-cost to the app's wire budget (the audit suite stays at 156 checks, all green).**
+
+| Roadmap | What shipped |
+|---|---|
+| **#52 Practice pack** | `quiz/make_pack.py` builds a printable **full-term pack per class** — 12-week revision plan, 13 subject papers (100 questions + answer key), 39 topic worksheets, subject formula/fact notes — and zips it: [`packs/SS1-full-term-practice-pack.zip`](packs/SS1-full-term-practice-pack.zip), SS2, SS3 (each 28 files, ~1.4 MB). |
+| **#85 Safe bank edit** | `quiz/bank_edit.py` + a `quiz/edits.json` hook in the build: patch questions by exact stem, rebuild, and **every unedited subject is verified byte-identical** against `quiz/bank_manifest.json`. Two real content bugs fixed this wave (SS2/SS3 Maths “NOT an algebra” explanations). |
+| **#93 Lighthouse CI** | `.github/workflows/lighthouse.yml` audits the live Pages URL on every relevant push and asserts floors (performance 55, accessibility 95, best-practices 90, SEO 90, PWA 85) with the report uploaded as an artifact. |
+| **#100 Suggest a question** | Footer **✍️ Suggest a question** button → prefilled GitHub issue (label `question` + template) so students can propose items; verified before shipping. |
+
+**Still open (needs you):** #92 Search Console submission (needs your Google login), #94 study video link (needs your video), #97 two-player mode (does not fit the 260 KiB gate — funding cuts required), #99 localisation (a content project: 3,900 stems), #86 brotli (GitHub Pages does not serve brotli).
+
+---
 ## 🔧 v7.1 — The Bug-Fix Wave
 
 **A full adversarial audit (`quiz/_bughunt.js`: corrupted storage, junk-typed data, missing browser APIs, empty deques, injection attempts) found 21 real robustness bugs — all fixed, all regression-checked.**

@@ -1,0 +1,34 @@
+name: Lighthouse CI
+# #93 — run Lighthouse against the live GitHub Pages site after every deploy-relevant push,
+# assert the quality floors, and keep the report as a build artifact.
+on:
+  push:
+    branches: [main]
+    paths: ["index.html", "bank.js", "sw.js", "quiz/template.html", ".github/workflows/lighthouse.yml"]
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit (Live Pages URL)
+        run: |
+          npm install -g @lhci/cli@0.14.x
+          lhci autorun \
+            --collect.url=https://merebari7-web.github.io/my-personal-study-app/ \
+            --collect.numberOfRuns=2 \
+            --collect.settings.chromeFlags="--no-sandbox --headless" \
+            --assert.assertions.performance:min=55 \
+            --assert.assertions.accessibility:min=95 \
+            --assert.assertions.best-practices:min=90 \
+            --assert.assertions.seo:min=90 \
+            --assert.assertions.pwa-installable:min=85 \
+            --upload.target=filesystem \
+            --upload.outputDir=lighthouse-reports
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: lighthouse-reports
+          if-no-files-found: error
