@@ -50,6 +50,8 @@ Copyright © merebari web · All rights reserved.
 | 🔒 Access gate | Everything is locked behind a study account — **no anonymous access**. Sign in with Google (hosted version) or create a free study account (name + optional email; works fully offline). Profiles & scores stay on the device |
 | 🖼 Certificate | Gilded certificate PNG export with serial number & signature |
 | 🔒 Integrity | SHA-256 hash check of the question bank at load time |
+| 🧘 Focus Lab | **v9.0** — a Pomodoro-style study timer in the lazy labs module: pick a subject + 15/25/45-minute focus block, run focus/break cycles, keep a small floating timer if you close the drawer, and turn any session into a real drill paper. The day's sessions and focus minutes are tracked on-device |
+| 📱 Responsive-first pass | **v9.0** — fluid base type, tablet breakpoint, a scrollable app bar, a full-width bottom home dock, single/two-column grids for labs, dashboards and analytics, safe-area-aware modals and bottom sheets, compact landscape handling and bigger touch targets |
 | ♿ Accessibility | Text-size control, reduced motion, read-aloud (browser speech), keyboard shortcuts (`?` for help) |
 
 Two tiny boot files (the app shell + its question bank) are cached by the service worker after the first visit, and the v8.0 Exam-Room Labs module joins the cache on first use — perfect for school computers, tablets and phones with no internet.
@@ -354,6 +356,20 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 
 **Budget discipline:** the wave landed at **259.9 KiB gzipped** (from 257.2) — still under the 260 KiB gate, with the test suite grown to **139 checks, all green** (the bank payload is untouched; every new feature was written tight, and the manual goal picker was replaced by a smarter automatic one).
 
+
+---
+
+## 🤳 v9.0 — The Every-Screen Wave
+
+**A full responsive/mobile-first pass across the whole app plus a new advanced study tool — shipped in the lazy labs module so the boot-critical page stays lean.**
+
+| New | What it does |
+|---|---|
+| 🧘 **Focus Lab** | A **Pomodoro-style study timer** in `labs.js` (lazy-loaded, offline-cached). Pick a subject and a 15/25/45-minute focus block, choose a 5/10-minute break, then start a focus/break cycle. The timer keeps running in a small **floating pill** if you close the drawer — tap it to come back. Every completed focus block is stored on-device with the subject and length, and a **today** card shows sessions, focus minutes and your day streak. A **▶ Drill 10** button turns the active subject into a real paper (answers feed your normal records, XP, mastery map and mistake bank). |
+| 📱 **Responsive-first pass** | Fluid base typography (`clamp`) so the app scales cleanly from small phones to large desktops; a **wide-screen** layout (1500px+) for big monitors; a **tablet** breakpoint that keeps the app bar readable; a **scrollable top nav** on narrow screens so 13 subjects, HUD and account stay reachable; a **full-width bottom home dock** on phones with safe-area insets; two-column mobile grids for labs, dashboard tiles, study-hall cards and analytics; compact quiz option rows, review cards and print-friendly modals; and **landscape/short-screen** handling so the hero doesn't swallow the page. Added a small-screen refinement for the labs overlay too (focus ring, chips, action buttons). |
+| 🔄 **Cache refresh** | Service-worker version bumped (`nssc-v…-v9`) so existing installs pick up the new build on their next online visit; the bank payload is untouched. |
+
+**Budget:** the responsive layer lives in the app shell, the new Focus Lab lives in the lazy `labs.js` module (≈16 KiB gzipped) and is runtime-cached by the service worker — so first paint and the boot-critical 260 KiB wire gate still hold.
 
 ---
 

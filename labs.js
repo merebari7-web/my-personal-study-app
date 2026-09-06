@@ -189,6 +189,27 @@
     } catch (e) { toast("Could not open the paper", "⚠️"); }
   }
 
+  /* Whole-subject drill (same paper screen as the app's own papers). */
+  function drillSubject(subject, n) {
+    try {
+      if (!classesReady()) return toast("The question bank is still loading — wait a moment", "⏳");
+      if (typeof state === "undefined") return;
+      var clsIdx = state.cls || 0;
+      var qs = pickFrom(clsIdx, subject || "All subjects", Math.max(5, Math.min(20, n || 10)));
+      if (!qs.length) return toast("No practice questions for that subject yet", "🗂");
+      state.subject = subject || null;
+      state.count = qs.length;
+      state.quiz = qs;
+      state.idx = 0; state.answers = []; state.flags = []; state.qTimes = [];
+      state.daily = false; state.reviewing = false; state.mock = false;
+      state.mode = "study"; submitting = false;
+      state.started = Date.now(); state.deadline = 0;
+      $("examNote").classList.add("hidden"); $("qTimer").classList.add("hidden");
+      setCard("quiz"); renderQ(); stopTimer(); saveSession();
+      toast("Drilling " + (subject || "all subjects") + " — " + qs.length + " questions", "📚");
+    } catch (e) { toast("Could not open the paper", "⚠️"); }
+  }
+
   /* ---------- overlay chrome ---------- */
   function overlayEl() {
     var o = $("lxOv");
@@ -869,6 +890,213 @@
   }
 
   /* ============================================================
+     🧘 6 · FOCUS LAB — pomodoro study timer + today's focus
+     Starts a focus/break cycle, keeps a small floating timer if you
+     close the drawer, and turns a completed session into a drill.
+     ============================================================ */
+  var FOC = { len: 25, rest: 5, subj: "All subjects", phase: "idle", left: 25 * 60, running: false, timer: null, endAt: 0, done: false };
+
+  function focusList() {
+    try { var a = store.get("nssc_focus", []); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+  }
+  function focusSave(rec) {
+    try { var a = focusList(); a.push(rec); store.set("nssc_focus", a.slice(-1200)); focusPaintStats(); } catch (e) {}
+  }
+  function focusToday() { var k = dayKey(Date.now()); return focusList().filter(function (s) { return dayKey(s.t) === k; }); }
+  function focusStreak() {
+    var days = {}, k = todayMid(), c = 0;
+    focusList().forEach(function (s) { days[dayKey(s.t)] = 1; });
+    while (days[dayKey(k)]) { c++; k -= 86400000; }
+    return c;
+  }
+  function focusMins() { return focusToday().reduce(function (s, x) { return s + Math.round(+x.len || 0); }, 0); }
+  function focusLabel() {
+    return FOC.phase === "focus" ? "Focus session" : FOC.phase === "rest" ? "Break time"
+      : FOC.phase === "pause" ? "Paused" : "Ready to focus";
+  }
+  function focusTotal() { return FOC.phase === "rest" ? FOC.rest * 60 : FOC.len * 60; }
+  function focusPaintStats() {
+    var e = $("lxfocusStats");
+    if (!e) return;
+    var t = focusToday(), mins = focusMins(), str = focusStreak();
+    e.innerHTML = '<div class="lx-stats lx-stats-focus">'
+      + "<div><b>" + t.length + "</b><small>Sessions today</small></div>"
+      + "<div><b>" + fmtNum(mins) + "</b><small>Focus minutes</small></div>"
+      + "<div><b>" + str + "</b><small>Day streak</small></div></div>";
+  }
+  function focusPill() {
+    var p = $("lxfocusPill");
+    if (p) return p;
+    p = document.createElement("button");
+    p.type = "button";
+    p.id = "lxfocusPill";
+    p.className = "lxfocus-pill";
+    p.setAttribute("aria-label", "Focus timer");
+    p.innerHTML = '<i id="lxfocusPillPhase">Focus</i><b id="lxfocusPillTime">' + fmtTime(FOC.left) + "</b>";
+    p.addEventListener("click", function () { LX.go("focus"); });
+    document.body.appendChild(p);
+    return p;
+  }
+  function focusPillPaint() {
+    var pill = $("lxfocusPill");
+    if (!pill) return;
+    var live = FOC.running || FOC.phase === "pause" || FOC.phase === "rest";
+    if (live && !$("lxOv")) {
+      pill.classList.add("show");
+      var t = $("lxfocusPillTime"), st = $("lxfocusPillPhase");
+      if (t) t.textContent = fmtTime(FOC.left);
+      if (st) st.textContent = FOC.phase === "rest" ? "Break" : "Focus";
+    } else {
+      pill.classList.remove("show");
+    }
+  }
+  function focusPaintActions() {
+    var start = $("lxFocusStart"), pause = $("lxFocusPause"), skip = $("lxFocusSkip"), reset = $("lxFocusReset");
+    if (start) {
+      start.classList.toggle("hidden", FOC.phase === "focus" || FOC.phase === "rest");
+      start.textContent = FOC.phase === "pause" ? "▶ Resume" : "▶ Start focus";
+    }
+    if (pause) pause.classList.toggle("hidden", !FOC.running);
+    if (skip) skip.classList.toggle("hidden", FOC.phase === "idle");
+    if (reset) reset.classList.toggle("hidden", FOC.phase === "idle");
+  }
+  function focusPaint() {
+    var t = $("lxfocusTime"), ph = $("lxfocusPhase"), bar = $("lxfocusBar");
+    if (t) t.textContent = fmtTime(FOC.left);
+    if (ph) ph.textContent = focusLabel();
+    if (bar) {
+      var total = focusTotal(), pct = total > 0 ? (total - FOC.left) / total : 0;
+      var pc = Math.max(0, Math.min(100, pct * 100));
+      bar.style.width = pc + "%";
+      bar.setAttribute("aria-valuenow", String(Math.round(pc)));
+    }
+    focusPaintActions();
+    focusPillPaint();
+  }
+  function focusStopTimer() { if (FOC.timer) { clearInterval(FOC.timer); FOC.timer = null; } }
+  function focusTick() {
+    if (!FOC.running) return;
+    var left = Math.max(0, Math.round((FOC.endAt - Date.now()) / 1000));
+    FOC.left = left;
+    focusPaint();
+    if (left <= 0) focusComplete();
+  }
+  function focusStart() {
+    if (FOC.phase === "rest") return;
+    if (FOC.phase === "idle" || FOC.phase === "pause") {
+      if (FOC.phase === "pause") {
+        FOC.endAt = Date.now() + FOC.left * 1000;
+      } else {
+        FOC.left = FOC.len * 60;
+        FOC.endAt = Date.now() + FOC.left * 1000;
+      }
+      FOC.phase = "focus"; FOC.running = true;
+      focusStopTimer();
+      FOC.timer = setInterval(focusTick, 250);
+      focusPaint();
+      toast("Focus session started — " + FOC.len + " min of solid study", "🧘");
+    }
+  }
+  function focusPause() {
+    if (!FOC.running) return;
+    FOC.left = Math.max(0, Math.round((FOC.endAt - Date.now()) / 1000));
+    FOC.running = false; FOC.phase = "pause";
+    focusStopTimer();
+    focusPaint();
+    toast("Focus paused", "⏸");
+  }
+  function focusReset() {
+    focusStopTimer();
+    FOC.running = false; FOC.phase = "idle"; FOC.left = FOC.len * 60; FOC.done = false;
+    focusPaint();
+    toast("Focus timer reset", "↺");
+  }
+  function focusComplete() {
+    focusStopTimer();
+    FOC.running = false; FOC.left = 0;
+    if (FOC.phase === "focus") {
+      focusSave({ t: Date.now(), len: FOC.len, subj: FOC.subj, type: "focus" });
+      FOC.phase = "rest"; FOC.left = FOC.rest * 60; FOC.done = true;
+      toast("Focus session " + FOC.len + " min complete — take a short break 🎉", "🧘");
+      try { if (window.speakText) speakText("Great work. Focus session complete. Time for a short break."); } catch (e) {}
+    } else if (FOC.phase === "rest") {
+      FOC.phase = "idle"; FOC.left = FOC.len * 60;
+      toast("Break over — ready for the next session", "🧘");
+    }
+    focusPaint();
+  }
+  function focusSkip() {
+    if (FOC.phase === "idle") return;
+    focusStopTimer(); FOC.running = false;
+    if (FOC.phase === "focus") {
+      FOC.phase = "rest"; FOC.left = FOC.rest * 60; FOC.done = true;
+      toast("Focus skipped — taking a short break", "⏭");
+    } else {
+      FOC.phase = "idle"; FOC.left = FOC.len * 60; FOC.done = false;
+      toast("Break skipped — back to ready", "⏭");
+    }
+    focusPaint();
+  }
+  function focusDrillSubj(n) {
+    LX.close();
+    try { drillSubject(FOC.subj === "All subjects" ? null : FOC.subj, n || 10); }
+    catch (e) { toast("Could not open the drill", "⚠️"); }
+  }
+  function focusSetup(field, val) {
+    if (FOC.phase !== "idle") return toast("Stop or reset the timer before changing settings", "⏸");
+    if (field === "subj") FOC.subj = val;
+    if (field === "len") { FOC.len = +val || 25; FOC.left = FOC.len * 60; }
+    if (field === "rest") FOC.rest = +val || 5;
+    LX_focus();
+  }
+  function LX_focus() {
+    hookEsc();
+    focusPill();
+    var subs = subjList();
+    var lens = [15, 25, 45], rests = [5, 10];
+    var dis = FOC.phase !== "idle" ? " lx-dis" : "";
+    function escOn(s) { return esc(s).replace(/'/g, "\\'"); }
+    var setup =
+      '<div class="lx-focus-setup' + dis + '">'
+      + '<div class="lx-field"><label>Subject to focus on</label><div class="lx-chips lx-chips-scroll">'
+      + subs.map(function (s) { return chip(s, "onclick=\"LX.focusSet('subj','" + escOn(s) + "')\"", FOC.subj === s); }).join("")
+      + '</div></div>'
+      + '<div class="lx-field"><label>Session length</label><div class="lx-chips">'
+      + lens.map(function (m) { return chip(m + " min", "onclick=\"LX.focusSet('len'," + m + ")\"", FOC.len === m); }).join("")
+      + '</div></div>'
+      + '<div class="lx-field"><label>Break length</label><div class="lx-chips">'
+      + rests.map(function (m) { return chip(m + " min", "onclick=\"LX.focusSet('rest'," + m + ")\"", FOC.rest === m); }).join("")
+      + "</div></div>"
+      + "</div>";
+    var body =
+      '<div class="lx-focus">'
+      + setup
+      + '<div class="lx-focus-clock">'
+      + '<div class="lx-focus-ring"><b id="lxfocusTime">' + fmtTime(FOC.left) + "</b>"
+      + '<small id="lxfocusPhase">' + focusLabel() + "</small></div>"
+      + '<div class="lx-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><div id="lxfocusBar" style="width:0%"></div></div>'
+      + "</div>"
+      + '<div class="lx-focus-actions">'
+      + '<button type="button" class="btn btn-primary" id="lxFocusStart" onclick="LX.focusStart()">▶ Start focus</button>'
+      + '<button type="button" class="btn btn-ghost" id="lxFocusPause" onclick="LX.focusPause()">⏸ Pause</button>'
+      + '<button type="button" class="btn btn-ghost" id="lxFocusSkip" onclick="LX.focusSkip()">⏭ Skip</button>'
+      + '<button type="button" class="btn btn-ghost" id="lxFocusReset" onclick="LX.focusReset()">↺ Reset</button>'
+      + "</div>"
+      + '<div id="lxfocusStats"></div>'
+      + '<div class="lx-focus-how"><b>How it works.</b> Pick a subject and length, start the timer, then study hard for the full focus block. '
+      + "When it ends you get a short break, and the day's sessions are counted on this device only. "
+      + "Close the drawer during a session — a small floating timer keeps counting; tap it to come back.</div>"
+      + "</div>";
+    var foot =
+      '<div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap">'
+      + '<button type="button" class="btn btn-gold" onclick="LX.focusDrill(10)">▶ Drill 10 in ' + esc(FOC.subj) + "</button>"
+      + '<button type="button" class="btn btn-ghost" onclick="LX.close()">Close</button></div>';
+    shell("🧘 Focus Lab", body, foot);
+    focusPaintStats();
+    focusPaint();
+  }
+
+  /* ============================================================
      dispatcher
      ============================================================ */
   function go(kind, arg) {
@@ -878,6 +1106,7 @@
         case "planner": return LX_planner();
         case "blitz": return LX_blitz();
         case "quizme": return LX_quizme();
+        case "focus": return LX_focus();
         case "formulas": return LX_formulas(arg);
         case "close": return LX.close();
         case "practice":
@@ -908,6 +1137,13 @@
   LX.planner = function () { go("planner"); };
   LX.blitz = function () { go("blitz"); };
   LX.quizme = function () { go("quizme"); };
+  LX.focus = function () { go("focus"); };
+  LX.focusStart = focusStart;
+  LX.focusPause = focusPause;
+  LX.focusSkip = focusSkip;
+  LX.focusReset = focusReset;
+  LX.focusSet = focusSetup;
+  LX.focusDrill = focusDrillSubj;
   LX.formulas = function (s) { go("formulas", s); };
   LX.recordsCopy = LX_recordsCopy;
   LX.planSub = LX_planSub; LX.planBuild = LX_planBuild; LX.planView = LX_planView;
@@ -946,7 +1182,14 @@
       ".lx-grade,.lx-fb{margin-top:14px;background:var(--panel);border-radius:14px;padding:14px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}.lx-grade b{width:100%;font-size:.95rem}.lx-fb{border-left:4px solid var(--gold)}.lx-fb.ok{border-left-color:var(--green-2,#1f8a68)}.lx-fb.no{border-left-color:var(--red)}.lx-fb p{width:100%;margin:0;font-size:.85rem;color:var(--ink-2);line-height:1.6}.lx-explain{width:100%;margin:2px 0 0;font-size:.87rem;color:var(--ink-2);line-height:1.6}" +
       ".lx-finish{text-align:center;padding:14px 4px}.lx-trophy{font-size:3.4rem;margin-bottom:6px}.lx-finish h3{margin:4px 0 16px}.lx-finish .lx-stats{grid-template-columns:repeat(auto-fit,minmax(80px,1fr))}" +
       ".lx-fcards{display:grid;gap:12px;margin-top:8px}.lx-fcard{border:1px solid var(--card-border);background:var(--card);border-radius:14px;padding:12px 14px}.lx-fcard p{margin:8px 0 0;font-size:.9rem;line-height:1.65;color:var(--ink-2)}.lx-fhead{display:flex;align-items:center;gap:8px;justify-content:space-between}.lx-fhead b{font-size:.95rem}" +
-      ".lx-score.qm{justify-content:space-between;gap:6px;padding:6px 14px}.lx-score.qm b{font-size:.9rem}.lx-score.qm i{font-style:normal;font-weight:900;font-size:1.15rem;color:var(--green-d);padding:0 4px}.lx-qm-detail{margin-top:8px;color:var(--mut);font-size:.78rem}.lx-qm-detail small{font-size:.76rem}";
+      ".lx-score.qm{justify-content:space-between;gap:6px;padding:6px 14px}.lx-score.qm b{font-size:.9rem}.lx-score.qm i{font-style:normal;font-weight:900;font-size:1.15rem;color:var(--green-d);padding:0 4px}.lx-qm-detail{margin-top:8px;color:var(--mut);font-size:.78rem}.lx-qm-detail small{font-size:.76rem}" +
+      /* ---- responsive + Focus Lab scoped styles ---- */
+      ".lx-cats{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}.lx-row{flex-wrap:wrap}.lx-chips-scroll{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:thin}.lx-chips-scroll .lx-chip{white-space:nowrap;flex:none}" +
+      ".lxfocus-pill{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translate(-50%,18px);z-index:71;display:flex;align-items:center;gap:8px;background:var(--card-solid);border:1px solid var(--card-border);border-radius:999px;padding:7px 14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;font-family:inherit;cursor:pointer}.lxfocus-pill.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}.lxfocus-pill i{font-style:normal;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}.lxfocus-pill b{font-size:.95rem;font-variant-numeric:tabular-nums;color:var(--green-d)}" +
+      ".lx-focus-setup{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}.lx-focus-setup .lx-chips{margin:4px 0 0}.lx-focus-setup .lx-chips .lx-chip{min-height:38px}.lx-focus-setup.lx-dis{opacity:.55;pointer-events:none;filter:grayscale(.4)}" +
+      ".lx-focus-clock{text-align:center;padding:16px 6px 4px}.lx-focus-ring{width:150px;height:150px;margin:0 auto;border-radius:50%;border:2px solid var(--gold-d,#8a5f24);background:radial-gradient(circle at 50% 40%,rgba(201,162,39,.18),transparent 62%);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 0 10px var(--bar-track),0 18px 34px -18px rgba(0,0,0,.35)}.lx-focus-ring b{font-size:2.1rem;font-weight:900;color:var(--green-d);font-variant-numeric:tabular-nums;line-height:1}.lx-focus-ring small{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin-top:6px}" +
+      ".lx-focus-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px 0 8px}.lx-focus-actions .btn{min-width:104px}.lx-focus .lx-bar{max-width:320px;margin:16px auto 0}.lx-focus-how{font-size:.8rem;color:var(--ink-2);line-height:1.6;background:var(--panel);border:1px dashed var(--card-border);border-radius:12px;padding:11px 13px;margin-top:12px}.lx-focus-how b{color:var(--ink)}.lx-stats-focus{margin:12px 0 0;grid-template-columns:repeat(3,1fr)}" +
+      "@media(max-width:560px){.lx-focus-ring{width:126px;height:126px}.lx-focus-ring b{font-size:1.72rem}.lxfocus-pill{bottom:calc(70px + env(safe-area-inset-bottom))}.lx-focus-actions .btn{min-width:88px;padding:11px 12px}}";
     document.head.appendChild(css);
   }
 })();
