@@ -1,7 +1,7 @@
 # 🎓 MY PERSONAL STUDY APP
 
 **A complete offline study app for the Nigerian Senior Secondary Certificate (SS1–SS3).**
-13 subjects · 3,900 questions with full explanations · two files (index.html + bank.js) — no install, no internet, no dependencies.
+13 subjects · 3,900 questions with full explanations · three tiny files (index.html + bank.js + on-demand labs.js) — no install, no internet, no dependencies.
 
 Copyright © merebari web · All rights reserved.
 
@@ -23,8 +23,9 @@ Copyright © merebari web · All rights reserved.
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** — cube, cuboid, sphere, cylinder, cone, pyramid, prism, **frustum & hemisphere** (9 shapes) — drag to rotate (double-click to reset), live dimension sliders, real-time volume & surface area with formulas, **anatomy facts** (faces · edges · vertices with the Euler check), auto-spin pause, **wireframe / orthographic / zoom views** (preferences persist per device), and **Solve a shape** — a shape-quiz mode with worked solutions that earns XP for correct answers and banks wrong ones into your mistake bank · links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🏠 Home + ✨ AI Coach | A floating **home dock** (🏠 Home · ✨ AI Coach · 📚 Practice · 🔬 Study Hall · 📊 HQ) that appears as you scroll, highlights where you are, and jumps you around the app · an **AI Coach** card at the top of the home screen suggests up to five things to do next — spaced-revision due deck, daily challenge, weakest subject & topic drills, mock exam, exam-countdown plan, daily goal, printable worksheet, parent report, first paper — each with a *why* ("because …") and a one-tap action; **↻ New ideas** rotates the deck while keeping the most urgent suggestion pinned. All suggestions are computed on-device from your own results and refresh after every paper and sign-in |
 | 👩‍🏫 The Professors' Standard | Built so teachers and professors recommend it worldwide: **🧠 metacognitive calibration** — after every study-mode answer students rate how sure they were (😕 🙂 😎) and Progress HQ compares confidence with actual accuracy per subject (well-calibrated / overconfident / underconfident verdicts); **🖨 printable exam papers** — subject + class + 10/20/30 questions, exam-style paper with the mark scheme on its own page, for class tests and homework; **👩‍🏫 For Educators hub** — research-based pedagogy (retrieval practice · spaced repetition · interleaving · feedback · mastery · calibration, with citations), classroom lesson plans, accessibility statement, privacy-on-device promise, printable educator guide and a one-tap recommend/share; **🔤 accessibility panel** — dyslexia-friendly readable text, high-contrast mode, text size, read-aloud, reduced motion in one place (persisted); richer CSV export (grade, time, mode, source) for your own analysis |
-| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **593.9 KB** (413.1 KB app shell + 180.9 KB bank asset) and **253.1 KiB gzipped combined** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
+| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **≈595 KB** (≈414 KB app shell + ≈181 KB bank asset) and **≈255 KiB gzipped boot wire (app + bank)** — under the 260 KiB wire budget — so the page loads fast even on school and mobile networks in low-bandwidth regions. The v8.0 Exam-Room Labs ship in a **lazy sibling module** (`labs.js`, ≈16 KiB gzipped) that is fetched on first use and cached by the service worker, so it never blocks first paint and never competes with the boot gate. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
 | 📶 Install-free & offline (PWA) | A small service worker (HTTPS only, on-device only) caches the app after the first visit: it re-opens instantly and **keeps working with zero network** — flip on airplane mode after one visit and every feature, bank and progress store still runs. While online the network is tried first so every release reaches you on the next visit. No install, no account, no app store |
+| ✨ Exam-Room Labs | **v8.0** — four new labs + a mid-paper tool, shipped as a lazy, service-worker-cached module so the boot file stays lean: **🏆 Records Hall** (highest score, fastest perfect paper, longest streak, biggest day, best 7-day stretch — with medals and a copyable progress snapshot) · **🗓 Exam Planner** (a day-by-day revision plan to any exam date: pick class + subjects, every syllabus topic is spaced over the days left with drill links and tick-off progress) · **🔁 Recall Blitz** (retrieval practice — the question appears before the options; honest self-marking; misses are banked straight into your spaced-revision mistakes) · **🤝 Quiz Me** (roadmap #97 — two players pass the device, alternating questions, streaks, winner's trophy) · **📘 Formula drawer** (the paper's subject formula & fact card, opened mid-paper without pausing the timer) |
 | 📘 Revision notes (formula & fact cards) | For **all 78 topics across the 13 subjects** — exam-style formulas and facts teachers will recognise (quadratic formula, SOH-CAH-TOA, OIL RIG, Ohm's law, monohybrid 3:1…). Opened from the Report Card lab or **straight from your results screen** (one tap on a missed paper), and printable as a single card or a whole-subject pack for the class. Topic names match the app's own topic tracker, so notes always appear where a student just failed |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
 | 🎓 Mock Hall | Full timed **mock examinations** — 25/50/100 questions, exam pace or 30/60/90 min, auto-submit at zero, **integrity monitoring** (tab-switches recorded on the report), review screen with jump-to-any-question grid before submitting |
@@ -51,7 +52,7 @@ Copyright © merebari web · All rights reserved.
 | 🔒 Integrity | SHA-256 hash check of the question bank at load time |
 | ♿ Accessibility | Text-size control, reduced motion, read-aloud (browser speech), keyboard shortcuts (`?` for help) |
 
-Two tiny files (the app shell + its question bank), cached by the service worker after the first visit — perfect for school computers, tablets and phones with no internet.
+Two tiny boot files (the app shell + its question bank) are cached by the service worker after the first visit, and the v8.0 Exam-Room Labs module joins the cache on first use — perfect for school computers, tablets and phones with no internet.
 
 ---
 
@@ -115,7 +116,7 @@ The same build is packaged as a Windows desktop app (`MyPersonalStudyApp.exe` vi
 
 ## 🗺 Upgrade roadmap — 100 upgrades
 
-The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipped and tested in the app; ⬜ items are the honest backlog. The plan runs in waves — each wave ships a batch, and the tests keep guarding the 260 KiB wire budget.
+The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipped and tested in the app; ⬜ items are the honest backlog. The plan runs in waves — each wave ships a batch, and the tests keep guarding the 260 KiB wire budget. From v8.0 on, wave features that cannot fit inside the boot-critical budget ship as a **lazy, cached sibling module** (`labs.js`) — first paint and the boot gate stay exactly where they were.
 
 ### A. The quiz core
 1. ✅ Timed examination mode (36 s per question, auto-submit)
@@ -232,7 +233,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 ### J. The next wave (open)
 95. ✅ Sound design — correct/wrong/badge/coin tones via WebAudio, off by default (verified in v7.0)
 96. ✅ Exam countdown card — name + date, gold banner counts the days (verified in v7.0)
-97. ⬜ Two-player “quiz me” mode — pass the device, fastest hand wins
+97. ✅ Two-player “quiz me” mode — pass the device, alternating questions, streaks & a winner’s trophy (v8.0, shipped in the lazy `labs.js` module so it never touches the boot gate)
 98. ✅ Question difficulty tags and a “tough papers only” toggle
 99. ⬜ Localised option — a second language for stems and explanations
 100. ✅ Suggest-a-question — footer link opens a prefilled GitHub issue; template + label ready (v7.2)
@@ -243,6 +244,24 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 ---
 
 
+---
+## ✨ v8.0 — The Exam-Room Wave
+
+**Roadmap #97 ships, and the app grows four new labs plus a mid-paper tool — without a single byte entering the boot-critical file's budget.** Every new feature lives in `labs.js`, a deferred sibling module (the same pattern that split `bank.js` out in v7.0): the page fetches it on first use, the service worker caches it, and it then works fully offline. Boot wire (app + bank) stays ≈255 KiB gzipped — under the 260 KiB gate.
+
+| New | What it does |
+|---|---|
+| 🏆 **Records Hall** | Your personal bests, computed live from your own stored papers: highest score, **fastest perfect paper**, longest daily streak, most questions in a day and best 7-day stretch — top three with 🥇🥈🥉 and dates, plus a **Copy progress snapshot** button for WhatsApp study groups and parents. The hall refreshes itself after every paper. |
+| 🗓 **Exam Planner** | Give an examination a name and a date (e.g. “WAEC SSCE — Mathematics”), pick your class and subjects, and the planner spaces **every chosen syllabus topic** across the days left, interleaving subjects day by day. Each task shows the topic’s formula/fact snippet, a **▶ Drill 10** button that opens the real paper screen (answers feed your normal records, XP, mastery map and mistakes), tick-off checkboxes with a live progress bar, a final-mock shortcut, a copyable plain-text plan, and honest warnings when the exam is too close to cover everything comfortably. |
+| 🔁 **Recall Blitz** | Retrieval-practice sprint: the question appears **before** the options, you say your answer out loud, then reveal and mark yourself — **Got it / Almost / Missed**. Misses are banked into your spaced-revision mistakes automatically (same dedupe and cap rules as the app’s own mistake store, so the Mistake Master counter updates at once). Earns XP, ends with a recall score and a list of what is coming back to you. |
+| 🤝 **Quiz Me** | Roadmap **#97** — two players, one device: names, class, subject and rounds; questions alternate, streaks build, and the higher score takes the 🏆 (draws share the honours). Winner earns XP and 🎖 merits on the device profile, but the game **never writes to your paper records** — progress statistics stay honest. |
+| 📘 **Formula drawer** | A button in the paper’s action row opens the current subject’s formula & fact card (SOH-CAH-TOA, OIL RIG, V = IR, the quadratic formula…) **without pausing the timer or leaving the question** — with links to the full card and a printable subject pack. |
+
+**Engineering:** the module reads the app’s own globals (`CLASSES`, `RNOTES`, the `nssc_*` store) and mirrors the app’s existing patterns (mistake dedupe, `state`-driven paper launch, XP/coins awards, `esc()` hygiene, namespaced `LX.*` handlers so nothing collides with the app). It injects one scoped stylesheet that inherits the maison palette and both themes. `sw.js` bumps to `nssc-v20250906`; `labs.js` is deliberately **not** in the service worker’s install list (an offline first visit must never fail to install) — the network-first fetch handler caches it on the first online use, after which the labs work offline like everything else.
+
+**Verified, not claimed:** the whole app (real `index.html` + real `bank.js` + `labs.js`) boots in a DOM test harness and every lab is driven end-to-end — sign-in, seeded papers, planner build/tick/drill/mock, blitz reveal/grade/banking, the two-player duel, the formula card — **41 checks, all green** (`jsdom`, no real browser needed).
+
+---
 ## 🧰 v7.2 — The Classroom Wave
 
 **Four roadmap items shipped in one release — every one of them zero-cost to the app's wire budget (the audit suite stays at 156 checks, all green).**
@@ -254,7 +273,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 | **#93 Lighthouse CI** | `.github/workflows/lighthouse.yml` audits the live Pages URL on every relevant push and asserts floors (performance 55, accessibility 95, best-practices 90, SEO 90, PWA 85) with the report uploaded as an artifact. |
 | **#100 Suggest a question** | Footer **✍️ Suggest a question** button → prefilled GitHub issue (label `question` + template) so students can propose items; verified before shipping. |
 
-**Still open (needs you):** #92 Search Console submission (needs your Google login), #94 study video link (needs your video), #97 two-player mode (does not fit the 260 KiB gate — funding cuts required), #99 localisation (a content project: 3,900 stems), #86 brotli (GitHub Pages does not serve brotli).
+**Still open (needs you):** #92 Search Console submission (needs your Google login), #94 study video link (needs your video), #99 localisation (a content project: 3,900 stems), #86 brotli (GitHub Pages does not serve brotli). (#97 shipped in v8.0 — two-player mode lives in the lazy `labs.js` module, so it does not compete with the boot-critical 260 KiB gate.)
 
 ---
 ## 🔧 v7.1 — The Bug-Fix Wave
