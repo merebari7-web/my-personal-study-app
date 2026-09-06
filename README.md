@@ -23,7 +23,7 @@ Copyright © merebari web · All rights reserved.
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** — cube, cuboid, sphere, cylinder, cone, pyramid, prism, **frustum & hemisphere** (9 shapes) — drag to rotate (double-click to reset), live dimension sliders, real-time volume & surface area with formulas, **anatomy facts** (faces · edges · vertices with the Euler check), auto-spin pause, **wireframe / orthographic / zoom views** (preferences persist per device), and **Solve a shape** — a shape-quiz mode with worked solutions that earns XP for correct answers and banks wrong ones into your mistake bank · links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🏠 Home + ✨ AI Coach | A floating **home dock** (🏠 Home · ✨ AI Coach · 📚 Practice · 🔬 Study Hall · 📊 HQ) that appears as you scroll, highlights where you are, and jumps you around the app · an **AI Coach** card at the top of the home screen suggests up to five things to do next — spaced-revision due deck, daily challenge, weakest subject & topic drills, mock exam, exam-countdown plan, daily goal, printable worksheet, parent report, first paper — each with a *why* ("because …") and a one-tap action; **↻ New ideas** rotates the deck while keeping the most urgent suggestion pinned. All suggestions are computed on-device from your own results and refresh after every paper and sign-in |
 | 👩‍🏫 The Professors' Standard | Built so teachers and professors recommend it worldwide: **🧠 metacognitive calibration** — after every study-mode answer students rate how sure they were (😕 🙂 😎) and Progress HQ compares confidence with actual accuracy per subject (well-calibrated / overconfident / underconfident verdicts); **🖨 printable exam papers** — subject + class + 10/20/30 questions, exam-style paper with the mark scheme on its own page, for class tests and homework; **👩‍🏫 For Educators hub** — research-based pedagogy (retrieval practice · spaced repetition · interleaving · feedback · mastery · calibration, with citations), classroom lesson plans, accessibility statement, privacy-on-device promise, printable educator guide and a one-tap recommend/share; **🔤 accessibility panel** — dyslexia-friendly readable text, high-contrast mode, text size, read-aloud, reduced motion in one place (persisted); richer CSV export (grade, time, mode, source) for your own analysis |
-| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **598.9 KB** and **259.7 KiB gzipped** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
+| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **599.2 KB** and **259.9 KiB gzipped** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
 | 📶 Install-free & offline (PWA) | A small service worker (HTTPS only, on-device only) caches the app after the first visit: it re-opens instantly and **keeps working with zero network** — flip on airplane mode after one visit and every feature, bank and progress store still runs. While online the network is tried first so every release reaches you on the next visit. No install, no account, no app store |
 | 📘 Revision notes (formula & fact cards) | For **all 78 topics across the 13 subjects** — exam-style formulas and facts teachers will recognise (quadratic formula, SOH-CAH-TOA, OIL RIG, Ohm's law, monohybrid 3:1…). Opened from the Report Card lab or **straight from your results screen** (one tap on a missed paper), and printable as a single card or a whole-subject pack for the class. Topic names match the app's own topic tracker, so notes always appear where a student just failed |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
@@ -129,7 +129,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 9. ✅ Full keyboard shortcuts — `?` help, `/` focus library, `Esc` close, `F` flag, `P` print, `R` restart
 10. ✅ Century run — 100-question mixed-syllabus marathon (v5.0)
 11. ✅ Per-question elapsed-time recording and average-time review
-12. ⬜ Adaptive difficulty — question hardness estimates so the paper tunes itself to you
+12. ✅ Adaptive difficulty — the smart paper tunes itself to you: if you scrape through the ★★★ questions, the next smart paper leans hard (v6.2)
 
 ### B. Memory science
 13. ✅ Spaced repetition — mistakes return after 1 → 3 → 7 → 14 days
@@ -211,8 +211,8 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 77. ✅ Object.freeze on the bank + verifyBankIntact checks
 78. ✅ Offline service worker — works with zero network after one visit
 79. ✅ PWA manifest + favicon
-80. ✅ 139-check automated test suite (was 127) — all green (v6.0)
-81. ✅ Gzip budget — 259.9 KiB, held under the 260 KiB gate through v6.0
+80. ✅ 143-check automated test suite (was 127) — all green (v6.2)
+81. ✅ Gzip budget — 259.9 KiB, held under the 260 KiB gate through v6.2
 82. ✅ Backup & restore — JSON export, merge or replace
 83. ✅ Backup & restore — sign-in sync between devices (Google)
 84. ✅ Desktop app build (Windows exe + zip)
@@ -243,6 +243,20 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 ---
 
 
+## 🎓 v6.2 — The Adaptive Wave
+
+**The paper now tunes itself to you — and the teacher's workshop got one more one-tap tool.**
+
+| New | What it does |
+|---|---|
+| 🎚 **Adaptive difficulty** | Question hardness was already tagged (1–3 ★). Now the smart paper reads the difficulty breakdown of your *latest* paper: if you smashed at least four hard questions but scored under 50% on them, the next smart paper is drawn entirely from the ★★★ pool — automatic, honest escalation. |
+| 📊 **Difficulty mix on results** | Every results screen now shows the paper's average difficulty (e.g. `🎚 ★1.7`) and how you did on the hard ones — you can see *which* weight of question you're losing marks on. |
+| ⬇ **One-tap paper CSV** | The exam-paper workshop already exported CSV (v5.0); the button now sits right next to **Print paper** in the paper card — one tap, no digging. |
+| 🧹 **Dead-code sweep** | Five genuinely uncalled functions (`quizStreakDays`, `topicAcc`, `initHomeNav`, `interleaveOn`, `titleCase`) removed after a full reference audit — the wave is funded, not bloated. The keyboard layer (1–4/A–D, N/Enter/→, ←, F/P/R/?, /) was verified first-class in the same pass. |
+
+**Budget discipline:** the wave landed at **259.9 KiB gzipped** — under the 260 KiB gate — with the bank payload byte-untouched, the suite grown to **143 checks, all green** (141 + adaptive-difficulty paper + CSV button & difficulty-mix render).
+
+---
 ## 🎓 v6.1 — The Hard-Questions Wave
 
 **Questions finally tell you how hard they are — and you can ask for only the hard ones.**
