@@ -53,6 +53,8 @@ Copyright © merebari web · All rights reserved.
 | 🔒 Access gate | Everything is locked behind a study account — **no anonymous access**. Sign in with Google (hosted version) or create a free study account (name + optional email; works fully offline). Profiles & scores stay on the device |
 | 🖼 Certificate | Gilded certificate PNG export with serial number & signature |
 | 🔒 Integrity | SHA-256 hash check of the question bank at load time |
+| 📱 Responsive hardening | **v10.2** — automated 8-viewport layout audit (320px phone → 1440px desktop, incl. every labs + Teaching Suite screen, run in headless Chrome): the app bar now wraps instead of clipping into a hidden horizontal scroll, all utility buttons are 40px touch targets, class tabs fit three-across to 320px, the quiz taskbar flows into wrapped rows instead of clipping buttons, and the Teaching Suite launcher button (which shipped unstyled, a 15×25px blob) gets its real styling + a 40px-tall tap area. Audit: 0 issues across 8 viewports |
+
 | 🧘 Focus Lab | **v9.0** — a Pomodoro-style study timer in the lazy labs module: pick a subject + 15/25/45-minute focus block, run focus/break cycles, keep a small floating timer if you close the drawer, and turn any session into a real drill paper. The day's sessions and focus minutes are tracked on-device |
 | 📱 Responsive-first pass | **v9.0** — fluid base type, tablet breakpoint, a scrollable app bar, a full-width bottom home dock, single/two-column grids for labs, dashboards and analytics, safe-area-aware modals and bottom sheets, compact landscape handling and bigger touch targets |
 | ♿ Accessibility | Text-size control, reduced motion, read-aloud (browser speech), keyboard shortcuts (`?` for help) |
