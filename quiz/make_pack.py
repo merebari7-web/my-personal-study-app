@@ -34,18 +34,53 @@ GOLD = colors.HexColor("#B98A45")
 INK = colors.HexColor("#1A2B22")
 
 # ---------- extract TOPICS (name → keywords) from the app template ----------
+def _match(s, op, cl, start):
+    """bracket-match: s[start] must be op; returns index of matching cl."""
+    assert s[start] in op, s[start:start + 30]
+    depth = 0
+    for i in range(start, len(s)):
+        c = s[i]
+        if c in op:
+            depth += 1
+        elif c in cl:
+            depth -= 1
+            if depth == 0:
+                return i
+    raise ValueError("unbalanced brackets at %d" % start)
+
 def parse_topics():
     src = open(TPL, encoding="utf-8").read()
-    m = re.search(r"TOPICS=(\{.*?\});", src, re.S)
-    assert m, "TOPICS not found in template"
-    raw = m.group(1)
+    i = src.index("TOPICS=")
+    j = _match(src, "{", "}", src.index("{", i))
+    raw = src[i:j + 1]
     topics = {}
-    for subj_block in re.finditer(r'"([^"]+)":\[(.*?)\](?=,"|"|\]|\};)', raw, re.S):
-        subj, body = subj_block.group(1), subj_block.group(2)
+    for subj in [name for name, _m, _s in REGISTRY]:
+        k = raw.find('"%s":[' % subj)
+        if k < 0:
+            k = raw.find('%s:[' % subj)
+        if k < 0:
+            topics[subj] = []
+            continue
+        end = _match(raw, "[", "]", raw.index("[", k))
+        body = raw[raw.index("[", k):end]
         tops = []
-        for tm in re.finditer(r'\["([^"]+)",\[(.*?)\]\]', body, re.S):
-            name, kws = tm.group(1), tm.group(2)
-            tops.append((name, [k.strip('"') for k in re.findall(r'"([^"]+)"', kws)]))
+        p = 0
+        while True:
+            q = body.find('["', p)
+            if q < 0:
+                break
+            close = _match(body, "[", "]", q)
+            pair = body[q:close + 1]
+            name = None
+            qq = body.find(chr(34), q)
+            q2 = body.find(chr(34), qq + 1) if qq >= 0 else -1
+            if qq >= 0 and q2 > qq:
+                name = body[qq + 1:q2]
+                tin = body.find('[', q2)
+                tend = _match(body, '[', ']', tin) if tin >= 0 else q2
+                if name and tend > q2:
+                    tops.append((name, [k.strip(chr(34)) for k in re.findall(chr(34) + '([^' + chr(34) + ']+)' + chr(34), body[tin:tend + 1])]))
+            p = close + 1
         topics[subj] = tops
     return topics
 

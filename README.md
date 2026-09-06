@@ -249,7 +249,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 
 | Roadmap | What shipped |
 |---|---|
-| **#52 Practice pack** | `quiz/make_pack.py` builds a printable **full-term pack per class** — 12-week revision plan, 13 subject papers (100 questions + answer key), 39 topic worksheets, subject formula/fact notes — and zips it: [`packs/SS1-full-term-practice-pack.zip`](packs/SS1-full-term-practice-pack.zip), SS2, SS3 (each 28 files, ~1.4 MB). |
+| **#52 Practice pack** | `quiz/make_pack.py` builds a printable **full-term pack per class** — 12-week revision plan, 13 subject papers (100 questions + answer key), 39 topic worksheets, subject formula/fact notes — and zips it: [`packs/SS1-full-term-practice-pack.zip`](packs/SS1-full-term-practice-pack.zip), SS2, SS3 (each 106 files — 13 papers, 78 topic worksheets, 13 notes packs + plan — ~4.9 MB). |
 | **#85 Safe bank edit** | `quiz/bank_edit.py` + a `quiz/edits.json` hook in the build: patch questions by exact stem, rebuild, and **every unedited subject is verified byte-identical** against `quiz/bank_manifest.json`. Two real content bugs fixed this wave (SS2/SS3 Maths “NOT an algebra” explanations). |
 | **#93 Lighthouse CI** | `.github/workflows/lighthouse.yml` audits the live Pages URL on every relevant push and asserts floors (performance 55, accessibility 95, best-practices 90, SEO 90, PWA 85) with the report uploaded as an artifact. |
 | **#100 Suggest a question** | Footer **✍️ Suggest a question** button → prefilled GitHub issue (label `question` + template) so students can propose items; verified before shipping. |
