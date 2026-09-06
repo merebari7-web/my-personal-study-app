@@ -4,7 +4,7 @@ name: Lighthouse CI
 on:
   push:
     branches: [main]
-    paths: ["index.html", "bank.js", "sw.js", "quiz/template.html", ".github/workflows/lighthouse.yml"]
+    paths: ["index.html", "bank.js", "sw.js", "edu.js", "quiz/template.html", ".github/workflows/lighthouse.yml"]
   workflow_dispatch:
 
 jobs:
