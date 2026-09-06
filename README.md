@@ -1,7 +1,7 @@
 # 🎓 MY PERSONAL STUDY APP
 
 **A complete offline study app for the Nigerian Senior Secondary Certificate (SS1–SS3).**
-13 subjects · 3,900 questions with full explanations · one single HTML file — no install, no internet, no dependencies.
+13 subjects · 3,900 questions with full explanations · two files (index.html + bank.js) — no install, no internet, no dependencies.
 
 Copyright © merebari web · All rights reserved.
 
@@ -23,7 +23,7 @@ Copyright © merebari web · All rights reserved.
 | 🧮 3D Shape Lab | Dependency-free interactive **3D solids** — cube, cuboid, sphere, cylinder, cone, pyramid, prism, **frustum & hemisphere** (9 shapes) — drag to rotate (double-click to reset), live dimension sliders, real-time volume & surface area with formulas, **anatomy facts** (faces · edges · vertices with the Euler check), auto-spin pause, **wireframe / orthographic / zoom views** (preferences persist per device), and **Solve a shape** — a shape-quiz mode with worked solutions that earns XP for correct answers and banks wrong ones into your mistake bank · links straight into the Mensuration paper · 3D-tilt cards on the home screen |
 | 🏠 Home + ✨ AI Coach | A floating **home dock** (🏠 Home · ✨ AI Coach · 📚 Practice · 🔬 Study Hall · 📊 HQ) that appears as you scroll, highlights where you are, and jumps you around the app · an **AI Coach** card at the top of the home screen suggests up to five things to do next — spaced-revision due deck, daily challenge, weakest subject & topic drills, mock exam, exam-countdown plan, daily goal, printable worksheet, parent report, first paper — each with a *why* ("because …") and a one-tap action; **↻ New ideas** rotates the deck while keeping the most urgent suggestion pinned. All suggestions are computed on-device from your own results and refresh after every paper and sign-in |
 | 👩‍🏫 The Professors' Standard | Built so teachers and professors recommend it worldwide: **🧠 metacognitive calibration** — after every study-mode answer students rate how sure they were (😕 🙂 😎) and Progress HQ compares confidence with actual accuracy per subject (well-calibrated / overconfident / underconfident verdicts); **🖨 printable exam papers** — subject + class + 10/20/30 questions, exam-style paper with the mark scheme on its own page, for class tests and homework; **👩‍🏫 For Educators hub** — research-based pedagogy (retrieval practice · spaced repetition · interleaving · feedback · mastery · calibration, with citations), classroom lesson plans, accessibility statement, privacy-on-device promise, printable educator guide and a one-tap recommend/share; **🔤 accessibility panel** — dyslexia-friendly readable text, high-contrast mode, text size, read-aloud, reduced motion in one place (persisted); richer CSV export (grade, time, mode, source) for your own analysis |
-| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **599.2 KB** and **259.9 KiB gzipped** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
+| ⚡ Size & speed pass | The whole app is post-processed with a build-time minifier (JS + CSS, question bank left byte-identical): on-disk **592.4 KB** (411.6 KB app shell + 180.8 KB bank asset) and **252.3 KiB gzipped combined** — under the 260 KiB wire budget that the test suite enforces — so the page loads fast even on school and mobile networks in low-bandwidth regions. All feature-marker tags and the bank's SHA-256 integrity fingerprint are preserved |
 | 📶 Install-free & offline (PWA) | A small service worker (HTTPS only, on-device only) caches the app after the first visit: it re-opens instantly and **keeps working with zero network** — flip on airplane mode after one visit and every feature, bank and progress store still runs. While online the network is tried first so every release reaches you on the next visit. No install, no account, no app store |
 | 📘 Revision notes (formula & fact cards) | For **all 78 topics across the 13 subjects** — exam-style formulas and facts teachers will recognise (quadratic formula, SOH-CAH-TOA, OIL RIG, Ohm's law, monohybrid 3:1…). Opened from the Report Card lab or **straight from your results screen** (one tap on a missed paper), and printable as a single card or a whole-subject pack for the class. Topic names match the app's own topic tracker, so notes always appear where a student just failed |
 | 🌌 3D scene depth | **Parallax hero** — floating scholar orbs, orbit rings and layered copy respond to the pointer · **3D certificate** — the PNG gains an embossed bevel frame, folded ribbon, gradient crest and engraved title, and tilts in perspective in the lightbox |
@@ -51,7 +51,7 @@ Copyright © merebari web · All rights reserved.
 | 🔒 Integrity | SHA-256 hash check of the question bank at load time |
 | ♿ Accessibility | Text-size control, reduced motion, read-aloud (browser speech), keyboard shortcuts (`?` for help) |
 
-Everything runs in one file — perfect for school computers, tablets and phones with no internet.
+Two tiny files (the app shell + its question bank), cached by the service worker after the first visit — perfect for school computers, tablets and phones with no internet.
 
 ---
 
@@ -63,7 +63,7 @@ Just open `index.html` in any modern browser (Chrome, Edge, Firefox, Safari). Th
 
 ## Host it on GitHub Pages
 
-This repo deploys to GitHub Pages straight from its `main` branch — the site is a single self-contained file, so no build step is needed.
+This repo deploys to GitHub Pages straight from its `main` branch — the built `index.html` + `bank.js` + `sw.js` are committed, so no build step is needed on the server.
 
 1. Push this repository to GitHub.
 2. Go to **Settings → Pages → Source: Deploy from a branch** → `main` / `/ (root)`.
@@ -153,7 +153,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 29. ✅ Print a single card or a whole-subject pack
 30. ✅ Revision tracker — mark cards revised, live progress (v5.0)
 31. ✅ 3D Shape Lab — 9 solids, formulas, Euler anatomy, shape-quiz mode
-32. ⬜ Audio flashcards — hear the question spoken while you revise
+32. ✅ Audio flashcards — **🔊 Hear it** on every flashcard reads the card aloud (v7.0)
 
 ### D. Progress HQ
 33. ✅ 16-week study heatmap
@@ -165,7 +165,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 39. ✅ Week in Review — papers, average, best, time over 7 days
 40. ✅ Average-time tile
 41. ✅ Exam-readiness score — topics + mastery + consistency
-42. ⬜ Per-question item analysis (which options trap you most)
+42. ✅ Per-question item analysis — **Trap alert** lines show which wrong option lures you, per question (v7.0)
 
 ### E. Teachers & parents
 43. ✅ Printable exam papers — paper + separate mark scheme page
@@ -188,8 +188,8 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 58. ✅ Reduced-motion mode — ambient animation pauses
 59. ✅ Focus mode — hide everything but the paper
 60. ✅ `Esc` exits overlays everywhere
-61. ⬜ Font choice — pick a preferred typeface for the whole app
-62. ⬜ Tap-target audit — guaranteed 44 px touch targets on every control
+61. ✅ Font choice — Default / Serif / Rounded typeface picker in the accessibility panel (v7.0)
+62. ✅ Tap-target audit — coarse-pointer devices get ≥44 px buttons, chips and tabs guaranteed (v7.0)
 
 ### G. Motivation & game
 63. ✅ Study points, scholar levels, merits
@@ -201,7 +201,7 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 69. ✅ Certificate — download a personalised PDF/PNG
 70. ✅ Confetti-style award moments on results
 71. ✅ Trophy finish screen with grade seal
-72. ⬜ Monthly milestone review — a “best month” recap card
+72. ✅ Monthly milestone review — **🏆 Best month** recap card in Progress HQ (v7.0)
 
 ### H. Reliability & engineering
 73. ✅ 3,900-question generated bank with per-question explanations
@@ -211,8 +211,8 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 77. ✅ Object.freeze on the bank + verifyBankIntact checks
 78. ✅ Offline service worker — works with zero network after one visit
 79. ✅ PWA manifest + favicon
-80. ✅ 143-check automated test suite (was 127) — all green (v6.2)
-81. ✅ Gzip budget — 259.9 KiB, held under the 260 KiB gate through v6.2
+80. ✅ 150-check automated test suite (was 127) — all green (v7.0)
+81. ✅ Gzip budget — 252.3 KiB combined (app + bank), held under the 260 KiB gate through v7.0
 82. ✅ Backup & restore — JSON export, merge or replace
 83. ✅ Backup & restore — sign-in sync between devices (Google)
 84. ✅ Desktop app build (Windows exe + zip)
@@ -230,8 +230,8 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 94. ⬜ A short “how to study with this app” video link for students
 
 ### J. The next wave (open)
-95. ⬜ Sound design — subtle correct/wrong tones (audio off by default)
-96. ⬜ Exam countdown card — days to a chosen exam date
+95. ✅ Sound design — correct/wrong/badge/coin tones via WebAudio, off by default (verified in v7.0)
+96. ✅ Exam countdown card — name + date, gold banner counts the days (verified in v7.0)
 97. ⬜ Two-player “quiz me” mode — pass the device, fastest hand wins
 98. ✅ Question difficulty tags and a “tough papers only” toggle
 99. ⬜ Localised option — a second language for stems and explanations
@@ -243,6 +243,23 @@ The 100-upgrade plan. Items are **real**: everything marked ✅ is already shipp
 ---
 
 
+## 🎓 v7.0 — The Split-Bank Wave
+
+**The biggest architectural change in the project: the question bank moves out of the page — and the wave of features is funded by it. The bank's content is byte-identical (same 3,900 questions, same delimiter-packed form, same SHA-256 fingerprint over the packed text — the integrity self-check is untouched).**
+
+| New | What it does |
+|---|---|
+| 🏗 **Split-file build** | The bank now ships as a sibling `bank.js` (generated from the template's marked block, re-compressed with **zopfli** — ~6 KB smaller than zlib-9 for the same deflate format every browser decodes natively). The app shell's gzip drops **266 KB → 122 KB**; the combined app+bank is **252.3 KiB**, and the test suite enforces the 260 KiB gate on the *combined* wire (check 118). |
+| 🔊 **Audio flashcards** | A **Hear it** button on every flashcard reads the card aloud with the device's speech engine (question + the four options). |
+| 📊 **Item analysis** | Every paper feeds a per-question option tally; on review, wrong answers get a **Trap alert** — “you're lured by C (64% of attempts on this question)”. |
+| 🏆 **Best month review** | Progress HQ gains a **Best month** card: your strongest stretch (≥3 papers) with the average. |
+| 🔤 **Font style choice** | Default / Serif / Rounded typeface picker in the accessibility panel, persisted. |
+| 👆 **Tap-target audit** | On coarse-pointer devices every button, chip and tab is guaranteed ≥44 px tall. |
+| ✅ **Verified, not duplicated** | The audit also confirmed **sound design** and the **exam countdown** were already shipped — they're now marked ✅ on the roadmap instead of being re-built; a would-be duplicate countdown was removed. |
+
+**Budget discipline:** 252.3 KiB combined gzip (122.4 app + 136.0 bank), bank payload byte-identical, **150 checks all green** (144 + 6 new: countdown-verified, font style, audio flashcards, item analysis, best month, tap-target + sound).
+
+---
 ## 🎓 v6.2 — The Adaptive Wave
 
 **The paper now tunes itself to you — and the teacher's workshop got one more one-tap tool.**
