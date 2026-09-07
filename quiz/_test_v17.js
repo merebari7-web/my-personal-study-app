@@ -45,7 +45,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     for (const m of [".edu-tag{", ".edu-opt:hover{"]) if (!EDU.includes(m)) throw "missing: " + m;
   });
   await run("service worker cache key bumped to -v17", () => {
-    if (!/"-v17"/.test(SW)) throw "NSS_V not -v17";
+    if (!/"-v1[7-9]"/.test(SW)) throw "NSS_V not >= -v17";
   });
 
   /* ---- behavioural smoke: premium coach still renders ---- */

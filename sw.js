@@ -2,7 +2,7 @@
    it re-opens instantly and works with zero network (airplane mode). While
    online the network is tried first so updates arrive on the next visit.
    Bump NSS_V on every release. */
-const NSS_V = "nssc-v20260907" + "-v17"; /* v17 — Lumina II: shell button/control states + touch-hover suppression, AI Coach small-screen hardening, Study Arcade deep refresh (answer feedback, floating medallions, gold HUD), Exam-Room Labs + Teaching Suite polish. Bump per release (runtime cache key). */
+const NSS_V = "nssc-v20260907" + "-v18"; /* v18 — Aurum first-class upgrade: glass hero stat plates + gold numerals, premium toast/keycap chips, launcher pulse ring, liquid-gold progress shimmer, gold question chips, breathing focus ring, ambient aurum glows. Bump per release (runtime cache key). */
 const NSS_CORE = ["./", "./index.html", "./sw.js", "./edu.js"];
 /* labs.js is NOT in NSS_CORE on purpose: the runtime fetch handler below caches
    it the first time it is requested online, so an offline first-visit install
