@@ -1,5 +1,5 @@
-/* v15 E2E smoke — real headless Chrome: curo fetches quiz/_syllabus_data.js +
-   quiz/_curr_data.js, the Teaching Suite repaints into the term-by-term map. */
+/* v15 E2E smoke — real headless Chrome: curo fetches quiz/syllabus_data.js +
+   quiz/curr_data.js, the Teaching Suite repaints into the term-by-term map. */
 const puppeteer = require("puppeteer");
 const path = require("path");
 
