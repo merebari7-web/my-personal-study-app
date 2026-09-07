@@ -531,6 +531,31 @@ var EXTRA_SUBJECTS = {
     DOC.body.appendChild(b);
   }
 
+  /* ---------- read-aloud ---------- */
+  var SPEAKU = null;
+  function speakTxt(t) {
+    try {
+      if (window.speechSynthesis && typeof SpeechSynthesisUtterance !== "undefined") {
+        if (SPEAKU) { window.speechSynthesis.cancel(); SPEAKU = null; return 0; }
+        var u = new SpeechSynthesisUtterance(t); SPEAKU = u; window.speechSynthesis.speak(u); return 1;
+      }
+    } catch (e) {}
+    return -1;
+  }
+  function speak() {
+    var subj = state.subj, topic = state.topic, cls = state.cls;
+    if (!topic) return toast("Choose a topic first", "⚠️");
+    var kws = kwArr(subj, topic);
+    var card = notesOf(subj)[topic] || "";
+    var txt = "Lesson note. " + (contentPara(subj, topic, kws, cls) || "") + " Objectives. " + lessonObjectives(topic, kws).join(" ") + " Key points. " + card + " " + classFocus(cls);
+    try { if (window.speakText) { window.speakText(txt); return toast("Reading the lesson aloud", "🔊"); } } catch (e) {}
+    var r = speakTxt(txt);
+    if (r === 1) toast("Reading the lesson aloud — tap again to stop", "🔊");
+    else if (r === 0) toast("Stopped", "🔊");
+    else toast("Read-aloud needs a browser with speech support", "🔊");
+  }
+  function stopSpeak() { try { if (SPEAKU && window.speechSynthesis) { window.speechSynthesis.cancel(); SPEAKU = null; } } catch (e) {} }
+
   /* ---------- modal ---------- */
   function close() {
     var o = $("eduOv");
@@ -540,6 +565,7 @@ var EXTRA_SUBJECTS = {
       o.parentNode.removeChild(o);
     }
     if (CBT && CBT.timer) { clearInterval(CBT.timer); CBT.timer = null; }
+    stopSpeak();
   }
   function open(kind, arg) {
     try { close(); } catch (e) {}
@@ -581,7 +607,7 @@ var EXTRA_SUBJECTS = {
     var t = tabs.map(function (x) {
       return '<button type="button" class="edu-tab' + (state.route === x[0] ? " on" : "") + '" title="' + esc(x[2]) + '" onclick="EDU.go(\'' + x[0] + '\')">' + x[1] + "</button>";
     }).join("");
-    return '<div class="edu-head"><div class="edu-brand"><b>🎓 Teaching Suite</b><small>SS1–SS3 · Nigerian curriculum · all 13 subjects</small></div><button type="button" class="edu-x" onclick="EDU.close()" aria-label="Close">✕</button></div>' +
+    return '<div class="edu-head"><div class="edu-brand"><b>🎓 Teaching Suite</b><small>SS1–SS3 · Nigerian curriculum · all 19 subjects</small></div><button type="button" class="edu-x" onclick="EDU.close()" aria-label="Close">✕</button></div>' +
       '<div class="edu-tabs" role="tablist">' + t + "</div>" +
       '<div class="edu-body" id="eduSBody"></div>' +
       '<div class="edu-foot">Runs on this device · no account needed · © merebari web</div>';
@@ -634,6 +660,7 @@ var EXTRA_SUBJECTS = {
       + '<div class="edu-sub"><b>📌 Key points &amp; facts</b><div class="edu-card-mini">' + bullets + '</div></div>'
       + '<div class="edu-sub"><b>🖨 Teacher tip.</b> Ask the class to read the key points once, close the screen, then write the facts they remember. This retrieval practice is the single most reliable way to teach a topic for WAEC/NECO.</div>'
       + "<div style=\"display:flex;gap:8px;flex-wrap:wrap;margin-top:12px\">"
+      + '<button type="button" class="edu-btn" onclick="EDU.speak()">🔊 Hear this lesson</button>'
       + '<button type="button" class="edu-btn" onclick="EDU.lessonPrint()">🖨 Print this lesson</button>'
       + '<button type="button" class="edu-btn gold" onclick="EDU.lessonDrill(\'' + esc(subj).replace(/'/g, "\\'") + '\',\'' + esc(topic).replace(/'/g, "\\'") + '\',\'' + esc(cls).replace(/'/g, "\\'") + '\')">▶ Drill this topic</button>'
       + "</div></div>";
@@ -1028,6 +1055,8 @@ var EXTRA_SUBJECTS = {
   window.EDU.subject = function (s) { try { state.subj = s; var tp = topicsOf(s); state.topic = tp.length ? tp[0][0] : null; paint(); } catch (e) {} };
   window.EDU.reveal = reveal;
   window.EDU.lessonPrint = lessonPrint;
+  window.EDU.speak = speak;
+  window.EDU.stopSpeak = stopSpeak;
   window.EDU.lessonDrill = lessonDrill;
   window.EDU.cbtBegin = cbtBegin;
   window.EDU.cbtPick = cbtPick;

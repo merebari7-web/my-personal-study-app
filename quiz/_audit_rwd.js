@@ -1,4 +1,4 @@
-/* Responsive layout audit v10 — headless Chrome, multiple viewports.
+/* Responsive layout audit v12 — headless Chrome, multiple viewports.
    Run: node quiz/_audit_rwd.js  (expects repo root with index.html + bank.js + labs.js + edu.js) */
 const puppeteer = require("puppeteer");
 const path = require("path");
@@ -103,10 +103,24 @@ async function snap(page, state, vp) {
         try { await page.evaluate((x) => EDU.go(x), v); await snap(page, "edu-" + v, vp); } catch (e) {}
       }
     } catch (e) { console.log(vp.name, "edu open failed:", String(e).slice(0, 60)); }
+    // Study Arcade (lazy arcade.js)
+    try {
+      await page.evaluate(() => window.arc ? window.arc("open") : null);
+      await page.waitForFunction(() => !!window.ARC && !!window.ARC.ready, { timeout: 20000 });
+      await snap(page, "arc-home", vp);
+      await page.evaluate(() => ARC.go("utme"));
+      await snap(page, "arc-utme-pick", vp);
+      await page.evaluate(() => { try { ARC.utmeStart({ subjects: ["English Language", "Mathematics", "Physics", "Chemistry"] }); } catch (e) {} });
+      await snap(page, "arc-utme-q", vp);
+      await page.evaluate(() => { try { ARC.go("cards", { subj: "French" }); } catch (e) {} });
+      await snap(page, "arc-cards", vp);
+      await page.evaluate(() => ARC.go("videos"));
+      await snap(page, "arc-videos", vp);
+    } catch (e) { console.log(vp.name, "arc open failed:", String(e).slice(0, 60)); }
     await page.close();
   }
   await browser.close();
-  console.log(`\n== RESPONSIVE AUDIT v10: ${ISSUES.length} issue(s) across ${VIEWPORTS.length} viewports ==`);
+  console.log(`\n== RESPONSIVE AUDIT v12: ${ISSUES.length} issue(s) across ${VIEWPORTS.length} viewports ==`);
   const byVp = {};
   for (const i of ISSUES) { const k = i.split(" :: ")[0]; byVp[k] = (byVp[k] || 0) + 1; }
   console.log(JSON.stringify(byVp));

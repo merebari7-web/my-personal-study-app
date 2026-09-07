@@ -1,4 +1,4 @@
-/* v11.0 suite — Teaching Suite extended subjects + Study Arcade + Video Studio.
+/* v12.0 suite — Teaching Suite extended subjects + Study Arcade + Video Studio.
    Run: node quiz/test_arcade.js  (repo root; jsdom) */
 const fs = require("fs");
 const { JSDOM, VirtualConsole } = require("jsdom");
@@ -79,11 +79,11 @@ const badText = /NaN|undefined\b|Infinity/;
   });
 
   w.eval(ARC);
-  await run("arc: loads, home shows 6 tiles", async () => {
+  await run("arc: loads, home shows 8 tiles", async () => {
     w.eval('ARC.go("open")');
     await sleep(120);
     if (!w.ARC || !w.ARC.ready) throw "ARC not ready";
-    if (doc.querySelectorAll(".arc-tile").length !== 6) throw "tiles=" + doc.querySelectorAll(".arc-tile").length;
+    if (doc.querySelectorAll(".arc-tile").length !== 8) throw "tiles=" + doc.querySelectorAll(".arc-tile").length;
     if (!doc.getElementById("arcOv")) throw "no overlay";
   });
 
@@ -186,7 +186,103 @@ const badText = /NaN|undefined\b|Infinity/;
     await sleep(120);
     if (!doc.getElementById("arcTermOpts")) throw "term failed with junk bests";
   });
-  await run("no uncaught errors across the whole v11 flow", () => {
+
+  // ---- v12: UTME Simulation + Flash Cards + 19-subject Rapid Fire ----
+  await run("utme: picker locks English + 13 bank subjects", async () => {
+    w.eval('ARC.go("utme")');
+    await sleep(150);
+    if (doc.querySelectorAll("#utmeSubs .arc-chip").length !== 13) throw "chips";
+    if (doc.querySelectorAll("#utmeSubs [data-lock]").length !== 1) throw "no compulsory lock";
+  });
+  await run("utme: full 180-question paper -> 400/400 + verdict + XP", async () => {
+    w.eval('ARC.utmeStart({subjects:["English Language","Mathematics","Physics","Chemistry"]})');
+    await sleep(300);
+    const ut = w.ARC._ut();
+    if (!ut || ut.paper.length !== 180) throw "paper=" + (ut && ut.paper.length);
+    if (doc.querySelectorAll("#utSheet .arc-cell").length !== 180) throw "no answer sheet";
+    for (let i = 0; i < ut.paper.length; i++) w.eval("ARC.utmeSet(" + i + "," + (+ut.paper[i].q.a) + ")");
+    if (ut.ans.some(a => a < 0)) throw "unanswered left";
+    w.eval("ARC.utmeSubmit(false)");
+    await sleep(160);
+    const txt = doc.getElementById("arcBody").textContent.replace(/\s+/g, " ");
+    if (!/400 \/ 400/.test(txt)) throw "total: " + txt.slice(0, 80);
+    if (!/Outstanding/.test(txt)) throw "no verdict";
+    if (!/Physics · 40\/40/.test(txt)) throw "no per-subject row";
+    const k = Object.keys(w.localStorage).find(x => x.indexOf("nssc_xp_") === 0);
+    if (k && +w.localStorage.getItem(k) <= 0) throw "no xp";
+  });
+  await run("utme: per-subject review shows answers + explanations", async () => {
+    w.eval('ARC.utmeReview("Physics")');
+    await sleep(160);
+    const txt = doc.getElementById("arcBody").textContent;
+    if ((txt.match(/✔/g) || []).length < 30) throw "not enough marked answers";
+    if (!/arc-opt good|arc-opt bad|arc-opt dim/.test(doc.getElementById("arcBody").innerHTML)) throw "no marking classes";
+  });
+  await run("utme: auto-submit at time zero", async () => {
+    w.eval('ARC.go("utme")'); await sleep(120);
+    w.eval('ARC.utmeStart({subjects:["English Language","Mathematics","Biology","Economics"],secs:2})');
+    await sleep(300);
+    if (!w.ARC._ut() || w.ARC._ut().over) throw "ended too early";
+    await sleep(2400);
+    if (!w.ARC._ut().over) throw "not auto-submitted";
+    if (!/Your UTME score/.test(doc.getElementById("arcBody").textContent)) throw "no result";
+  });
+  await run("cards: 19-subject chips + deck renders term-first", async () => {
+    w.eval('ARC.go("cards",{subj:"French"})');
+    await sleep(140);
+    if (doc.querySelectorAll("#cardSubs .arc-chip").length !== 19) throw "chips";
+    const cd = w.ARC._cd();
+    if (!cd || cd.deck.length !== 6) throw "deck=" + (cd && cd.deck.length);
+    if (!/Show answer/.test(doc.getElementById("arcPlay").textContent)) throw "no card";
+  });
+  await run("cards: flip -> rate all -> deck done + persistence", async () => {
+    w.eval('ARC.go("cards",{subj:"French"})'); await sleep(120);
+    let guard = 0;
+    while (guard++ < 10) {
+      const play = doc.getElementById("arcPlay");
+      if (!play || /Deck done/.test(play.textContent)) break;
+      w.eval("ARC.cardFlip()");
+      w.eval("ARC.cardRate(1)");
+      await sleep(25);
+    }
+    if (!/Deck done/.test(doc.getElementById("arcPlay").textContent)) throw "no deck end";
+    const saved = JSON.parse(w.localStorage.getItem("nssc_cards_a") || "{}");
+    if (!saved.French || saved.French.length !== 6) throw "not persisted";
+    if (!/knew it/.test(doc.getElementById("arcPlay").textContent)) throw "no summary";
+  });
+  await run("cards: known cards re-queued last after restart", async () => {
+    w.eval('ARC.cardRestart()'); await sleep(60);
+    const cd = w.ARC._cd();
+    if (!cd || cd.deck.length !== 6) throw "no deck";
+    if (cd.deck[0].fresh) throw "known card not re-queued last";
+  });
+  await run("rapid: subject chips = All + 19 subjects", async () => {
+    w.eval('ARC.go("rapid")'); await sleep(140);
+    if (doc.querySelectorAll("#arcRSubs .arc-chip").length !== 20) throw "chips=" + doc.querySelectorAll("#arcRSubs .arc-chip").length;
+  });
+  await run("rapid: extended subject (French) playable", async () => {
+    w.eval('ARC.go("rapid",{subj:"French",secs:999})'); await sleep(250);
+    const o = doc.getElementById("arcRapidOpts");
+    if (!o) throw "no question for French";
+    w.eval("ARC.rpick(" + (+o.getAttribute("data-answer")) + ")");
+    await sleep(620);
+    if (!(w.ARC._state().score > 0)) throw "score=" + w.ARC._state().score;
+    if (!/Score [1-9]/.test(doc.getElementById("arcBody").textContent)) throw "score pill not updated";
+    w.eval('ARC.go("open")');
+  });
+  await run("edu: read-aloud button + speak() works and header says 19 subjects", async () => {
+    w.eval('EDU.subject("Further Mathematics"); EDU.go("notes");');
+    await sleep(150);
+    const l = doc.getElementById("eduLesson");
+    if (!l || !/Hear this lesson/.test(l.textContent)) throw "no speak button";
+    w.eval("EDU.speak()"); await sleep(50);
+    w.eval("EDU.speak()"); await sleep(50);
+    w.eval("EDU.stopSpeak()"); await sleep(30);
+    const brand = doc.querySelector(".edu-brand small");
+    if (!brand || !/all 19 subjects/.test(brand.textContent)) throw "header: " + (brand && brand.textContent);
+    if (/all 13 subjects/.test(brand.textContent)) throw "stale 13";
+  });
+  await run("no uncaught errors across the whole v12 flow", () => {
     if (errs.length) throw errs.join(";").slice(0, 140);
     let hits = 0;
     doc.querySelectorAll("body *").forEach(el => {
@@ -196,6 +292,6 @@ const badText = /NaN|undefined\b|Infinity/;
     if (hits > 0) throw "NaN in rendered text x" + hits;
   });
 
-  console.log(fails ? `\n${fails} FAIL` : "\nALL v11 CHECKS PASSED");
+  console.log(fails ? `\n${fails} FAIL` : "\nALL v12 CHECKS PASSED");
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error("suite crashed:", e); process.exit(2); });
