@@ -1,7 +1,7 @@
 /* ============================================================
    v11.0 — STUDY ARCADE + VIDEO STUDIO · engine
-   6 study modes (Term Match, Rapid Fire 60s, Flash Cards, Memory Pairs,
-   Ladder Challenge, UTME Simulation) + Video Studio + curriculum hub.
+   7 study modes (Term Match, Rapid Fire 60s, Flash Cards, Memory Pairs,
+   Ladder Challenge, UTME Simulation, Theory Hall) + Video Studio + hub.
    All state lives on-device; XP/merits feed the main app.
    ============================================================ */
 (function () {
@@ -110,7 +110,15 @@
     + ".arc-bar{height:10px;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden;margin:4px 0 2px}"
     + ".arc-bar i{display:block;height:100%;background:linear-gradient(90deg,#c9a227,#e6c453)}"
     + ".arc-fcard{border:1.5px solid var(--card-border,#ddd2b8);border-radius:16px;background:linear-gradient(150deg,#134a7c,#0a2c50);color:#f5ead2;min-height:190px;display:grid;place-items:center;padding:22px;font-size:1.02rem;font-weight:800;text-align:center;line-height:1.55;margin-bottom:12px}"
-    + ".arc-fcard.show{background:var(--chip-bg,#fffdf6);color:var(--ink,#1c1626)}";
+    + ".arc-fcard.show{background:var(--chip-bg,#fffdf6);color:var(--ink,#1c1626)}"
+    + ".arc-calc{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;border:1.5px solid var(--card-border,#ddd2b8);border-radius:12px;padding:8px;background:var(--panel,#fbf7ee);margin:10px 0}"
+    + ".arc-calcd{grid-column:1/-1;text-align:right;font-size:1.15rem;font-weight:900;padding:8px 10px;border:1px solid var(--card-border,#ddd2b8);border-radius:8px;background:var(--opt-bg,#fffdf6);color:var(--ink,#1c1626);min-height:42px;display:flex;align-items:center;justify-content:flex-end;overflow:hidden}"
+    + ".arc-calc button{border:1.5px solid var(--card-border,#ddd2b8);border-radius:9px;min-height:42px;font-weight:800;background:var(--chip-bg,#fffdf6);color:var(--ink,#1c1626);cursor:pointer;font-family:inherit;font-size:.95rem}"
+    + ".arc-calc button.op{background:rgba(201,162,39,.16);border-color:#c9a227}"
+    + ".arc-eq{grid-column:1/-1}"
+    + ".arc-calc button.eq{background:#c9a227;color:#1d1508;border-color:#a67c1e}"
+    + ".arc-model{border:1px solid #2b8a3e;border-left:4px solid #2b8a3e;border-radius:10px;padding:10px 12px;background:rgba(43,138,62,.07);margin:10px 0;font-size:.85rem;line-height:1.6}"
+    + ".arc-marks li{font-size:.8rem;line-height:1.5;margin:4px 0}";
 
   function body() { return $("arcBody"); }
   function shell(title, inner, wide) {
@@ -135,10 +143,11 @@
     if (ov) ov.classList.add("hidden");
     document.body.classList.remove("arc-open");
     if (M.timer) { clearInterval(M.timer); M.timer = null; }
+    CALC.on = false;
   }
   function tabs() {
     var t = $("arcTabs"); if (!t) return;
-    var items = [["open", "🏠 Home"], ["term", "🧠 Term Match"], ["rapid", "⚡ Rapid Fire"], ["cards", "🃏 Flash Cards"], ["memo", "🃏 Memory Pairs"], ["ladder", "🪜 Ladder"], ["utme", "🎓 UTME"], ["videos", "🎬 Studio"], ["hub", "🗺 Curriculum"]];
+    var items = [["open", "🏠 Home"], ["term", "🧠 Term Match"], ["rapid", "⚡ Rapid Fire"], ["cards", "🃏 Flash Cards"], ["memo", "🃏 Memory Pairs"], ["ladder", "🪜 Ladder"], ["utme", "🎓 UTME"], ["essay", "📝 Theory"], ["videos", "🎬 Studio"], ["hub", "🗺 Curriculum"]];
     t.innerHTML = items.map(function (x) {
       return '<button type="button" class="arc-tab' + (M.mode === x[0] ? " on" : "") + '" onclick="ARC.go(\'' + x[0] + '\')">' + x[1] + "</button>";
     }).join("");
@@ -155,14 +164,16 @@
     if (kind === "memo") return memoGo(opts);
     if (kind === "ladder") return ladderGo(opts);
     if (kind === "utme") return utmeGo(opts);
+    if (kind === "essay") return essayGo(opts);
     if (kind === "cards") return cardGo(opts);
     if (kind === "videos") return vidRoute();
     if (kind === "hub") return hubRoute();
     var bs = bests();
     shell("🎮 Study Arcade — play, revise, level up", "" +
-      '<p style="margin:0 0 10px;font-size:.8rem;color:var(--mut,#8a7a5e)">Six study modes built on the app\'s verified WAEC/NECO question bank and the full 19-subject curriculum — every correct answer earns XP and merits.</p>' +
+      '<p style="margin:0 0 10px;font-size:.8rem;color:var(--mut,#8a7a5e)">Seven study modes built on the app\'s verified WAEC/NECO question bank and the 19-subject curriculum — every correct answer earns XP and merits.</p>' +
       '<div class="arc-grid">' +
       tile("utme", "🎓", "UTME Simulation", "JAMB-style: 4 subjects, 180 questions, timed — see your /400", bs.utme && bs.utme.best ? bs.utme.best + "/400 best" : "") +
+      tile("essay", "📝", "Theory Hall", "WAEC/NECO essay questions with model answers — write, then self-mark", bs.essay && bs.essay.best ? bs.essay.best + " graded" : "") +
       tile("cards", "🃏", "Flash Cards", "Term–definition decks for all 19 subjects — the tricky cards come back first", bs.cards && bs.cards.best ? bs.cards.best + "/6 best" : "") +
       tile("term", "🧠", "Term Match", "Match each term to its definition — 10 rounds, streaks count", bs.term && bs.term.best ? bs.term.best.best + " pts best" : "") +
       tile("rapid", "⚡", "Rapid Fire 60s", "Answer as many real questions as you can in 60 seconds", bs.rapid && bs.rapid.best ? bs.rapid.best.best + " pts best" : "") +
@@ -389,10 +400,24 @@
   /* ---------- Ladder Challenge ---------- */
   function ladderGo(opts) {
     var cls = bank(); if (!cls) { toast("The question bank is still loading — try again in a moment", "⏳"); return go("open"); }
-    M.deck = shuffle(cls.reduce(function (a, c) { return a.concat(c.questions || []); }, [])).slice(0, 10);
+    var subjSel = (opts && opts.subj) || M.subj || null;
+    if (subjSel) M.deck = poolFor(subjSel).slice(0, 10);
+    else M.deck = shuffle(cls.reduce(function (a, c) { return a.concat(c.questions || []); }, [])).slice(0, 10);
+    if (!M.deck || !M.deck.length) M.deck = shuffle(cls.reduce(function (a, c) { return a.concat(c.questions || []); }, [])).slice(0, 10);
     M.round = 0; M.lives = 3; M.score = 0; M.over = false;
     M.secs = (opts && opts.secs) || 20;
-    shell("🪜 Ladder Challenge", '<div class="arc-hud"><span class="arc-pill">Rung ' + (M.round + 1) + "/10</span><span class=\"arc-pill\">Lives ❤❤❤</span><span class=\"arc-pill\">Score " + M.score + "</span><span class=\"arc-pill\" id=\"ladClock\">⏱ 20s</span></div><div id=\"arcPlay\"></div>");
+    var ladSubs = subjList().slice();
+    Object.keys(XQ).forEach(function (x) { if (ladSubs.indexOf(x) < 0) ladSubs.push(x); });
+    ladSubs.sort();
+    var ladChips = ['<button type="button" class="arc-chip' + (subjSel ? "" : " on") + '" data-s="">All subjects</button>']
+      .concat(ladSubs.map(function (x) { return '<button type="button" class="arc-chip' + (subjSel === x ? " on" : "") + '" data-s="' + esc(x) + '">' + esc(x) + "</button>"; })).join("");
+    shell("🪜 Ladder Challenge", '<div class="arc-sub" id="ladSubs">' + ladChips + '</div><div class="arc-hud"><span class="arc-pill">Rung ' + (M.round + 1) + "/10</span><span class=\"arc-pill\">Lives ❤❤❤</span><span class=\"arc-pill\">Score " + M.score + "</span><span class=\"arc-pill\" id=\"ladClock\">⏱ 20s</span></div><div id=\"arcPlay\"></div>");
+    var ls = $("ladSubs");
+    if (ls) {
+      Array.prototype.forEach.call(ls.querySelectorAll(".arc-chip"), function (b) {
+        b.onclick = function () { M.subj = b.getAttribute("data-s") || null; ladderGo(); };
+      });
+    }
     ladderQ();
   }
   function ladderQ() {
@@ -535,11 +560,14 @@
     var box = $("arcQ"); if (!box || !UT) return;
     var p = UT.paper[UT.cur];
     if (p) {
-      box.innerHTML = '<div class="arc-hud"><span class="arc-pill">Q' + (UT.cur + 1) + "/" + UT.paper.length + "</span><span class=\"arc-pill\">" + esc(p.s) + "</span></div>" +
+      box.innerHTML = '<div class="arc-hud"><span class="arc-pill">Q' + (UT.cur + 1) + "/" + UT.paper.length + "</span><span class=\"arc-pill\">" + esc(p.s) + '</span><button type="button" class="arc-btn" id="utCalcB" title="On-screen calculator (JAMB CBT provides one)">🧮</button></div>' +
         '<div class="arc-qtext">' + esc(p.q.q) + "</div>" +
         '<div class="arc-opts">' + (p.q.o || []).map(function (o, k) {
           return '<button type="button" class="arc-opt' + (UT.ans[UT.cur] === k ? " on-arc" : "") + '" onclick="ARC.utmeSet(' + UT.cur + "," + k + ')">' + ["A", "B", "C", "D"][k] + ". " + esc(o) + "</button>";
-        }).join("") + "</div>";
+        }).join("") + '<div id="arcCalcMount"></div></div>';
+      var cb = $("utCalcB");
+      if (cb) cb.onclick = function () { calcToggle(); };
+      calcMount();
     } else box.innerHTML = "";
     var sheet = $("utSheet");
     if (sheet) {
@@ -581,6 +609,7 @@
       }
     }
     UT.over = true;
+    CALC.on = false;
     if (M.timer) { clearInterval(M.timer); M.timer = null; }
     if (typeof document.removeEventListener === "function") document.removeEventListener("visibilitychange", utmV);
     var t = utmeTotals();
@@ -709,6 +738,190 @@
     bindActs();
   }
 
+  /* ---------- On-screen calculator (UTME — JAMB CBT style) ---------- */
+  var CALC = { on: false, disp: "0", acc: null, op: null, fresh: true };
+  function calcRound(n) {
+    if (typeof n !== "number" || !isFinite(n)) return NaN;
+    var p = parseFloat(n.toPrecision(12));
+    return p === 0 ? 0 : p;
+  }
+  function calcRun(a, op, b) {
+    var r = op === "+" ? a + b : op === "-" ? a - b : op === "*" ? a * b : (b === 0 ? NaN : a / b);
+    return calcRound(r);
+  }
+  function calcPaint() {
+    var d = $("arcCalcDisp");
+    if (d) d.textContent = String(CALC.disp);
+  }
+  function calcPress(k) {
+    if (!CALC.on) return;
+    if (k === "c") { CALC.disp = "0"; CALC.acc = null; CALC.op = null; CALC.fresh = true; calcPaint(); return; }
+    if (k === "ce") { CALC.disp = "0"; CALC.fresh = true; calcPaint(); return; }
+    if (k === "+/-") {
+      if (CALC.disp !== "0" && CALC.disp !== "Error") CALC.disp = CALC.disp.charAt(0) === "-" ? CALC.disp.slice(1) : "-" + CALC.disp;
+      calcPaint(); return;
+    }
+    if (/^[0-9.]$/.test(k)) {
+      if (CALC.disp === "Error") { CALC.disp = "0"; CALC.fresh = true; }
+      if (CALC.fresh) { CALC.disp = k === "." ? "0." : k; CALC.fresh = false; }
+      else {
+        if (k === "." && CALC.disp.indexOf(".") >= 0) return;
+        if (CALC.disp === "0" && k !== ".") CALC.disp = k;
+        else CALC.disp += k;
+      }
+      if (CALC.disp.length > 14) return;
+      calcPaint(); return;
+    }
+    if (k === "=") {
+      if (CALC.op !== null && CALC.acc !== null) {
+        var r = calcRun(CALC.acc, CALC.op, parseFloat(CALC.disp) || 0);
+        CALC.disp = String(isNaN(r) ? "Error" : r);
+        CALC.acc = null; CALC.op = null; CALC.fresh = true;
+      }
+      calcPaint(); return;
+    }
+    if ("+-*/".indexOf(k) >= 0) {
+      var cur = parseFloat(CALC.disp) || 0;
+      if (CALC.op !== null && CALC.acc !== null && !CALC.fresh) CALC.acc = calcRun(CALC.acc, CALC.op, cur);
+      else CALC.acc = cur;
+      CALC.op = k === "*" ? "*" : k === "/" ? "/" : k;
+      CALC.fresh = true;
+      CALC.disp = String(CALC.acc);
+      calcPaint();
+    }
+  }
+  function calcToggle() {
+    CALC.on = !CALC.on;
+    if (M.mode === "utme" && !UT.over) utmeQ(); else calcMount();
+  }
+  function calcMount() {
+    var host = $("arcCalcMount"); if (!host) return;
+    if (!CALC.on) { host.innerHTML = ""; return; }
+    var box = document.createElement("div");
+    box.className = "arc-calc";
+    var d = document.createElement("div");
+    d.className = "arc-calcd"; d.id = "arcCalcDisp"; d.textContent = String(CALC.disp);
+    box.appendChild(d);
+    var grid = [
+      ["C", "c"], ["⌫", "ce"], ["÷", "/"], ["×", "*"],
+      ["7", "7"], ["8", "8"], ["9", "9"], ["−", "-"],
+      ["4", "4"], ["5", "5"], ["6", "6"], ["+", "+"],
+      ["1", "1"], ["2", "2"], ["3", "3"], ["±", "+/-"],
+      ["0", "0"], [".", "."]
+    ];
+    grid.forEach(function (g) {
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = g[0]; b.className = /[÷×−+±]/.test(g[0]) ? "op" : "";
+      b.setAttribute("aria-label", g[0]);
+      b.onclick = function () { calcPress(g[1]); };
+      box.appendChild(b);
+    });
+    var eq = document.createElement("button");
+    eq.type = "button"; eq.textContent = "="; eq.className = "eq";
+    eq.onclick = function () { calcPress("="); };
+    box.appendChild(eq);
+    host.appendChild(box);
+  }
+  function calcKey(e) {
+    if (!CALC.on) return;
+    var k = e.key;
+    if (/^[0-9]$/.test(k)) calcPress(k);
+    else if (k === ".") calcPress(".");
+    else if (k === "+" || k === "-") calcPress(k);
+    else if (k === "*") calcPress("*");
+    else if (k === "/") { e.preventDefault(); calcPress("/"); }
+    else if (k === "Enter" || k === "=") { e.preventDefault(); calcPress("="); }
+    else if (k === "Backspace") calcPress("ce");
+    else if (k === "Escape") calcToggle();
+  }
+  if (typeof document.addEventListener === "function") document.addEventListener("keydown", calcKey);
+
+  /* ---------- Theory Hall (WAEC/NECO essay practice) ---------- */
+  var ESS = { subj: null, idx: 0, got: 0 }, ESS_KEY = "nssc_essay_a";
+  function essayProg() {
+    try { var p = store(ESS_KEY); if (p && typeof p === "object" && !Array.isArray(p)) return p; } catch (e) {}
+    return {};
+  }
+  function essayGo(opts) {
+    var subs = Object.keys(ESSEY).sort();
+    if (!subs.length) { toast("The essay bank is still loading — try again in a moment", "📝"); return go("open"); }
+    var subj = (opts && opts.subj) || M.subj || subs[0];
+    if (!ESSEY[subj]) subj = subs[0];
+    M.subj = subj; M.mode = "essay";
+    ESS.subj = subj; ESS.idx = 0; ESS.got = 0;
+    var prog = essayProg();
+    var chips = subs.map(function (sx) {
+      var done = prog[sx] && prog[sx].length >= ESSEY[sx].length;
+      return '<button type="button" class="arc-chip' + (sx === subj ? " on" : "") + '" data-s="' + esc(sx) + '">' + esc(sx) + (done ? " ✓" : "") + "</button>";
+    }).join("");
+    shell("📝 Theory Hall — WAEC/NECO essay practice", '<div class="arc-sub" id="essSubs">' + chips + '</div><p class="arc-note">Attempt the question on paper first — then reveal the model answer and marking points, self-mark honestly, and earn XP for your effort. Two essays per subject.</p><div id="arcPlay"></div>');
+    var box = $("essSubs");
+    if (box) {
+      Array.prototype.forEach.call(box.querySelectorAll(".arc-chip"), function (b) {
+        b.onclick = function () { M.subj = b.getAttribute("data-s"); essayGo(); };
+      });
+    }
+    essayShow();
+  }
+  function essayShow() {
+    var play = $("arcPlay"); if (!play) return;
+    var list = ESSEY[M.subj] || [];
+    if (ESS.idx >= list.length) return essayEnd();
+    var e = list[ESS.idx];
+    play.innerHTML = '<div class="arc-hud"><span class="arc-pill">Essay ' + (ESS.idx + 1) + "/" + list.length + '</span><span class="arc-pill">' + esc(M.subj) + '</span><span class="arc-pill">✔ ' + ESS.got + " graded</span></div>" +
+      '<div class="arc-q"><div class="arc-qtext">' + esc(e.q) + "</div>" +
+      '<p class="arc-note">Write your answer on paper (or say it aloud) before revealing the model. Real pen practice, like the exam.</p>' +
+      '<div class="arc-actions"><button type="button" class="arc-btn gold" id="essRev">🔎 Reveal model answer</button><button type="button" class="arc-btn" id="essSkip">Skip →</button></div></div>';
+    var r = $("essRev"); if (r) r.onclick = essayReveal;
+    var sk = $("essSkip"); if (sk) sk.onclick = function () { ESS.idx++; essayShow(); };
+  }
+  function essayReveal() {
+    var play = $("arcPlay"); if (!play) return;
+    var e = (ESSEY[M.subj] || [])[ESS.idx];
+    if (!e) return;
+    play.innerHTML = '<div class="arc-q"><div class="arc-qtext">' + esc(e.q) + "</div>" +
+      '<div class="arc-model"><b>Model answer.</b> ' + esc(e.model) + "</div>" +
+      '<div class="edu-sub"><b>🎯 Marking points</b><ul class="arc-marks">' + e.pts.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul></div>" +
+      '<p class="arc-note">💡 Examiner tip: ' + esc(e.tip) + "</p>" +
+      '<p style="font-size:.8rem;font-weight:800;margin:8px 0 6px">How would the examiner grade your attempt?</p>' +
+      '<div class="arc-actions"><button type="button" class="arc-btn gold" id="essHi">🏆 8–10 · developed</button><button type="button" class="arc-btn" id="essMid">👍 5–7 · adequate</button><button type="button" class="arc-btn" id="essLo">✍ 1–4 · partial</button></div></div>';
+    var hi = $("essHi"); if (hi) hi.onclick = function () { essayGrade(2); };
+    var mid = $("essMid"); if (mid) mid.onclick = function () { essayGrade(1); };
+    var lo = $("essLo"); if (lo) lo.onclick = function () { essayGrade(0); };
+  }
+  function essayGrade(g) {
+    var prog = essayProg();
+    if (!prog[M.subj]) prog[M.subj] = [];
+    if (prog[M.subj].indexOf(ESS.idx) < 0) prog[M.subj].push(ESS.idx);
+    store(ESS_KEY, prog);
+    ESS.got++;
+    xp(g === 2 ? 10 : g === 1 ? 6 : 2);
+    M.best = ESS.got;
+    saveBest("essay");
+    ESS.idx++;
+    essayShow();
+  }
+  function essayEnd() {
+    var play = $("arcPlay"); if (!play) return;
+    var list = ESSEY[M.subj] || [];
+    var prog = essayProg();
+    var all = prog[M.subj] && prog[M.subj].length >= list.length;
+    if (all) coin(1);
+    play.innerHTML = '<div class="arc-q"><div class="arc-qtext">📝 ' + M.subj + " — both essays attempted! You graded " + ESS.got + " of " + list.length + "</div>" +
+      '<p style="font-size:.78rem;color:var(--mut,#8a7a5e);margin:0 0 10px">' + (all ? "Full set done — coin earned. Replay any time to revise." : "Replay the ones you skipped — self-marking beats re-reading.") + "</p>" +
+      '<div class="arc-actions"><button type="button" class="arc-btn gold" id="essRe">↻ Replay subject</button><button type="button" class="arc-btn" id="essNext">Next subject →</button><button type="button" class="arc-btn" data-a="open">All modes</button></div></div>';
+    var re = $("essRe"); if (re) re.onclick = function () { essayGo(); };
+    var nx = $("essNext");
+    if (nx) nx.onclick = function () {
+      var subs = Object.keys(ESSEY).sort();
+      var i = subs.indexOf(M.subj);
+      M.subj = subs[(i + 1) % subs.length];
+      essayGo();
+    };
+    bindActs();
+    if (all) xp(20);
+  }
+
   /* ---------- Video Studio ---------- */
   function vidRoute() {
     M.mode = "videos";
@@ -809,6 +1022,9 @@
     utmeStart: utmeStart, utmeSet: utmeSet, utmeNav: utmeNav, utmeGrid: utmeGrid,
     utmeSubmit: utmeSubmit, utmeReview: utmeReview, utmeResults: utmeResults,
     cardSub: cardSub, cardFlip: cardFlip, cardRate: cardRate,
+    cb: calcPress, calcToggle: calcToggle,
+    essayGrade: essayGrade, essayReveal: essayReveal,
+    _calc: function () { return CALC; }, _ess: function () { return ESS; },
     cardRestart: function () { if (CD && CD.subj) cardStart(CD.subj); },
     _ut: function () { return UT; }, _cd: function () { return CD; },
     watch: watch, addVideo: addVideo, delVideo: delVideo,
@@ -816,4 +1032,5 @@
     _state: function () { return M; }
   };
   window.ARC.ready = true;
+  window.ESSEY = ESSEY;
 })();

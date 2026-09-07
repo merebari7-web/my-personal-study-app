@@ -1,4 +1,4 @@
-/* v12.0 suite — Teaching Suite extended subjects + Study Arcade + Video Studio.
+/* v13.0 suite — Teaching Suite extended subjects + Study Arcade + Video Studio.
    Run: node quiz/test_arcade.js  (repo root; jsdom) */
 const fs = require("fs");
 const { JSDOM, VirtualConsole } = require("jsdom");
@@ -79,11 +79,11 @@ const badText = /NaN|undefined\b|Infinity/;
   });
 
   w.eval(ARC);
-  await run("arc: loads, home shows 8 tiles", async () => {
+  await run("arc: loads, home shows 9 tiles", async () => {
     w.eval('ARC.go("open")');
     await sleep(120);
     if (!w.ARC || !w.ARC.ready) throw "ARC not ready";
-    if (doc.querySelectorAll(".arc-tile").length !== 8) throw "tiles=" + doc.querySelectorAll(".arc-tile").length;
+    if (doc.querySelectorAll(".arc-tile").length !== 9) throw "tiles=" + doc.querySelectorAll(".arc-tile").length;
     if (!doc.getElementById("arcOv")) throw "no overlay";
   });
 
@@ -282,7 +282,75 @@ const badText = /NaN|undefined\b|Infinity/;
     if (!brand || !/all 19 subjects/.test(brand.textContent)) throw "header: " + (brand && brand.textContent);
     if (/all 13 subjects/.test(brand.textContent)) throw "stale 13";
   });
-  await run("no uncaught errors across the whole v12 flow", () => {
+
+  // ---- v13: UTME calculator + Theory Hall + Ladder 19 subjects ----
+  await run("utme: on-screen calculator opens with full keypad", async () => {
+    w.eval('ARC.go("utme")'); await sleep(120);
+    w.eval('ARC.utmeStart({subjects:["English Language","Mathematics","Physics","Chemistry"]})');
+    await sleep(280);
+    if (!doc.getElementById("utCalcB")) throw "no calc button";
+    w.eval("ARC.calcToggle()"); await sleep(60);
+    if (!doc.getElementById("arcCalcDisp")) throw "no display";
+    if (doc.querySelectorAll("#arcCalcMount button").length < 12) throw "keypad too small";
+  });
+  await run("utme: calculator computes (12+3=15, 9x9=81, /0=Error)", async () => {
+    ["1","2","+","3","="].forEach(k => w.eval('ARC.cb("' + k + '")'));
+    if (doc.getElementById("arcCalcDisp").textContent !== "15") throw "12+3";
+    w.eval('ARC.cb("c")'); ["9","*","9","="].forEach(k => w.eval('ARC.cb("' + k + '")'));
+    if (doc.getElementById("arcCalcDisp").textContent !== "81") throw "9x9";
+    w.eval('ARC.cb("c")'); ["8","/","0","="].forEach(k => w.eval('ARC.cb("' + k + '")'));
+    if (doc.getElementById("arcCalcDisp").textContent !== "Error") throw "div0";
+    w.eval('ARC.cb("c")');
+  });
+  await run("utme: calculator accepts keyboard input without pausing timer", async () => {
+    const t0 = w.ARC._ut().t0;
+    const c0 = doc.getElementById("utClock").textContent;
+    doc.dispatchEvent(new w.KeyboardEvent("keydown", { key: "5", bubbles: true }));
+    doc.dispatchEvent(new w.KeyboardEvent("keydown", { key: "+", bubbles: true }));
+    doc.dispatchEvent(new w.KeyboardEvent("keydown", { key: "2", bubbles: true }));
+    doc.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    if (doc.getElementById("arcCalcDisp").textContent !== "7") throw "keyboard calc";
+    await sleep(1200);
+    const c1 = doc.getElementById("utClock").textContent;
+    if (c1 === c0) throw "timer paused by calculator";
+  });
+  await run("essay: Theory Hall lists 19 subjects, 38 essays in data", async () => {
+    if (!w.ESSEY || Object.keys(w.ESSEY).length !== 19) throw "subjects=" + (w.ESSEY && Object.keys(w.ESSEY).length);
+    let n = 0; Object.keys(w.ESSEY).forEach(s => n += w.ESSEY[s].length);
+    if (n !== 38) throw "essays=" + n;
+    w.eval('ARC.go("essay")'); await sleep(140);
+    if (doc.querySelectorAll("#essSubs .arc-chip").length !== 19) throw "chips";
+  });
+  await run("essay: question -> model answer -> self-mark -> progress saved", async () => {
+    w.eval('ARC.go("essay",{subj:"Biology"})'); await sleep(140);
+    if (!/Write your answer on paper/.test(doc.getElementById("arcPlay").textContent)) throw "no task prompt";
+    w.eval("ARC.essayReveal()"); await sleep(60);
+    const t = doc.getElementById("arcPlay").textContent;
+    if (!/Model answer/.test(t) || !/Marking points/.test(t) || !/Examiner tip/.test(t)) throw "reveal incomplete";
+    w.eval("ARC.essayGrade(2)"); await sleep(60);
+    if (!/Essay 2\/2/.test(doc.getElementById("arcPlay").textContent)) throw "no essay 2";
+    w.eval("ARC.essayGrade(1)"); await sleep(60);
+    if (!/both essays attempted/.test(doc.getElementById("arcPlay").textContent)) throw "no end";
+    const saved = JSON.parse(w.localStorage.getItem("nssc_essay_a") || "{}");
+    if (!saved.Biology || saved.Biology.length !== 2) throw "not persisted";
+  });
+  await run("essay: corrupt nssc_essay_a survives", async () => {
+    w.localStorage.setItem("nssc_essay_a", '{"broken');
+    w.eval('ARC.go("essay")'); await sleep(120);
+    if (!doc.getElementById("arcPlay")) throw "crash";
+    if (/uncaught/i.test(doc.body.textContent)) throw "error text";
+  });
+  await run("ladder: subject chips = All + 19, extended subject playable", async () => {
+    w.eval('ARC.go("ladder")'); await sleep(200);
+    if (doc.querySelectorAll("#ladSubs .arc-chip").length !== 20) throw "chips=" + doc.querySelectorAll("#ladSubs .arc-chip").length;
+    w.eval('ARC.go("ladder",{subj:"French"})'); await sleep(250);
+    const o = doc.getElementById("arcLadOpts");
+    if (!o) throw "no French question";
+    w.eval("ARC.lpick(" + (+o.getAttribute("data-answer")) + ")");
+    await sleep(600);
+    if (!(w.ARC._state().score > 0)) throw "score not awarded";
+  });
+  await run("no uncaught errors across the whole v13 flow", () => {
     if (errs.length) throw errs.join(";").slice(0, 140);
     let hits = 0;
     doc.querySelectorAll("body *").forEach(el => {
@@ -292,6 +360,6 @@ const badText = /NaN|undefined\b|Infinity/;
     if (hits > 0) throw "NaN in rendered text x" + hits;
   });
 
-  console.log(fails ? `\n${fails} FAIL` : "\nALL v12 CHECKS PASSED");
+  console.log(fails ? `\n${fails} FAIL` : "\nALL v13 CHECKS PASSED");
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error("suite crashed:", e); process.exit(2); });

@@ -2,7 +2,7 @@
    it re-opens instantly and works with zero network (airplane mode). While
    online the network is tried first so updates arrive on the next visit.
    Bump NSS_V on every release. */
-const NSS_V = "nssc-v20260907" + "-v12"; /* v12 — advanced study: UTME Simulation, Flash Cards, 19-subject games, lesson read-aloud. Every NSS_CORE change needs a bump (edu.js changed). */
+const NSS_V = "nssc-v20260907" + "-v13"; /* v13 — exam hall complete: UTME calculator, Theory Hall (38 essays), Ladder on 19 subjects. Bump per release (runtime cache key). */
 const NSS_CORE = ["./", "./index.html", "./sw.js", "./edu.js"];
 /* labs.js is NOT in NSS_CORE on purpose: the runtime fetch handler below caches
    it the first time it is requested online, so an offline first-visit install
