@@ -1,1 +1,4 @@
 packs/SS*-full-term-practice-pack/
+node_modules/
+__pycache__/
+*.pyc
