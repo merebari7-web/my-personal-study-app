@@ -1,5 +1,5 @@
 /* LIVE service-worker verification against the deployed site.
-   Proves a returning/offline user now receives the responsive v10.2 build.
+   Proves a returning/offline user receives the current release build (key derived from sw.js).
    Run: node quiz/_live_sw.js */
 const puppeteer = require("puppeteer");
 const URL = "https://merebari7-web.github.io/my-personal-study-app/";
@@ -30,7 +30,8 @@ const ok = (l, c) => { console.log(c ? "✓" : "✗", l); if (!c) fails++; };
     }),
     new Promise(r => setTimeout(() => r({ key: "timeout" }), 25000)),
   ]));
-  ok("live SW installs with -v10.2 cache key", sw.key.indexOf("-v10.2") > -1);
+  const ver = (require("fs").readFileSync("sw.js", "utf8").match(/const NSS_V = "[^"]*" \+ "(-v[0-9a-z.]+)"/) || [])[1];
+  ok("live SW installs with " + ver + " cache key", sw.key.indexOf(ver) > -1);
   ok("live cache holds the responsive index (qnav wrap)", sw.idxRx === true);
 
   await page.evaluate(() => { document.getElementById("gateName").value = "A B"; document.getElementById("gateEmail").value = "a@b.c"; gateSignUp(); });
@@ -38,7 +39,7 @@ const ok = (l, c) => { console.log(c ? "✓" : "✗", l); if (!c) fails++; };
   await page.reload({ waitUntil: "load" });
   await new Promise(r => setTimeout(r, 1000));
   ok("live OFFLINE reload still boots the app", await page.evaluate(() => !window.QUIZ_ERR && !!document.getElementById("gateOverlay")));
-  ok("live offline nav is v10.2 (overflow visible = wraps)", await page.evaluate(() => getComputedStyle(document.querySelector("nav.nav")).overflowX === "visible"));
+  ok("live offline nav still wraps (overflow visible)", await page.evaluate(() => getComputedStyle(document.querySelector("nav.nav")).overflowX === "visible"));
 
   await browser.close();
   console.log(fails ? `\nLIVE SW: ${fails} FAIL` : "\nALL LIVE SERVICE-WORKER CHECKS PASSED");
