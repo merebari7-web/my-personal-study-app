@@ -622,5 +622,18 @@ by the service worker, so the boot-critical page + question bank stay lean. */
   function c(){if(!document.getElementById("eduLaunch")){b()}if(!document.getElementById("eduLaunchCss")){var st=document.createElement("style");st.id="eduLaunchCss";st.textContent=".edu-launcher{position:fixed;right:14px;top:calc(14px + env(safe-area-inset-top));z-index:99;display:inline-flex;align-items:center;min-height:40px;gap:8px;background:var(--card-solid,#fffaf0);border:1px solid var(--card-border,#ddd2b8);border-radius:999px;padding:8px 14px;cursor:pointer;box-shadow:0 8px 24px -12px rgba(0,0,0,.35);color:var(--ink,#1c1626);font-family:inherit;font-size:.82rem;font-weight:700;transition:.2s}.edu-launcher:hover{transform:translateY(-2px);border-color:var(--gold,#c9a25f)}.edu-launch-ico{font-size:1.15rem}.edu-launch-txt{display:none}@media(min-width:520px){.edu-launch-txt{display:inline}}";document.head.appendChild(st)}}
   if("loading"===document.readyState)document.addEventListener("DOMContentLoaded",c);else c();
 })();</script>
+<script>
+/* v11.0 Study Arcade + Video Studio loader — arcade.js is fetched once, on first
+use, then cached by the service worker, so the boot-critical page stays lean. */
+(function(){
+  var L=function(){var a=arguments;if(window.ARC&&ARC.ready)return ARC.go.apply(ARC,a);var q=window.__arcWait=window.__arcWait||[];q.push(function(){try{ARC.go.apply(ARC,a)}catch(e){}});if(window.__arcLoading)return;window.__arcLoading=1;var s=document.createElement("script");s.src="arcade.js";s.async=!0;s.onload=function(){ARC.ready=!0;delete window.__arcLoading;var w=(window.__arcWait||[]).splice(0);w.forEach(function(f){try{f()}catch(e){}})};s.onerror=function(){delete window.__arcLoading;try{toast("The Study Arcade needs one online visit to download — after that it works offline","⚠️")}catch(e){}};document.head.appendChild(s)};
+  window.arc=L;
+  var ST=".arc-launcher{position:fixed;left:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:99;display:inline-flex;align-items:center;min-height:40px;gap:8px;background:var(--card-solid,#fffaf0);border:1px solid var(--card-border,#ddd2b8);border-radius:999px;padding:8px 14px;cursor:pointer;box-shadow:0 8px 24px -12px rgba(0,0,0,.35);color:var(--ink,#1c1626);font-family:inherit;font-size:.82rem;font-weight:700;transition:.2s}.arc-launcher:hover{transform:translateY(-2px);border-color:var(--gold,#c9a25f)}@media (max-width:640px){.arc-launcher{left:10px;bottom:calc(64px + env(safe-area-inset-bottom));padding:8px 12px}}";
+  function b(){if(document.getElementById("arcLaunch"))return;var x=document.createElement("button");x.id="arcLaunch";x.className="arc-launcher";x.type="button";x.title="Open the Study Arcade — games, video lessons, full curriculum";x.setAttribute("aria-label","Open the Study Arcade");x.innerHTML='<span aria-hidden="true">🎮</span><span>Study Arcade</span>';x.onclick=function(){L("open")};document.body.appendChild(x)}
+  function c(){if(!document.getElementById("arcLaunch")){b()}if(!document.getElementById("arcLaunchCss")){var st=document.createElement("style");st.id="arcLaunchCss";st.textContent=ST;document.head.appendChild(st)}}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",c);else c();
+})();
+</script>
+
 </body>
 </html>

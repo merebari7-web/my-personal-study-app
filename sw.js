@@ -2,7 +2,7 @@
    it re-opens instantly and works with zero network (airplane mode). While
    online the network is tried first so updates arrive on the next visit.
    Bump NSS_V on every release. */
-const NSS_V = "nssc-v20250907" + "-v10.2"; /* v10.2 — responsive hardening release (cache-bust: old NSS_V kept serving the pre-v10.2 shell) */
+const NSS_V = "nssc-v20260907" + "-v11"; /* v11 — curriculum complete: 19-subject notes + arcade (games, video studio, hub). v10.2 stale-cache lesson: every NSS_CORE change needs a bump. */
 const NSS_CORE = ["./", "./index.html", "./sw.js", "./edu.js"];
 /* labs.js is NOT in NSS_CORE on purpose: the runtime fetch handler below caches
    it the first time it is requested online, so an offline first-visit install
