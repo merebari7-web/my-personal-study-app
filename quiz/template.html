@@ -635,5 +635,35 @@ use, then cached by the service worker, so the boot-critical page stays lean. */
 })();
 </script>
 
+<!-- v15.0 Complete Curriculum Library loader — the syllabus index and the
+  lesson-note/question library are fetched once on first use of the Teaching
+  Suite, then cached by the service worker. Both scripts define global vars
+  (SYLL, CURR) that the Teaching Suite reads when they arrive. -->
+<script>
+(function(){
+  var curo=function(cb){
+    if(window.SYLL&&window.CURR){ if(cb)try{cb()}catch(e){} return true; }
+    if(window.__curSettled)return false;
+    if(window.__curLoading){
+      if(cb)(window.__curWait=window.__curWait||[]).push(cb);
+      return false;
+    }
+    window.__curLoading=1;
+    var left=2;
+    var done=function(){
+      if(--left)return;
+      window.__curSettled=1;delete window.__curLoading;
+      var w=window.__curWait||[];delete window.__curWait;
+      w.forEach(function(f){try{f()}catch(e){}});
+      if(cb)try{cb()}catch(e){}
+    };
+    var A=document.createElement("script");A.src="quiz/_syllabus_data.js";A.async=true;A.onload=done;A.onerror=done;document.head.appendChild(A);
+    var B=document.createElement("script");B.src="quiz/_curr_data.js";B.async=true;B.onload=done;B.onerror=done;document.head.appendChild(B);
+    return false;
+  };
+  window.curo=curo;
+})();
+</script>
+
 </body>
 </html>

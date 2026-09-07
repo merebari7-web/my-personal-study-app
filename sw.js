@@ -2,7 +2,7 @@
    it re-opens instantly and works with zero network (airplane mode). While
    online the network is tried first so updates arrive on the next visit.
    Bump NSS_V on every release. */
-const NSS_V = "nssc-v20260907" + "-v14"; /* v14 — study analytics: per-subject accuracy, weekly XP, UTME quick packs. Bump per release (runtime cache key). */
+const NSS_V = "nssc-v20260907" + "-v15"; /* v15 — complete SS1–SS3 curriculum library: 684-topic term-by-term syllabus index and 19-subject lesson-note + question library (quiz/_syllabus_data.js, quiz/_curr_data.js). */
 const NSS_CORE = ["./", "./index.html", "./sw.js", "./edu.js"];
 /* labs.js is NOT in NSS_CORE on purpose: the runtime fetch handler below caches
    it the first time it is requested online, so an offline first-visit install

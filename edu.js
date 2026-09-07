@@ -321,6 +321,19 @@ var EXTRA_SUBJECTS = {
     } catch (e) {}
     return null;
   }
+  function curEntry(subject, topic) {
+    try {
+      if (typeof window.CURR !== "undefined" && window.CURR && window.CURR[subject])
+        return (window.CURR[subject] || []).filter(function (x) { return x[0] === topic; })[0] || null;
+    } catch (e) {}
+    return null;
+  }
+  function curEnsure(repaint) {
+    try {
+      if (typeof window.SYLL !== "undefined" && window.SYLL && typeof window.CURR !== "undefined" && window.CURR) return;
+      if (window.curo) window.curo(function () { try { if (repaint) repaint(); } catch (e) {} });
+    } catch (e) {}
+  }
 
 
   var DOC = document;
@@ -374,13 +387,25 @@ var EXTRA_SUBJECTS = {
     return ["SS1", "SS2", "SS3"];
   }
   function topicsOf(subject) {
+    var out = [];
+    function add(arr, kws) {
+      if (!arr || !arr[0]) return;
+      var has = out.some(function (x) { return x[0] === arr[0]; });
+      if (!has) out.push([arr[0], kws || []]);
+    }
+    try {
+      if (typeof window.CURR !== "undefined" && window.CURR && window.CURR[subject])
+        window.CURR[subject].forEach(function (t) { add(t, t[1]); });
+    } catch (e) {}
     try {
       if (typeof EXTRA_SUBJECTS === "object" && EXTRA_SUBJECTS[subject] && EXTRA_SUBJECTS[subject].topics)
-        return EXTRA_SUBJECTS[subject].topics.map(function (t) { return [t[0], t[1]]; });
+        EXTRA_SUBJECTS[subject].topics.forEach(function (t) { add(t, t[1]); });
     } catch (e) {}
     try {
-      if (typeof TOPICS !== "undefined" && TOPICS[subject]) return TOPICS[subject];
+      if (typeof TOPICS !== "undefined" && TOPICS && TOPICS[subject])
+        TOPICS[subject].forEach(function (t) { add(t, t[1]); });
     } catch (e) {}
+    if (out.length) return out;
     try {
       var nb = notesOf(subject);
       if (nb) return Object.keys(nb).map(function (t) { return [t, []]; });
@@ -388,16 +413,23 @@ var EXTRA_SUBJECTS = {
     return [];
   }
   function notesOf(subject) {
+    var mm = {};
     try {
-      if (typeof EXTRA_SUBJECTS === "object" && EXTRA_SUBJECTS[subject]) {
-        var mm = {};
+      if (typeof EXTRA_SUBJECTS === "object" && EXTRA_SUBJECTS[subject])
         (EXTRA_SUBJECTS[subject].topics || []).forEach(function (t) { mm[t[0]] = t[2] || ""; });
-        return mm;
-      }
     } catch (e) {}
-    try { if (window.notesBank) return notesBank()[subject] || {}; } catch (e) {}
-    try { if (typeof RNOTES !== "undefined" && RNOTES[subject]) return RNOTES[subject]; } catch (e) {}
-    return {};
+    try {
+      if (window.notesBank) { var nb0 = notesBank()[subject] || {}; Object.keys(nb0).forEach(function (k) { mm[k] = nb0[k]; }); }
+    } catch (e) {}
+    try {
+      if (typeof RNOTES !== "undefined" && RNOTES[subject])
+        Object.keys(RNOTES[subject]).forEach(function (k) { mm[k] = RNOTES[subject][k]; });
+    } catch (e) {}
+    try {
+      if (typeof window.CURR !== "undefined" && window.CURR && window.CURR[subject])
+        window.CURR[subject].forEach(function (t) { if (t && t[2]) mm[t[0]] = t[2]; });
+    } catch (e) {}
+    return mm;
   }
   function subjectsData() {
     try {
@@ -463,8 +495,22 @@ var EXTRA_SUBJECTS = {
       ". In " + cls + " the emphasis is on " + (cls === "SS1" ? "building a solid foundation" : cls === "SS2" ? "deepening understanding and improving accuracy" : "exam readiness, accuracy and speed") + ".";
   }
   function schemeFor(subject, cls) {
-    var topics = topicsOf(subject);
     var out = [];
+    try {
+      if (typeof window.SYLL !== "undefined" && window.SYLL && window.SYLL[subject] && window.SYLL[subject].length === 9) {
+        var srows = window.SYLL[subject];
+        var termNames = ["1st Term", "2nd Term", "3rd Term"];
+        var focuses = ["Foundations and first units", "Development and applications", "Revision and public-examination preparation"];
+        for (var ti = 0; ti < 3; ti++) {
+          var wk = [];
+          srows.slice(ti * 3, ti * 3 + 3).forEach(function (r) { r.forEach(function (tp) { wk.push(tp); }); });
+          wk = wk.slice(0, 12);
+          out.push([{ term: termNames[ti], focus: focuses[ti] }, wk.map(function (tp, j) { return { week: "Week " + (j + 1), topic: tp }; })]);
+        }
+        return out;
+      }
+    } catch (e) {}
+    var topics = topicsOf(subject);
     if (!topics.length) return out;
     var t1 = topics.slice(0, 2), t2 = topics.slice(2, 4), t3 = topics.slice(4);
     function weeks(topicArr, labels) {
@@ -478,8 +524,14 @@ var EXTRA_SUBJECTS = {
     return out;
   }
   function matchQuestions(subject, topicName, kws, clsIndex, n) {
+    var need = n || 4;
     var ex = extraTopic(subject, topicName);
-    if (ex) return (ex[3] || []).slice(0, n || 4);
+    if (ex) return (ex[3] || []).slice(0, need);
+    var out = [];
+    try {
+      var ce = curEntry(subject, topicName);
+      if (ce && ce[3] && ce[3].length) out = out.concat(ce[3]);
+    } catch (e) {}
     var all = questionsFor(clsIndex, subject);
     var matched = [];
     if (kws && kws.length) {
@@ -488,8 +540,9 @@ var EXTRA_SUBJECTS = {
         return kws.some(function (k) { return k && k.length >= 2 && t.indexOf(k.toLowerCase()) >= 0; });
       });
     }
-    if (matched.length < (n || 4)) matched = all.slice();
-    return shuffle(matched).slice(0, n || 4);
+    if (matched.length < need) matched = all.slice();
+    if (!out.length) return shuffle(matched).slice(0, need);
+    return out.concat(shuffle(matched)).slice(0, need);
   }
   function gradeFor(pct) {
     if (pct >= 75) return "A1";
@@ -640,6 +693,7 @@ var EXTRA_SUBJECTS = {
     var clsSel = $("eduCls"), subSel = $("eduSub");
     if (clsSel) clsSel.onchange = function () { state.cls = clsSel.value; paint(); };
     if (subSel) subSel.onchange = function () { state.subj = subSel.value; state.topic = topicsOf(state.subj)[0] ? topicsOf(state.subj)[0][0] : null; paint(); };
+    curEnsure(function () { try { paint(); } catch (e) {} });
   }
   function lessonHtml(subj, topic, cls) {
     if (!topic) return "<p class=\"edu-empty\">Choose a topic to see the lesson note.</p>";
@@ -688,6 +742,10 @@ var EXTRA_SUBJECTS = {
   function kwArr(subj, topic) {
     var ex = extraTopic(subj, topic);
     if (ex) return ex[1] || [];
+    try {
+      var ce = curEntry(subj, topic);
+      if (ce && ce[1]) return ce[1];
+    } catch (e) {}
     try { var tp = (TOPICS[subj] || []).filter(function (x) { return x[0] === topic; })[0]; return tp ? tp[1] : []; } catch (e) { return []; }
   }
   function reveal(id, btn) {
@@ -948,6 +1006,7 @@ var EXTRA_SUBJECTS = {
     var sc = $("schCls"), ss = $("schSub");
     if (sc) sc.onchange = function () { state.cls = sc.value; $("schBody").innerHTML = schemeHtml(state.subj, state.cls); };
     if (ss) ss.onchange = function () { state.subj = ss.value; $("schBody").innerHTML = schemeHtml(state.subj, state.cls); };
+    curEnsure(function () { var sb = $("schBody"); if (sb) sb.innerHTML = schemeHtml(state.subj, state.cls); });
   }
   function schemeHtml(subj, cls) {
     var rows = schemeFor(subj, cls);
@@ -967,14 +1026,26 @@ var EXTRA_SUBJECTS = {
     var b = body(); if (!b) return;
     var subs = subjectList(), cls = state.cls || "SS3";
     b.innerHTML = '<div class="edu-sec"><h3>🧭 SS1–SS3 Syllabus Map</h3>'
-      + '<p class="edu-lede">The full Senior Secondary syllabus for all 19 subjects covered by the app (the 13 core subjects plus six extended: Further Mathematics, CRS, IRS, Data Processing, Food & Nutrition and French). Every topic group in the map has a lesson note, questions and a scheme-of-work slot, so teachers can see the whole three-year course at a glance.</p>'
+      + '<p class="edu-lede">The complete Nigerian Senior Secondary syllabus for all 19 subjects — 684 topics laid out term by term (1st, 2nd and 3rd) across SS1–SS3. Every topic on the map has a lesson note, practice questions and a scheme-of-work slot, so teachers and students can see the whole three-year course at a glance.</p>'
       + '<div class="edu-pickrow"><label>Class <select class="edu-sel" id="sylCls">' + classList().map(function (c) { return '<option value="' + esc(c) + '"' + (c === cls ? " selected" : "") + '>' + esc(c) + "</option>"; }).join("") + "</select></label></div>"
       + '<div class="edu-grid" id="sylBody">' + syllabusHtml(cls) + "</div></div>";
     var sc = $("sylCls"); if (sc) sc.onchange = function () { state.cls = sc.value; $("sylBody").innerHTML = syllabusHtml(state.cls); };
+    curEnsure(function () { var sb = $("sylBody"); if (sb) sb.innerHTML = syllabusHtml(state.cls); });
   }
   function syllabusHtml(cls) {
-    var subs = subjectList();
+    var subs = subjectList(), hasSyll = false;
+    try { hasSyll = typeof window.SYLL !== "undefined" && window.SYLL && Object.keys(window.SYLL).length >= 19; } catch (e) {}
     return '<div class="edu-grid3">' + subs.map(function (s) {
+      if (hasSyll && window.SYLL[s] && window.SYLL[s].length === 9) {
+        var srows = window.SYLL[s];
+        var terms = [["1st Term", srows.slice(0, 3)], ["2nd Term", srows.slice(3, 6)], ["3rd Term", srows.slice(6, 9)]];
+        var tHtml = terms.map(function (tr) {
+          return '<div class="edu-sub"><b>' + tr[0] + '</b><div>' +
+            tr[1].map(function (r) { return r.map(function (t) { return '<span class="edu-pill">' + esc(t) + "</span>"; }).join(""); }).join("") + "</div></div>";
+        }).join("");
+        return '<div class="edu-card"><h4>' + esc(s) + ' <small>' + esc(cls) + "</small></h4>" +
+          '<p class="edu-sub-label">' + esc(subjectCurriculum(s)) + "</p>" + tHtml + "</div>";
+      }
       var topics = topicsOf(s);
       var items = topics.map(function (t) { return '<span class="edu-pill">' + esc(t[0]) + "</span>"; }).join("");
       return '<div class="edu-card"><h4>' + esc(s) + ' <small>' + esc(cls) + "</small></h4>" +
