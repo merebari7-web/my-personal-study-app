@@ -10,7 +10,8 @@ const path = require("path");
   page.on("pageerror", e => errs.push(String(e.message).slice(0, 140)));
   page.on("console", m => { if (m.type() === "error" && !/GSI_LOGGER|given origin is not allowed/.test(m.text())) errs.push("console: " + m.text().slice(0, 140)); });
   await page.setViewport({ width: 1280, height: 900 });
-  await page.goto("file://" + path.resolve("index.html"), { waitUntil: "load" });
+  const TARGET = process.env.E2E_URL || "file://" + path.resolve("index.html");
+  await page.goto(TARGET, { waitUntil: "load", timeout: 60000 });
   await page.evaluate(() => {
     const n = document.getElementById("gateName"), e = document.getElementById("gateEmail");
     if (n) n.value = "A B"; if (e) e.value = "a@b.c";
