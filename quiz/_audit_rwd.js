@@ -5,8 +5,12 @@ const path = require("path");
 
 const VIEWPORTS = [
   { name: "phone-sm-320", w: 320, h: 568 },
+  { name: "phone-360", w: 360, h: 640 },
   { name: "phone-375", w: 375, h: 667 },
   { name: "phone-390", w: 390, h: 844 },
+  { name: "phone-393", w: 393, h: 852 },
+  { name: "phone-412", w: 412, h: 915 },
+  { name: "phone-430", w: 430, h: 932 },
   { name: "phone-landscape", w: 667, h: 375 },
   { name: "tablet-768", w: 768, h: 1024 },
   { name: "tablet-1024", w: 1024, h: 768 },
