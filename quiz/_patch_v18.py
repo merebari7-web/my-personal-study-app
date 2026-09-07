@@ -28,6 +28,16 @@ def walk_chain_end(src, anchor):
         if j < len(src) and src[j] == "+":
             j += 1
             while j < len(src) and src[j] in " \t\n\r": j += 1
+            while j + 1 < len(src) and src[j] == "/" and src[j + 1] == "*":
+                j += 2
+                while j + 1 < len(src) and not (src[j] == "*" and src[j + 1] == "/"):
+                    j += 1
+                j += 2
+                while j < len(src) and src[j] in " \t\n\r": j += 1
+            while j + 1 < len(src) and src[j] == "/" and src[j + 1] == "/":
+                j += 2
+                while j < len(src) and src[j] not in "\n": j += 1
+                while j < len(src) and src[j] in " \t\n\r": j += 1
             continue
         break
     assert src[j] == ";", "expected ; at %d" % j

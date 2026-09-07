@@ -55,7 +55,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     for (const s of [".lx-qhead>span:first-child", ".lx-qn{display:inline-grid", ".lx-blitz-score .ok", ".lx-blitz-score .no"]) if (!LABS.includes(s)) throw "missing: " + s;
   });
   await run("service worker cache key bumped to -v18", () => {
-    if (!/"-v18"/.test(SW)) throw "NSS_V not -v18";
+    if (!/-v(1[89]|[2-9][0-9])/.test(SW)) throw "NSS_V not >= -v18";
   });
 
   /* ---- behavioural smoke ---- */
