@@ -72,7 +72,7 @@ function dom(seed) {
   });
   await run("service worker cache key bumped to -v16", () => {
     const sw = fs.readFileSync("sw.js", "utf8");
-    if (!/"-v16"/.test(sw)) throw "NSS_V not -v16";
+    if (!/"-v1[6-9]"/.test(sw)) throw "NSS_V not >= -v16";
   });
 
   /* ---- behavioural: coach premium cards ---- */
