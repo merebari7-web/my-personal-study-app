@@ -1,4 +1,4 @@
-/* Responsive layout audit v13 — headless Chrome, multiple viewports.
+/* Responsive layout audit v14 — headless Chrome, multiple viewports.
    Run: node quiz/_audit_rwd.js  (expects repo root with index.html + bank.js + labs.js + edu.js) */
 const puppeteer = require("puppeteer");
 const path = require("path");
@@ -119,6 +119,10 @@ async function snap(page, state, vp) {
       await page.evaluate(() => { try { ARC.calcToggle(); } catch (e) {} });
       await page.evaluate(() => ARC.go("essay"));
       await snap(page, "arc-essay", vp);
+      await page.evaluate(() => { try { ARC.go("utme"); ARC.utmePreset("Science"); } catch (e) {} });
+      await snap(page, "arc-utme-preset", vp);
+      await page.evaluate(() => ARC.go("stats"));
+      await snap(page, "arc-stats", vp);
       await page.evaluate(() => { try { ARC.essayReveal(); } catch (e) {} });
       await snap(page, "arc-essay-reveal", vp);
       await page.evaluate(() => ARC.go("videos"));
@@ -127,7 +131,7 @@ async function snap(page, state, vp) {
     await page.close();
   }
   await browser.close();
-  console.log(`\n== RESPONSIVE AUDIT v13: ${ISSUES.length} issue(s) across ${VIEWPORTS.length} viewports ==`);
+  console.log(`\n== RESPONSIVE AUDIT v14: ${ISSUES.length} issue(s) across ${VIEWPORTS.length} viewports ==`);
   const byVp = {};
   for (const i of ISSUES) { const k = i.split(" :: ")[0]; byVp[k] = (byVp[k] || 0) + 1; }
   console.log(JSON.stringify(byVp));

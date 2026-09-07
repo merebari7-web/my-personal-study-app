@@ -1841,8 +1841,8 @@ var ESSEY = {
 
 /* ============================================================
    v11.0 — STUDY ARCADE + VIDEO STUDIO · engine
-   7 study modes (Term Match, Rapid Fire 60s, Flash Cards, Memory Pairs,
-   Ladder Challenge, UTME Simulation, Theory Hall) + Video Studio + hub.
+   8 study modes (Term Match, Rapid Fire 60s, Flash Cards, Memory Pairs,
+   Ladder Challenge, UTME Simulation, Theory Hall, Study Stats) + Video Studio + hub.
    All state lives on-device; XP/merits feed the main app.
    ============================================================ */
 (function () {
@@ -1865,8 +1865,8 @@ var ESSEY = {
     try { if (window.toast) return toast(m, icon); } catch (e) {}
     try { window.toast(m, icon); } catch (e) {}
   }
-  function xp(n) { try { if (window.xpAdd && n) { xpAdd(n); return true; } } catch (e) {} return false; }
-  function coin(n) { try { if (window.coinsAdd && n) { coinsAdd(n); return true; } } catch (e) {} return false; }
+  function xp(n) { try { if (window.xpAdd && n) { xpAdd(n); recDay("x", n); return true; } } catch (e) {} return false; }
+  function coin(n) { try { if (window.coinsAdd && n) { coinsAdd(n); recDay("c", n); return true; } } catch (e) {} return false; }
   function bank() {
     try {
       if (typeof CLASSES !== "undefined" && CLASSES && CLASSES.length && CLASSES[0] && CLASSES[0].questions) return CLASSES;
@@ -1881,7 +1881,7 @@ var ESSEY = {
   function uid() { var k = "nssc_uid_a"; var v = store(k); if (!v) { v = Math.random().toString(36).slice(2, 10); store(k, v); } return v; }
   var ARC_KEY = "nssc_arc_a";
   function bests() { var b = store(ARC_KEY) || {}; return typeof b === "object" && !Array.isArray(b) ? b : {}; }
-  function saveBest(b) { var cur = bests(); cur[b] = { best: M.best, at: Date.now() }; store(ARC_KEY, cur); }
+  function saveBest(b) { var cur = bests(); cur[b] = { best: M.best, at: Date.now() }; store(ARC_KEY, cur); recDay("g", 1); }
 
   /* ---------- state ---------- */
   var M = { mode: null, subj: null, round: 0, score: 0, streak: 0, best: 0, lives: 3, secs: 0, moves: 0, t0: 0, deck: [], timer: null, over: false };
@@ -1959,7 +1959,20 @@ var ESSEY = {
     + ".arc-eq{grid-column:1/-1}"
     + ".arc-calc button.eq{background:#c9a227;color:#1d1508;border-color:#a67c1e}"
     + ".arc-model{border:1px solid #2b8a3e;border-left:4px solid #2b8a3e;border-radius:10px;padding:10px 12px;background:rgba(43,138,62,.07);margin:10px 0;font-size:.85rem;line-height:1.6}"
-    + ".arc-marks li{font-size:.8rem;line-height:1.5;margin:4px 0}";
+    + ".arc-marks li{font-size:.8rem;line-height:1.5;margin:4px 0}"
+    + ".arc-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin:10px 0}"
+    + ".arc-kpi{border:1px solid var(--card-border,#ddd2b8);border-radius:11px;padding:10px 12px;background:var(--panel,#fbf7ee)}"
+    + ".arc-kpi b{display:block;font-size:1.15rem;color:#8a6d1f}"
+    + ".arc-kpi span{font-size:.68rem;color:var(--mut,#8a7a5e)}"
+    + ".arc-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:6px 0 4px}"
+    + ".arc-wcell{text-align:center;font-size:.64rem;color:var(--mut,#8a7a5e)}"
+    + ".arc-wbar{height:26px;border-radius:6px;background:rgba(201,162,39,.14);display:flex;align-items:flex-end;overflow:hidden;margin-bottom:3px}"
+    + ".arc-wbar i{display:block;width:100%;background:linear-gradient(180deg,#e6c453,#c9a227);border-radius:6px}"
+    + ".arc-wcell b{display:block;font-size:.66rem;color:var(--ink,#1c1626)}"
+    + ".arc-srow{display:flex;align-items:center;gap:10px;margin:7px 0}"
+    + ".arc-srow .arc-bar{flex:1;margin:0}"
+    + ".arc-srow b{min-width:104px;font-size:.78rem;line-height:1.3}"
+    + ".arc-srow em{min-width:88px;font-style:normal;font-weight:800;font-size:.72rem;color:var(--mut,#8a7a5e);text-align:right}";
 
   function body() { return $("arcBody"); }
   function shell(title, inner, wide) {
@@ -1988,7 +2001,7 @@ var ESSEY = {
   }
   function tabs() {
     var t = $("arcTabs"); if (!t) return;
-    var items = [["open", "🏠 Home"], ["term", "🧠 Term Match"], ["rapid", "⚡ Rapid Fire"], ["cards", "🃏 Flash Cards"], ["memo", "🃏 Memory Pairs"], ["ladder", "🪜 Ladder"], ["utme", "🎓 UTME"], ["essay", "📝 Theory"], ["videos", "🎬 Studio"], ["hub", "🗺 Curriculum"]];
+    var items = [["open", "🏠 Home"], ["term", "🧠 Term Match"], ["rapid", "⚡ Rapid Fire"], ["cards", "🃏 Flash Cards"], ["memo", "🃏 Memory Pairs"], ["ladder", "🪜 Ladder"], ["utme", "🎓 UTME"], ["essay", "📝 Theory"], ["stats", "📊 Stats"], ["videos", "🎬 Studio"], ["hub", "🗺 Curriculum"]];
     t.innerHTML = items.map(function (x) {
       return '<button type="button" class="arc-tab' + (M.mode === x[0] ? " on" : "") + '" onclick="ARC.go(\'' + x[0] + '\')">' + x[1] + "</button>";
     }).join("");
@@ -2006,15 +2019,17 @@ var ESSEY = {
     if (kind === "ladder") return ladderGo(opts);
     if (kind === "utme") return utmeGo(opts);
     if (kind === "essay") return essayGo(opts);
+    if (kind === "stats") return statsRoute();
     if (kind === "cards") return cardGo(opts);
     if (kind === "videos") return vidRoute();
     if (kind === "hub") return hubRoute();
     var bs = bests();
     shell("🎮 Study Arcade — play, revise, level up", "" +
-      '<p style="margin:0 0 10px;font-size:.8rem;color:var(--mut,#8a7a5e)">Seven study modes built on the app\'s verified WAEC/NECO question bank and the 19-subject curriculum — every correct answer earns XP and merits.</p>' +
+      '<p style="margin:0 0 10px;font-size:.8rem;color:var(--mut,#8a7a5e)">Eight study modes built on the app\'s verified WAEC/NECO question bank — every correct answer earns XP and merits, and Study Stats shows where to focus next.</p>' +
       '<div class="arc-grid">' +
       tile("utme", "🎓", "UTME Simulation", "JAMB-style: 4 subjects, 180 questions, timed — see your /400", bs.utme && bs.utme.best ? bs.utme.best + "/400 best" : "") +
       tile("essay", "📝", "Theory Hall", "WAEC/NECO essay questions with model answers — write, then self-mark", bs.essay && bs.essay.best ? bs.essay.best + " graded" : "") +
+      tile("stats", "📊", "Study Stats", "Your accuracy per subject + weekly XP — spot what to revise", "") +
       tile("cards", "🃏", "Flash Cards", "Term–definition decks for all 19 subjects — the tricky cards come back first", bs.cards && bs.cards.best ? bs.cards.best + "/6 best" : "") +
       tile("term", "🧠", "Term Match", "Match each term to its definition — 10 rounds, streaks count", bs.term && bs.term.best ? bs.term.best.best + " pts best" : "") +
       tile("rapid", "⚡", "Rapid Fire 60s", "Answer as many real questions as you can in 60 seconds", bs.rapid && bs.rapid.best ? bs.rapid.best.best + " pts best" : "") +
@@ -2026,6 +2041,32 @@ var ESSEY = {
   }
   function tile(mode, icon, t, small, best) {
     return '<button type="button" class="arc-tile" onclick="ARC.go(\'' + mode + '\')"><span>' + icon + '</span><b>' + esc(t) + '</b><small>' + esc(small) + '</small>' + (best ? '<div class="arc-best">' + esc(best) + "</div>" : "") + "</button>";
+  }
+
+  /* ---------- study analytics ---------- */
+  var STATS_KEY = "nssc_arc_stats_a";
+  function statsGet() {
+    var v = store(STATS_KEY);
+    if (v && typeof v === "object" && !Array.isArray(v) && v.s && v.d) return v;
+    return { s: {}, d: {} };
+  }
+  function statsSet(v) { store(STATS_KEY, v); }
+  function rec(subj, ok) {
+    var v = statsGet();
+    var k = subj || "All subjects";
+    var e = v.s[k] || { n: 0, c: 0 };
+    e.n++; if (ok) e.c++;
+    v.s[k] = e;
+    statsSet(v);
+  }
+  function dayKeyOf(d) { return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function recDay(f, nAdd) {
+    var v = statsGet();
+    var k = dayKeyOf(new Date());
+    var d = v.d[k] || { x: 0, c: 0, g: 0 };
+    d[f] = (d[f] || 0) + nAdd;
+    v.d[k] = d;
+    statsSet(v);
   }
 
   /* ---------- Term Match ---------- */
@@ -2061,6 +2102,7 @@ var ESSEY = {
       if (k === i && i !== ans) b.classList.add("bad");
       b.disabled = true;
     });
+    rec(M.subj, i === ans);
     if (i === ans) { M.score += 10 + 2 * M.streak; M.streak++; }
     else M.streak = 0;
     setTimeout(termRound, 650);
@@ -2146,6 +2188,7 @@ var ESSEY = {
   function rapidQ() {
     var play = $("arcPlay"); if (!play || M.over) return;
     var q = M.deck[M.round % M.deck.length]; M.round++;
+    M.curSubj = q.s || M.subj || "All subjects";
     play.innerHTML = '<div class="arc-q"><div class="arc-qtext">' + esc(q.q) + "</div>" +
       '<div class="arc-opts" id="arcRapidOpts" data-answer="' + q.a + '">' +
       q.o.map(function (o, i) { return '<button type="button" class="arc-opt" onclick="ARC.rpick(' + i + ')">' + esc(o) + "</button>"; }).join("") + "</div></div>";
@@ -2157,6 +2200,7 @@ var ESSEY = {
     Array.prototype.forEach.call(btns, function (b, k) {
       b.classList.add(k === ans ? "good" : "dim"); if (k === i && i !== ans) b.classList.add("bad"); b.disabled = true;
     });
+    rec(M.curSubj, i === ans);
     if (i === ans) { M.score += 10 + 2 * M.streak; M.streak++; } else M.streak = 0;
     try { var sp = document.querySelectorAll("#arcBody .arc-pill")[1]; if (sp) sp.textContent = "Score " + M.score; } catch (e) {}
     setTimeout(rapidQ, 420);
@@ -2264,6 +2308,7 @@ var ESSEY = {
   function ladderQ() {
     var play = $("arcPlay"); if (!play || M.over) return;
     var q = M.deck[M.round]; M.round++;
+    M.curSubj = q.s || M.subj || "All subjects";
     var per = Math.max(6, M.secs - M.round); /* each rung gets a little tighter */
     M.rungSecs = per;
     var play2 = $("arcPlay");
@@ -2275,7 +2320,7 @@ var ESSEY = {
     M.timer = setInterval(function () {
       var left = Math.max(0, per - ((Date.now() - M.ladT) / 1000 | 0));
       var c = $("ladClock"); if (c) c.textContent = "⏱ " + left + "s";
-      if (left <= 0) { clearInterval(M.timer); M.timer = null; ladderMiss(true); }
+      if (left <= 0) { clearInterval(M.timer); M.timer = null; rec(M.curSubj, false); ladderMiss(true); }
     }, 1000);
   }
   function lpick(i) {
@@ -2283,6 +2328,7 @@ var ESSEY = {
     clearInterval(M.timer); M.timer = null;
     var opts = $("arcLadOpts"); if (!opts) return;
     var ans = +opts.getAttribute("data-answer");
+    rec(M.curSubj, i === ans);
     if (i === ans) { M.score += 10 + M.round; }
     else ladderMiss(false);
     if (i === ans) setTimeout(ladderNext, 420);
@@ -2325,11 +2371,13 @@ var ESSEY = {
     shell("🎓 UTME Simulation Hall — JAMB style", "" +
       '<p class="arc-note" style="font-size:.8rem;line-height:1.6">The real UTME format: <b>4 subjects</b> (English Language + 3 you choose), <b>60 English questions + 40 per other subject = 180 questions</b>, timed, scaled to <b>/400</b>. Built from the app&#39;s verified WAEC/NECO bank — a practice simulation, not an official JAMB paper. Integrity hint: the paper counts tab switches.</p>' +
       '<div class="arc-sub" id="utmeSubs">' + utmeChips(eng, rest) + "</div>" +
+      '<div class="arc-sub" id="utmePres"><span class="arc-pill">Quick packs:</span>' + presetChips() + "</div>" +
       '<div class="arc-add"><label style="font-size:.78rem;font-weight:800">Time <select id="utmeMin" style="border:1.5px solid var(--card-border,#ddd2b8);border-radius:10px;padding:8px 10px;font-family:inherit;min-height:40px;background:var(--opt-bg,#fffdf6);color:var(--ink,#1c1626)"><option value="90">90 min</option><option value="120" selected>120 min</option><option value="150">150 min</option></select></label>' +
       '<span id="utmeCount" style="font-size:.78rem;font-weight:800">0/3 subjects selected</span>' +
       '<button type="button" class="arc-btn gold" id="utmeGo">▶ Start simulation</button></div>');
     var g = $("utmeGo");
     if (g) g.onclick = function () { utmeStart(opts); };
+    var cc = $("utmeCount"); if (cc) cc.textContent = UPICK.length + "/3 subjects selected";
     var box = $("utmeSubs");
     if (box) {
       Array.prototype.forEach.call(box.querySelectorAll(".arc-chip:not([data-lock])"), function (b) {
@@ -2342,10 +2390,38 @@ var ESSEY = {
         };
       });
     }
+    var pb = $("utmePres");
+    if (pb) {
+      Array.prototype.forEach.call(pb.querySelectorAll("[data-p]"), function (b) {
+        b.onclick = function () { utmePreset(b.getAttribute("data-p")); };
+      });
+    }
+  }
+  function presetChips() {
+    return [
+      ["Science", "🔬 Science"],
+      ["Biological", "🧬 Biological"],
+      ["Commercial", "💼 Commercial"],
+      ["Arts", "🏛 Arts"]
+    ].map(function (p) {
+      return '<button type="button" class="arc-chip" data-p="' + p[0] + '" title="' + p[1] + ' subject pack">' + p[1] + "</button>";
+    }).join("");
+  }
+  function utmePreset(name) {
+    var subs = subjList();
+    var map = { Science: ["Mathematics", "Physics", "Chemistry"], Biological: ["Biology", "Chemistry", "Physics"], Commercial: ["Economics", "Commerce", "Government"], Arts: ["Literature in English", "Government", "Geography"] };
+    var pick = (map[name] || []).filter(function (s) { return subs.indexOf(s) >= 0; });
+    subs.forEach(function (s) { if (pick.length < 3 && !/english/i.test(s) && pick.indexOf(s) < 0) pick.push(s); });
+    UPICK = pick.slice(0, 3);
+    utmeGo();
+    toast("Subject pack loaded — start when ready", "🎓");
   }
   function utmeChips(eng, rest) {
     var h = ['<button type="button" class="arc-chip on" data-lock="1">' + esc(eng) + " <span style=\"opacity:.65\">(compulsory)</span></button>"];
-    rest.forEach(function (s) { h.push('<button type="button" class="arc-chip" data-s="' + esc(s) + '">' + esc(s) + "</button>"); });
+    rest.forEach(function (s) {
+      var on = UPICK.indexOf(s) >= 0;
+      h.push('<button type="button" class="arc-chip' + (on ? " on" : "") + '" data-s="' + esc(s) + '">' + esc(s) + (on ? " ✓" : "") + "</button>");
+    });
     return h.join("");
   }
   function utmeStart(opts) {
@@ -2387,6 +2463,7 @@ var ESSEY = {
       var c = $("utClock"); if (c) c.textContent = "⏱ " + fmtT(left);
       if (left <= 0) { clearInterval(M.timer); M.timer = null; utmeSubmit(true); }
     }, 1000);
+    if (typeof document.removeEventListener === "function") document.removeEventListener("visibilitychange", utmV);
     if (typeof document.addEventListener === "function") document.addEventListener("visibilitychange", utmV);
   }
   function fmtT(s) { s = Math.max(0, s | 0); var m = s / 60 | 0, r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
@@ -2453,10 +2530,12 @@ var ESSEY = {
     CALC.on = false;
     if (M.timer) { clearInterval(M.timer); M.timer = null; }
     if (typeof document.removeEventListener === "function") document.removeEventListener("visibilitychange", utmV);
+    UT.paper.forEach(function (p, i) { if (UT.ans[i] > -1) rec(p.s, UT.ans[i] === p.q.a); });
     var t = utmeTotals();
     var bs = bests();
     if (!bs.utme || t.total > bs.utme.best) bs.utme = { best: t.total, at: Date.now(), subs: UT.subs.slice(), per: t.per };
     store(ARC_KEY, bs);
+    recDay("g", 1);
     xp(t.correctAll * 2); coin(t.total >= 260 ? 2 : (t.total >= 200 ? 1 : 0));
     shell("🎓 UTME Simulation — Results", resultsHtml(t));
   }
@@ -2763,6 +2842,53 @@ var ESSEY = {
     if (all) xp(20);
   }
 
+  /* ---------- Study Stats ---------- */
+  function statsRoute() {
+    M.mode = "stats";
+    var v = statsGet(), ss = v.s || {}, dd = v.d || {};
+    var rows = [], totN = 0, totC = 0;
+    Object.keys(ss).forEach(function (k) {
+      var e = ss[k];
+      totN += e.n; totC += e.c;
+      rows.push({ k: k, n: e.n, c: e.c, pct: e.n ? Math.round(100 * e.c / e.n) : 0 });
+    });
+    rows.sort(function (a, b) { return b.pct - a.pct || b.n - a.n; });
+    var acc = totN ? Math.round(100 * totC / totN) : 0;
+    var xpTot = 0, cTot = 0, gTot = 0;
+    Object.keys(dd).forEach(function (k) { xpTot += dd[k].x || 0; cTot += dd[k].c || 0; gTot += dd[k].g || 0; });
+    var xmax = 0, wk = "";
+    for (var i = 6; i >= 0; i--) {
+      var d2 = new Date(); d2.setDate(d2.getDate() - i);
+      var k2 = dayKeyOf(d2), x = (dd[k2] || {}).x || 0;
+      if (x > xmax) xmax = x;
+      wk += '<div class="arc-wcell"><div class="arc-wbar"><i style="height:' + Math.max(4, Math.round(xmax ? 26 * x / xmax : 4)) + 'px"></i></div>' + esc(k2.slice(5)) + (x ? "<b>" + x + "</b>" : "") + "</div>";
+    }
+    var weak = rows.filter(function (r) { return r.n >= 3; }).sort(function (a, b) { return a.pct - b.pct; }).slice(0, 3);
+    if (!weak.length) weak = rows.slice().sort(function (a, b) { return a.pct - b.pct; }).slice(0, 3);
+    var drills = weak.map(function (r) {
+      return '<button type="button" class="arc-btn gold" data-drill="' + esc(r.k) + '">▶ ' + esc(r.k) + "</button>";
+    }).join("");
+    var srows = rows.map(function (r) {
+      return '<div class="arc-srow"><b>' + esc(r.k) + '</b><div class="arc-bar"><i style="width:' + r.pct + '%"></i></div><em>' + r.c + "/" + r.n + " · " + r.pct + '%</em></div>';
+    }).join("");
+    shell("📊 Study Stats — your arcade performance", "" +
+      '<p style="font-size:.8rem;color:var(--mut,#8a7a5e);margin:0 0 8px">Every answer in the games is counted per subject. Accuracy covers the question rounds (Term Match, Rapid Fire, Ladder, UTME); the strip below shows XP earned from the arcade in the last 7 days.</p>' +
+      '<div class="arc-kpis"><div class="arc-kpi"><b>' + totN + '</b><span>Answered</span></div><div class="arc-kpi"><b>' + acc + '%</b><span>Accuracy</span></div><div class="arc-kpi"><b>' + xpTot + '</b><span>Arcade XP</span></div><div class="arc-kpi"><b>' + cTot + '</b><span>Coins</span></div><div class="arc-kpi"><b>' + gTot + '</b><span>Games</span></div></div>' +
+      '<h4 style="margin:12px 0 2px;font-size:.9rem">📈 XP — last 7 days</h4>' +
+      '<div class="arc-week">' + wk + "</div>" +
+      '<h4 style="margin:12px 0 2px;font-size:.9rem">🎯 Subject accuracy</h4>' +
+      (srows || '<p class="arc-note">No answers recorded yet — play a game and your stats appear here.</p>') +
+      '<h4 style="margin:12px 0 6px;font-size:.9rem">🧭 Focus next on</h4>' +
+      '<div class="arc-actions">' + (drills || '<span class="arc-note" style="margin:0">Answer a few questions first.</span>') + '<button type="button" class="arc-btn" id="statsRes">Reset stats</button></div>' +
+      '<p class="arc-note">Stats live only on this device and clear with the app data.</p>');
+    Array.prototype.forEach.call(document.querySelectorAll("#arcBody [data-drill]"), function (b) {
+      b.onclick = function () { go("rapid", { subj: b.getAttribute("data-drill") }); };
+    });
+    var rs = $("statsRes");
+    if (rs) rs.onclick = function () { statsReset(); };
+  }
+  function statsReset() { statsSet({ s: {}, d: {} }); toast("Study stats cleared", "📊"); statsRoute(); }
+
   /* ---------- Video Studio ---------- */
   function vidRoute() {
     M.mode = "videos";
@@ -2862,6 +2988,7 @@ var ESSEY = {
     termSub: termSub, memoSub: memoSub, rapidSub: function (s) { M.subj = s || null; rapidGo(); },
     utmeStart: utmeStart, utmeSet: utmeSet, utmeNav: utmeNav, utmeGrid: utmeGrid,
     utmeSubmit: utmeSubmit, utmeReview: utmeReview, utmeResults: utmeResults,
+    utmePreset: utmePreset, statsReset: statsReset, _stats: statsGet,
     cardSub: cardSub, cardFlip: cardFlip, cardRate: cardRate,
     cb: calcPress, calcToggle: calcToggle,
     essayGrade: essayGrade, essayReveal: essayReveal,
