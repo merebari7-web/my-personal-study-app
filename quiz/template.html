@@ -274,6 +274,19 @@ h2,h3{text-wrap:balance}
   .hero-copy{max-width:1120px}
 }
 </style>
+
+<!-- v20 AI Coach desktop-responsive (source: quiz/_v20_ui.css) -->
+<style id="v20ui">
+/* v20 — AI Coach "Suggested for you" desktop layout: on PC the grid was
+   auto-fitting ~3 narrow columns (240px min) so the card text column collapsed
+   to ~44px beside the action button. From 1024px up use a generous 2-column
+   grid with the action button vertically centred and never squeezed. */
+@media(min-width:1024px){
+  .ai-grid{grid-template-columns:repeat(auto-fit,minmax(420px,1fr))}
+  .ai-it{align-items:center}
+  .ai-it .ai-go{flex:none;white-space:nowrap}
+}
+</style>
 </head>
 <div class="luxe-frame" aria-hidden="true"></div>
 <body>

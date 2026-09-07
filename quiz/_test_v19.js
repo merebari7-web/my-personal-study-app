@@ -48,7 +48,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     for (const m of ["100dvh", "env(safe-area-inset-bottom)", "@media(max-width:359px)"]) if (!LABS.includes(m)) throw "missing labs marker: " + m;
   });
   await run("service worker cache key bumped to -v19", () => {
-    if (!/"-v19"/.test(SW)) throw "NSS_V not -v19";
+    if (!/"-v(19|[2-9][0-9])"/.test(SW)) throw "NSS_V not -v19";
   });
   await run("boot wire gzip <= 266240 B", () => {
     const w = zlib.gzipSync(HTML, { level: 9 }).length + zlib.gzipSync(BANK, { level: 9 }).length;
