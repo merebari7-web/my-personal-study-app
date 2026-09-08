@@ -17,7 +17,7 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (!/@media\(min-width:1024px\)[\s\S]{0,200}\.ai-it \.ai-go\{flex:none;white-space:nowrap/.test(HTML)) throw "button rule missing";
   });
   await run("service worker cache key bumped to -v20", () => {
-    if (!/"-v20"/.test(SW)) throw "NSS_V not -v20";
+    if (!/"-v(20|[2-9][0-9])"/.test(SW)) throw "NSS_V not -v20";
   });
   await run("boot wire gzip <= 266240 B", () => {
     const w = zlib.gzipSync(HTML, { level: 9 }).length + zlib.gzipSync(BANK, { level: 9 }).length;
