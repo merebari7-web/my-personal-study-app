@@ -1,6 +1,7 @@
-/* v21.0 — Mater Notes library (lazy module). Uses window.MATER (data array
+/* v22.0 — Mater Notes library (lazy module). Uses window.MATER (data array
    injected by quiz/_mater_build.py from the PDFs in mater-notes/). Creates its
-   own overlay modal with class tabs and downloadable/printable PDF cards. */
+   own overlay modal with class tabs, a First/Second Term toggle and
+   downloadable/printable PDF cards (60 files: 30 per term). */
 (function () {
   "use strict";
   if (window.MN) return;
@@ -14,6 +15,7 @@
     ".mn-tabs{display:flex;gap:8px;padding:14px 18px 4px;flex-wrap:wrap}" +
     ".mn-tab{border:1px solid var(--card-border);background:var(--panel,#fff);color:var(--ink-2);border-radius:999px;padding:8px 18px;font-weight:800;cursor:pointer;font-family:inherit;font-size:.82rem;transition:.2s}" +
     ".mn-tab.on{background:linear-gradient(135deg,#e7c873,#b8912f);color:#2a1d06;border-color:rgba(201,162,39,.55)}" +
+    ".mn-terms .mn-tab{padding:6px 15px;font-size:.76rem}" +
     ".mn-list{padding:14px 18px 22px;display:grid;grid-template-columns:1fr;gap:12px}" +
     ".mn-it{border:1px solid var(--card-border);border-radius:14px;padding:13px 15px;background:var(--card-solid,#fff);display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;transition:.2s}" +
     ".mn-it:hover{border-color:var(--gold);box-shadow:var(--shadow-sm)}" +
@@ -40,9 +42,14 @@
   }
 
   var cur = "SS1";
+  var term = "T1";
+
+  function termOf(e) {
+    return e && e.weeks && /Second\s*Term/i.test(e.weeks) ? "T2" : "T1";
+  }
 
   function rows() {
-    var list = (window.MATER || []).filter(function (e) { return e.cls === cur; });
+    var list = (window.MATER || []).filter(function (e) { return e.cls === cur && termOf(e) === term; });
     var html = "";
     list.forEach(function (e, i) {
       var href = "mater-notes/" + encodeURIComponent(e.file);
@@ -57,6 +64,8 @@
     });
     if (!html) html = '<div class="mn-empty">Files for this class are being prepared — check again soon.</div>';
     document.getElementById("mnList").innerHTML = html;
+    var lb = document.getElementById("mnTermLbl");
+    if (lb) lb.textContent = term === "T2" ? "Second Term 2026/2027 · Weeks 7–12" : "First Term 2026/2027 · Weeks 1–6";
   }
 
   function open() {
@@ -75,22 +84,31 @@
       "background:var(--bg,#f6f1e4);border:1px solid rgba(201,162,39,.4);box-shadow:0 30px 80px -24px rgba(0,0,0,.65)";
     bx.innerHTML =
       '<div class="mn-head"><span class="mn-hico">\ud83d\udcda</span>' +
-      '<div class="mn-htx"><h3>Mater Notes</h3><small>Mater Misericordiae Secondary School, Rumomasi · First Term 2026/2027 · Weeks 1–6</small></div>' +
+      '<div class="mn-htx"><h3>Mater Notes</h3><small>Mater Misericordiae Secondary School, Rumomasi · <span id="mnTermLbl">First Term 2026/2027 · Weeks 1–6</span></small></div>' +
       '<button class="mn-x" type="button">✕ Close</button></div>' +
       '<div class="mn-tabs"><button data-c="SS1" type="button">SS1</button><button data-c="SS2" type="button">SS2</button><button data-c="SS3" type="button">SS3</button></div>' +
+      '<div class="mn-tabs mn-terms"><button data-t="T1" type="button">First Term</button><button data-t="T2" type="button">Second Term</button></div>' +
       '<div class="mn-list" id="mnList"></div>';
     ov.appendChild(bx);
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
       if (e.target === ov || e.target.closest(".mn-x")) close();
     });
-    ov.querySelectorAll(".mn-tabs button").forEach(function (b) {
+    var tabs = ov.querySelectorAll(".mn-tabs:not(.mn-terms) button");
+    tabs.forEach(function (b) {
       b.className = "mn-tab" + (b.getAttribute("data-c") === cur ? " on" : "");
       b.addEventListener("click", function () {
         cur = b.getAttribute("data-c");
-        ov.querySelectorAll(".mn-tabs button").forEach(function (x) {
-          x.className = "mn-tab" + (x.getAttribute("data-c") === cur ? " on" : "");
-        });
+        tabs.forEach(function (x) { x.className = "mn-tab" + (x.getAttribute("data-c") === cur ? " on" : ""); });
+        rows();
+      });
+    });
+    var terms = ov.querySelectorAll(".mn-terms button");
+    terms.forEach(function (b) {
+      b.className = "mn-tab" + (b.getAttribute("data-t") === term ? " on" : "");
+      b.addEventListener("click", function () {
+        term = b.getAttribute("data-t");
+        terms.forEach(function (x) { x.className = "mn-tab" + (x.getAttribute("data-t") === term ? " on" : ""); });
         rows();
       });
     });
