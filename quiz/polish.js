@@ -450,4 +450,28 @@
     if ("requestIdleCallback" in window) { window.requestIdleCallback(hr, { timeout: 8000 }); }
     else { setTimeout(hr, 2600); }
   } catch (e) {}
+  /* v34 — load the Scientific Calculator + AI Study Tutor at idle too, so
+     they never compete with boot. */
+  try {
+    var cr = function () {
+      if (window.__calc || document.getElementById("calcScript")) return;
+      var s8 = document.createElement("script");
+      s8.id = "calcScript";
+      s8.src = "quiz/calc.js";
+      s8.async = !0;
+      s8.onerror = function () { try { s8.remove(); } catch (e) {} };
+      document.head.appendChild(s8);
+    };
+    var ar = function () {
+      if (window.__ai || document.getElementById("aiScript")) return;
+      var s9 = document.createElement("script");
+      s9.id = "aiScript";
+      s9.src = "quiz/ai.js";
+      s9.async = !0;
+      s9.onerror = function () { try { s9.remove(); } catch (e) {} };
+      document.head.appendChild(s9);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(cr, { timeout: 9000 }); window.requestIdleCallback(ar, { timeout: 9500 }); }
+    else { setTimeout(cr, 2900); setTimeout(ar, 3200); }
+  } catch (e) {}
 })();
