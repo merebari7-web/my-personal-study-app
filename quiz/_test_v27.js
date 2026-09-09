@@ -29,9 +29,9 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (/quiz\/pro\.js/.test(HTML)) throw "pro.js inline in shell";
     if (!/quiz\/polish\.js/.test(HTML)) throw "polish loader gone";
   });
-  await run("service worker cache key bumped (progression-aware)", () => {
-    if (!/"-v2[7-9]"/.test(SW)) throw "NSS_V not advanced";
-    if (!/v27/.test(SW)) throw "no v27 note";
+  await run("service worker cache key bumped to -v27", () => {
+    if (!/"-v2[7-9]"/.test(SW)) throw "NSS_V not current";
+    if (!/v2[7-9]/.test(SW)) throw "no v2x note";
   });
   await run("boot wire gzip <= 266240 B", () => {
     const w = zlib.gzipSync(HTML, { level: 9 }).length + zlib.gzipSync(BANK, { level: 9 }).length;

@@ -104,19 +104,6 @@
     "@keyframes pfDia{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.28);opacity:1}}" +
     "}" +
     "@media (max-width:640px){html.polished #polishFx .pf-halo{width:132%;top:24%}html.polished .hero-chip{padding:6px 11px;font-size:.7rem}}" +
-    /* --- v28: section underline draw, cursor spotlight, light remaster, hour ambience --- */
-    "html.polished .step{position:relative;padding-bottom:12px}" +
-    "html.polished .step::after{content:'';position:absolute;left:2px;bottom:0;width:74px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--pf-g),rgba(220,184,95,0));animation:pfDraw 1s cubic-bezier(.2,.7,.3,1) .2s both}" +
-    "@keyframes pfDraw{from{transform:scaleX(0)}to{transform:scaleX(1)}}" +
-    "html.polished .stat,html.polished .lib-item,html.polished .notes-card{background-image:radial-gradient(210px circle at var(--px,50%) var(--py,38%),rgba(220,184,95,.15),transparent 62%)}" +
-    "html.polished[data-aura-hour=hour-m] .pf-halo{filter:hue-rotate(-6deg) saturate(1.12) blur(10px)}" +
-    "html.polished[data-aura-hour=hour-a] .pf-halo{filter:hue-rotate(-9deg) blur(10px)}" +
-    "html.polished[data-aura-hour=hour-e] .pf-halo{filter:hue-rotate(14deg) saturate(1.2) blur(10px)}" +
-    "html.polished[data-aura-hour=hour-n] .pf-halo{filter:hue-rotate(28deg) saturate(.9) blur(10px)}" +
-    "html.polished[data-theme=light] .stat{background:linear-gradient(165deg,#fffdf8,#f6ecd4);border-color:rgba(190,150,70,.4);box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),0 18px 40px -26px rgba(150,110,40,.45)}" +
-    "html.polished[data-theme=light] .stat span{color:#8a6a30}" +
-    "html.polished[data-theme=light] .hero-chip{border-color:rgba(190,150,70,.38);background:rgba(255,252,244,.78)}" +
-    "html.polished[data-theme=light] .step::after{background:linear-gradient(90deg,#c9a227,rgba(201,162,39,0))}" +
     "@media print{html.polished #polishFx,html.polished .back-top,html.polished .hero-chip{display:none!important}}";
 
   function apply() {
@@ -134,109 +121,7 @@
       heroChip();
       backTop();
       reveal();
-      spotlight();
-      countUp();
-      hourAmb();
-      dockFix();
-      setTimeout(function () { try { countUp(); } catch (e) {} }, 1400);
     } catch (e) { /* decorative only — never break the app */ }
-  }
-
-  /* v28 — cursor spotlight (fine pointers, honours reduced motion) */
-  function spotlight() {
-    try {
-      if (!window.matchMedia || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      document.addEventListener("pointermove", function (e) {
-        var t = e.target;
-        if (!t || !t.closest) return;
-        var el = t.closest(".stat,.lib-item,.notes-card");
-        if (!el) return;
-        var r = el.getBoundingClientRect();
-        if (!r.width) return;
-        el.style.setProperty("--px", (e.clientX - r.left) + "px");
-        el.style.setProperty("--py", (e.clientY - r.top) + "px");
-      }, { passive: true });
-    } catch (e) {}
-  }
-
-  /* v28 — count-up for hero stat numerals */
-  function countUp() {
-    try {
-      if (!("requestAnimationFrame" in window)) return;
-      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      var els = document.querySelectorAll(".stat b");
-      if (!els.length) return;
-      Array.prototype.forEach.call(els, function (el) {
-        if (el.getAttribute("data-cn")) return;
-        var txt = (el.textContent || "").trim();
-        var m = txt.match(/^([\d,]+)(.*)$/);
-        if (!m) return;
-        var target = parseFloat(m[1].replace(/,/g, ""));
-        var suf = m[2] || "";
-        if (!isFinite(target) || target > 1e7) return;
-        el.setAttribute("data-cn", "1");
-        var t0 = 0, DUR = 800;
-        function step(ts) {
-          if (!t0) t0 = ts;
-          var k = Math.min(1, (ts - t0) / DUR);
-          k = 1 - Math.pow(1 - k, 3);
-          el.textContent = Math.round(target * k).toLocaleString("en") + suf;
-          if (k < 1) requestAnimationFrame(step);
-        }
-        requestAnimationFrame(step);
-      });
-    } catch (e) {}
-  }
-
-  /* v28 — home dock repair: the shell never invokes its own scroll/click
-     binder (checked live: AI.bound stays false), so the dock stays hidden
-     and its buttons are dead. This is an additive, idempotent controller. */
-  function dockFix() {
-    try {
-      var d = document.getElementById("homeDock");
-      if (!d || window.__dockFix) return;
-      window.__dockFix = 1;
-      var onScroll = function () {
-        var y = window.scrollY || document.documentElement.scrollTop || 0;
-        d.classList.toggle("show", y > 240);
-        var at = function (id) { var el = document.getElementById(id); return el ? el.getBoundingClientRect().top : 1e9; };
-        var n = "home";
-        if (at("aiCoach") < 170) n = "coach";
-        if (at("step-class") < 150) n = "practice";
-        if (at("labGrid") < 150) n = "lab";
-        Array.prototype.forEach.call(d.querySelectorAll(".hd-btn"), function (b) {
-          b.classList.toggle("on", b.getAttribute("data-hd") === n);
-        });
-      };
-      window.addEventListener("scroll", onScroll, { passive: true });
-      onScroll();
-      if (!d.dataset.pfNav) {
-        d.dataset.pfNav = "1";
-        Array.prototype.forEach.call(d.querySelectorAll(".hd-btn"), function (b) {
-          var hd = b.getAttribute("data-hd");
-          if (!hd) return;
-          b.addEventListener("click", function () {
-            if (hd === "hq") { if (typeof openHQ === "function") openHQ(); return; }
-            var s = null;
-            if (hd === "coach") s = document.getElementById("aiCoach");
-            else if (hd === "practice") s = document.getElementById("step-class");
-            else if (hd === "lab") s = document.getElementById("labGrid");
-            var n2 = hd === "home" ? 0 : (s ? Math.max(0, s.getBoundingClientRect().top + (window.scrollY || document.documentElement.scrollTop || 0) - 84) : 0);
-            try { window.scrollTo({ top: n2, behavior: "smooth" }); } catch (e) { window.scrollTo(0, n2); }
-          });
-        });
-      }
-    } catch (e) {}
-  }
-
-  /* v28 — time-of-day ambience on the hero glow */
-  function hourAmb() {
-    try {
-      var h = new Date().getHours();
-      var k = h >= 5 && h < 12 ? "hour-m" : h >= 12 && h < 17 ? "hour-a" : h >= 17 && h < 21 ? "hour-e" : "hour-n";
-      document.documentElement.setAttribute("data-aura-hour", k);
-    } catch (e) {}
   }
 
   function heroLayer() {
@@ -333,5 +218,20 @@
     };
     if ("requestIdleCallback" in window) { window.requestIdleCallback(pr, { timeout: 4000 }); }
     else { setTimeout(pr, 1400); }
+  } catch (e) {}
+  /* v28 — load the Pro Boost module (Math Sprint, Soundscapes, 3D tilt,
+     gold aura rings) at idle too, so it never competes with boot. */
+  try {
+    var br = function () {
+      if (window.__boost || document.getElementById("boostScript")) return;
+      var s3 = document.createElement("script");
+      s3.id = "boostScript";
+      s3.src = "quiz/boost.js";
+      s3.async = !0;
+      s3.onerror = function () { try { s3.remove(); } catch (e) {} };
+      document.head.appendChild(s3);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(br, { timeout: 5000 }); }
+    else { setTimeout(br, 1700); }
   } catch (e) {}
 })();

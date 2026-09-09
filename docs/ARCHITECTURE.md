@@ -121,3 +121,5 @@ and an approval queue in the UI; 4) keep the SW cache as an offline fallback.
   12-viewport responsive audit (`quiz/_audit_rwd.js`).
 - Every release: suites → push → 45 s → live SHA-256 byte check →
   `node quiz/_live_sw.js`.
+
+- `quiz/boost.js` (v28) — Pro Boost: Math Sprint arcade, WebAudio Soundscapes, 3D tile tilt + glare, gold aura rings; idle-loaded from `polish.js`.
