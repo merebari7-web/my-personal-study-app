@@ -122,4 +122,8 @@ and an approval queue in the UI; 4) keep the SW cache as an offline fallback.
 - Every release: suites → push → 45 s → live SHA-256 byte check →
   `node quiz/_live_sw.js`.
 
-- `quiz/boost.js` (v28) — Pro Boost: Math Sprint arcade, WebAudio Soundscapes, 3D tile tilt + glare, gold aura rings; idle-loaded from `polish.js`.
+## Lazy experience modules (v24→v29)
+- `quiz/polish.js` — Aurum UI library (v24→v26) + v28 visual layer; idle-loads `pro.js` (v27) and `boost.js` (v29).
+- `quiz/pro.js` — Pro Tools (v27): Ctrl+K palette (exposes `window.__proPalHooks`), exam countdowns, Zen focus, heatmap, ripple; idle-loads `aura.js` (v28).
+- `quiz/aura.js` — Apex HQ (v28): Trophy Room gallery + Exam Sprint Plan generator + dock pill.
+- `quiz/boost.js` — Pro Boost (v29): Math Sprint arcade, WebAudio Soundscapes, 3D tile tilt/glare, gold aura rings; palette entries via `__proPalHooks`.

@@ -1,8 +1,9 @@
-/* v28.0 suite — Pro Boost (lazy quiz/boost.js, loaded by polish.js at idle):
-   ⚡ Math Sprint (60s mental-maths arcade, numpad, combos, best, XP/coins),
-   🌧️ Soundscapes (WebAudio rain/ocean/brown-noise, volume, persistence),
-   🧊 3D tilt + glare on tiles/cards, 💫 gold aura rings on quiz+plan cards,
-   plus two new command-palette entries. SW key -v28.
+/* v28.0 suite — Apex HQ (lazy quiz/aura.js, loaded by pro.js at idle):
+   🏆 Trophy Room gallery (13 achievements + live progress + unlock dates),
+   🗓 Exam Sprint Plan generator (target exam + weakest-subject weighting,
+   day checklist, regenerate, print), 🏆 dock pill, command-palette entries,
+   and the polish v28 texture layer (section underline draw, count-up,
+   cursor spotlight, hour ambience, light remaster). SW key -v28.
    Run: node quiz/_test_v28.js */
 const fs = require("fs");
 const zlib = require("zlib");
@@ -12,26 +13,24 @@ const BANK = fs.readFileSync("bank.js", "utf8");
 const SW = fs.readFileSync("sw.js", "utf8");
 const POLISH = fs.readFileSync("quiz/polish.js", "utf8");
 const PRO = fs.readFileSync("quiz/pro.js", "utf8");
-const BOOST = fs.readFileSync("quiz/boost.js", "utf8");
+const AURA = fs.readFileSync("quiz/aura.js", "utf8");
 let fails = 0;
 const run = async (label, fn) => { try { await fn(); console.log("PASS:", label); } catch (e) { fails++; console.log("FAIL:", label, "->", String(e && e.message || e).slice(0, 240)); } };
 
 (async () => {
-  await run("boost.js: parses and carries every v28 feature", () => {
-    new Function(BOOST);
-    for (const h of ["Math Sprint", "sprOpen", "sprPad", "sprFinish", "nssc_sprint", "Soundscapes", "scapeOv", "playScape", "noiseBuf", "bt3d", "boost-ring", "__proPalHooks", "sprLaunch", "scapeLaunch"]) {
-      if (BOOST.indexOf(h) < 0) throw "missing hook " + h;
+  await run("aura.js: parses and carries every v28 feature", () => {
+    new Function(AURA);
+    for (const h of ["apexOv", "apexBtn", "tro-card", "pl-row", "Trophy Room", "Exam Sprint Plan", "apex-print", "plRegen", "nssc_apex", "__palActions"]) {
+      if (AURA.indexOf(h) < 0) throw "missing hook " + h;
     }
   });
-  await run("pro.js: exposes palette hooks for boost", () => {
-    if (PRO.indexOf("__proPalHooks") < 0) throw "no hooks in pro.js";
+  await run("pro.js: idle-loads aura.js (zero boot cost)", () => {
+    if (PRO.indexOf("quiz/aura.js") < 0) throw "no aura loader";
+    if (PRO.indexOf("requestIdleCallback") < 0 && PRO.indexOf("setTimeout(ax") < 0) throw "no idle strategy";
+    if (PRO.indexOf("window.__palAdd = add") < 0) throw "palette hook missing";
   });
-  await run("polish.js: idle-loads boost.js (zero boot cost)", () => {
-    if (POLISH.indexOf("quiz/boost.js") < 0) throw "no boost loader";
-    if (POLISH.indexOf("requestIdleCallback") < 0 && POLISH.indexOf("setTimeout(br") < 0) throw "no idle strategy";
-  });
-  await run("index.html: still loader-only (no boost inline, wire unchanged)", () => {
-    if (/quiz\/boost\.js/.test(HTML)) throw "boost.js inline in shell";
+  await run("index.html: shell untouched by v28 (no aura inline)", () => {
+    if (/quiz\/aura\.js/.test(HTML)) throw "aura.js inline in shell";
     if (!/quiz\/polish\.js/.test(HTML)) throw "polish loader gone";
   });
   await run("service worker cache key bumped to -v28", () => {
@@ -44,7 +43,7 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     console.log("   (wire " + w + " — headroom " + (266240 - w) + " B)");
   });
 
-  /* jsdom: boot polish -> pro -> boost, then exercise every v28 feature */
+  /* jsdom: aura boots, dock pill, trophies, plan, palette entry */
   const html = HTML.replace('<script src="bank.js"></script>', "<script>" + BANK + "</script>");
   const vc = new VirtualConsole(); vc.on("jsdomError", () => {});
   const d = new JSDOM(html, { runScripts: "dangerously", url: "https://nssc-quiz.test/", pretendToBeVisual: true, virtualConsole: vc,
@@ -56,117 +55,88 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
       window.SpeechSynthesisUtterance = function (t) { this.text = t; };
       window.scrollTo = () => {}; window.matchMedia = window.matchMedia || (() => ({ matches: false }));
       window.Notification = function () {}; window.Notification.permission = "default";
-      window.AudioContext = function () { this.currentTime = 0; this.sampleRate = 44100; this.state = "running";
-        this.createOscillator = () => ({ type: "", connect() {}, start() {}, stop() {}, frequency: { value: 0 } });
-        this.createGain = () => ({ connect() {}, disconnect() {}, gain: { value: 0, setTargetAtTime() {}, exponentialRampToValueAtTime() {} } });
-        this.createBiquadFilter = () => ({ connect() {}, disconnect() {}, type: "", frequency: { value: 0 } });
-        this.destination = {}; this.resume = () => {}; };
+      window.print = () => {};
+      window.AudioContext = function () { this.currentTime = 0; this.createOscillator = () => ({ type: "", connect() {}, start() {}, stop() {}, frequency: { value: 0 } }); this.createGain = () => ({ connect() {}, gain: { exponentialRampToValueAtTime() {} } }); this.destination = {}; this.close = () => {}; };
     } });
   const w = d.window;
   await new Promise(r => setTimeout(r, 700));
-  await run("polish boots, pro attaches, then boost mounts (chips, rings, tilt, hooks)", async () => {
+  await run("polish -> pro -> aura chain attaches (pill, palette hook)", async () => {
     w.eval(POLISH);
     await new Promise(r => setTimeout(r, 900));
     w.eval(PRO);
     await new Promise(r => setTimeout(r, 300));
-    w.eval(BOOST);
+    w.eval(AURA);
     await new Promise(r => setTimeout(r, 300));
-    const doc = w.document;
-    if (!doc.documentElement.classList.contains("boost")) throw "no boost class";
-    if (!doc.getElementById("boostCss")) throw "no boost css";
-    if (!doc.getElementById("sprLaunch")) throw "no sprint chip";
-    if (!doc.getElementById("scapeLaunch")) throw "no scape chip";
-    if (!doc.getElementById("quizCard").classList.contains("boost-ring")) throw "quizCard no ring";
-    if (!doc.getElementById("planCard").classList.contains("boost-ring")) throw "planCard no ring";
-    if (!doc.querySelector(".bt3d")) throw "no tilt class applied";
-    // palette hooks: Ctrl+K -> "sprint" filter -> Math Sprint entry present
-    doc.dispatchEvent(new w.KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }));
+    if (!w.document.documentElement.classList.contains("aura")) throw "no aura class";
+    const pill = w.document.getElementById("apexBtn");
+    if (!pill) throw "no dock pill";
+    if (!w.document.querySelector("#homeDock .hd-btn.apex-hd")) throw "pill not in dock";
+    if (!Array.isArray(w.__palActions) || w.__palActions.length < 2) throw "palette registry not populated";
+  });
+  await run("seeded attempts -> trophy room: unlocked live, progress bars", async () => {
+    const now = Date.now(), day = 864e5;
+    w.localStorage.setItem("nssc_attempts_guest", JSON.stringify([
+      { subj: "Mathematics", pct: 60, correct: 6, tms: now },
+      { subj: "Physics", pct: 100, correct: 10, tms: now - day },
+      { subj: "Chemistry", pct: 0, correct: 0, tms: now - 2 * day }
+    ]));
+    w.document.getElementById("apexBtn").click();
+    await new Promise(r => setTimeout(r, 300));
+    const cards = w.document.querySelectorAll(".apex-ov .tro-card");
+    if (cards.length !== 13) throw "trophy cards=" + cards.length;
+    const on = w.document.querySelectorAll(".apex-ov .tro-card.on");
+    if (on.length < 2) throw "unlocked=" + on.length + " (expect ≥2: first + perfect)";
+    if (!on[0].textContent.match(/Unlocked/)) throw "no unlock date shown";
+    const bars = w.document.querySelectorAll(".apex-ov .tro-pb");
+    if (!bars.length) throw "no progress bars for locked badges";
+    const hat = cards[2].textContent;
+    if (!/today/.test(hat)) throw "hat progress missing: " + hat.slice(0, 60);
+  });
+  await run("exam sprint plan: generates, checks off, persists", async () => {
+    const tabs = w.document.querySelectorAll(".apex-ov .apex-tab");
+    tabs[1].click();
+    await new Promise(r => setTimeout(r, 250));
+    const rows = w.document.querySelectorAll(".apex-ov .pl-row");
+    if (rows.length < 10 || rows.length > 21) throw "plan rows=" + rows.length;
+    if (!/WAEC|NECO|JAMB/.test(w.document.getElementById("apexBody").textContent)) throw "no exam target";
+    rows[0].querySelector(".pl-chk").click();
     await new Promise(r => setTimeout(r, 200));
-    const pal = doc.getElementById("palQ");
+    const st = JSON.parse(w.localStorage.getItem("nssc_apex") || "{}");
+    if (!st.plan || !st.plan.items || st.plan.items[0].done !== true) throw "plan not persisted";
+    const done = w.document.querySelectorAll(".apex-ov .pl-row.done").length;
+    if (done !== 1) throw "done rows=" + done;
+    // regenerate resets progress
+    w.document.getElementById("plRegen").click();
+    await new Promise(r => setTimeout(r, 200));
+    if (w.document.querySelectorAll(".apex-ov .pl-row.done").length) throw "regen kept done";
+  });
+  await run("palette add hooks: Apex HQ entry opens overlay", async () => {
+    w.document.getElementById("apexX").click();
+    w.document.dispatchEvent(new w.KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }));
+    await new Promise(r => setTimeout(r, 250));
+    const pal = w.document.getElementById("palQ");
     if (!pal) throw "palette did not open";
     const inp = pal.querySelector("#palIn");
-    inp.value = "sprint";
+    inp.value = "apex";
     inp.dispatchEvent(new w.Event("input", { bubbles: true }));
     await new Promise(r => setTimeout(r, 150));
-    const labels = Array.prototype.map.call(pal.querySelectorAll(".pal-it"), x => x.textContent).join("|");
-    if (labels.indexOf("Math Sprint") < 0) throw "palette missing Math Sprint: " + labels.slice(0, 80);
-    doc.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
-  });
-  await run("math sprint: fast run -> numpad entry -> combo -> result XP + best saved", async () => {
-    w.eval("window.__sprintFast = true");
-    w.eval('document.getElementById("sprLaunch").click()');
+    const items = pal.querySelectorAll(".pal-it");
+    if (!items.length) throw "no apex palette entries";
+    items[0].click();
     await new Promise(r => setTimeout(r, 250));
-    const doc = w.document;
-    if (!doc.getElementById("boostOv")) throw "sprint overlay missing";
-    if (!doc.getElementById("sprQ").textContent) throw "no question painted";
-    const q = w.__sprint.q;
-    if (!q || typeof q.a !== "number") throw "no question state";
-    const ans = String(q.a);
-    const pad = doc.getElementById("sprPad");
-    for (const ch of ans) pad.querySelector('[data-k="' + ch + '"]').click();
-    pad.querySelector('[data-k="✓"]').click();
-    await new Promise(r => setTimeout(r, 120));
-    if (w.__sprint.score !== 1) throw "score=" + w.__sprint.score;
-    // second question, deliberately wrong -> combo resets, no crash
-    w.eval('document.getElementById("sprIn").textContent');
-    const q2 = w.__sprint.q;
-    const wrong = String(q2.a === 0 ? 1 : q2.a + 999);
-    for (const ch of wrong.slice(0, 3)) pad.querySelector('[data-k="' + ch + '"]').click();
-    pad.querySelector('[data-k="✓"]').click();
-    await new Promise(r => setTimeout(r, 120));
-    if (w.__sprint.combo !== 0) throw "combo not reset: " + w.__sprint.combo;
-    // let the fast clock run out
-    await new Promise(r => setTimeout(r, 4200));
-    if (!doc.getElementById("sprAgain")) throw "no result view";
-    const saved = JSON.parse(w.localStorage.getItem("nssc_sprint") || "{}");
-    if (!saved.best || typeof saved.best.easy !== "number") throw "best not saved";
-    if (saved.best.easy < 1) throw "best.easy=" + saved.best.easy;
-    w.eval('document.getElementById("sprClose").click()');
-    await new Promise(r => setTimeout(r, 100));
-    if (doc.getElementById("boostOv")) throw "overlay not closed";
-  });
-  await run("soundscapes: overlay opens, presets safe without real audio, volume + persistence", async () => {
-    w.eval('document.getElementById("scapeLaunch").click()');
-    await new Promise(r => setTimeout(r, 200));
-    const doc = w.document;
-    const ov = doc.getElementById("scapeOv");
-    if (!ov) throw "scape overlay missing";
-    if (!ov.querySelector('.sc-t[data-k="rain"]')) throw "no rain preset";
-    ov.querySelector('.sc-t[data-k="ocean"]').click();
-    await new Promise(r => setTimeout(r, 120));
-    const saved = JSON.parse(w.localStorage.getItem("nssc_scapes") || "{}");
-    if (saved.p !== "ocean") throw "preset not persisted: " + saved.p;
-    if (typeof w.__scapeOn === "undefined") throw "no scape state flag";
-    const vol = doc.getElementById("scVol");
-    vol.value = 25;
-    vol.dispatchEvent(new w.Event("input", { bubbles: true }));
-    await new Promise(r => setTimeout(r, 80));
-    const saved2 = JSON.parse(w.localStorage.getItem("nssc_scapes") || "{}");
-    if (saved2.v !== 25) throw "volume not persisted";
-    doc.getElementById("scapeX").click();
-    await new Promise(r => setTimeout(r, 100));
-    if (doc.getElementById("scapeOv")) throw "scape not closed";
-  });
-  await run("tilt + glare: pointermove drives transform, pointerout resets, reduced-motion safe", async () => {
-    const doc = w.document;
-    w.eval("window.__tiltForce = true");
-    const t = doc.querySelector(".bt3d");
-    if (!t) throw "no tile for tilt";
-    const r = t.getBoundingClientRect();
-    const PE = typeof w.PointerEvent !== "undefined";
-    t.dispatchEvent(PE ? new w.PointerEvent("pointermove", { clientX: r.left + 10, clientY: r.top + 10, bubbles: true }) : new w.Event("pointermove", { bubbles: true }));
-    await new Promise(r2 => setTimeout(r2, 120));
-    // jsdom rects are 0 -> tilt skips; just ensure no exceptions and listener path exists
-    t.dispatchEvent(PE ? new w.PointerEvent("pointerout", { bubbles: true }) : new w.Event("pointerout", { bubbles: true }));
-    await new Promise(r2 => setTimeout(r2, 60));
+    if (w.document.getElementById("apexOv").classList.contains("hidden")) throw "apex did not open from palette";
+    w.document.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    await new Promise(r => setTimeout(r, 150));
+    if (!w.document.getElementById("apexOv").classList.contains("hidden")) throw "Esc did not close";
   });
 
-  /* real-Chrome: sprint e2e, soundscape audio, tilt transform, ring, no errors */
+  /* real-Chrome: dock pill, trophy room, plan toggle, no errors, no overflow */
   let puppeteer = null;
   try { puppeteer = require("puppeteer"); } catch (e) {}
   if (puppeteer) {
-    const b = await puppeteer.launch({ headless: true, args: ["--no-sandbox", "--disable-dev-shm-usage", "--autoplay-policy=no-user-gesture-required"] });
+    const b = await puppeteer.launch({ headless: true, args: ["--no-sandbox", "--disable-dev-shm-usage"] });
     try {
+      let v28i = 1;
       for (const v of [{ w: 375, h: 667 }, { w: 1280, h: 800 }]) {
         const p = await b.newPage();
         const errs = [];
@@ -180,83 +150,69 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
         await p.setViewport({ width: v.w, height: v.h });
         await p.goto("file://" + process.cwd() + "/index.html", { waitUntil: "load" });
         await p.waitForFunction(() => typeof CLASSES !== "undefined", { timeout: 20000 }).catch(() => {});
-        await p.waitForFunction(() => document.getElementById("sprLaunch") !== null, { timeout: 15000 }).catch(() => {});
-        await new Promise(r => setTimeout(r, 900));
-        await run("chrome " + v.w + ": sprint + soundscapes + tilt + rings e2e", async () => {
+        await p.evaluate((i) => {
+          const n = document.getElementById("gateName"), e = document.getElementById("gateEmail");
+          if (n && e) { n.value = "Amina V28" + i; e.value = "amina" + i + "@test.ng"; gateSignUp(); }
+        }, v28i);
+        await p.waitForFunction(() => document.getElementById("apexBtn") !== null, { timeout: 15000 }).catch(() => {});
+        await new Promise(r => setTimeout(r, 600));
+        await run("chrome " + v.w + ": apex pill, trophies, plan e2e", async () => {
           const m = await p.evaluate(async () => {
-            const r = { err: [] };
-            window.__sprintFast = true;
-            const chip = document.getElementById("sprLaunch");
-            r.chip = !!chip;
-            if (chip) chip.click();
-            await new Promise(r2 => setTimeout(r2, 250));
-            r.ov = !!document.getElementById("boostOv");
-            const SP = window.__sprint;
-            const a = SP && SP.q ? String(SP.q.a) : "";
-            const pad = document.getElementById("sprPad");
-            if (a && pad) {
-              for (const ch of a) { const b = pad.querySelector('[data-k="' + ch + '"]'); if (b) b.click(); }
-              pad.querySelector('[data-k="✓"]').click();
-            }
-            await new Promise(r2 => setTimeout(r2, 150));
-            r.score = SP ? SP.score : -1;
-            r.combo = SP ? SP.bestCombo : -1;
-            await new Promise(r2 => setTimeout(r2, 4500));
-            r.res = !!document.getElementById("sprAgain");
-            r.saved = !!JSON.parse(localStorage.getItem("nssc_sprint") || "{}").best;
-            if (document.getElementById("sprAgain")) document.getElementById("sprClose").click();
-            await new Promise(r2 => setTimeout(r2, 120));
-            // soundscapes
-            document.getElementById("scapeLaunch").click();
-            await new Promise(r2 => setTimeout(r2, 200));
-            r.scOv = !!document.getElementById("scapeOv");
-            const rain = document.querySelector('#scapeOv .sc-t[data-k="rain"]');
-            if (rain) rain.click();
-            await new Promise(r2 => setTimeout(r2, 500));
-            r.scOn = window.__scapeOn === true;
-            r.scCtx = window.__scapeAvail !== 0;
-            if (document.getElementById("scapeX")) document.getElementById("scapeX").click();
-            await new Promise(r2 => setTimeout(r2, 600));
-            r.scOff = window.__scapeOn === false;
-            // tilt over a visible ai-it card
-            window.__tiltForce = true;
-            let tile = null;
-            const all = document.querySelectorAll(".ai-it,.g-tile,.lab-tile,.sv-tile,.lib-item");
-            for (const t of all) { const rc = t.getBoundingClientRect(); if (rc.width > 40 && rc.height > 40) { tile = t; break; } }
-            if (tile) {
-              const rc = tile.getBoundingClientRect();
-              tile.dispatchEvent(new PointerEvent("pointermove", { clientX: rc.left + rc.width * 0.85, clientY: rc.top + rc.height * 0.85, bubbles: true }));
-              await new Promise(r2 => setTimeout(r2, 150));
-              r.tilt = tile.style.transform || "";
-              tile.dispatchEvent(new PointerEvent("pointerout", { bubbles: true }));
-              await new Promise(r2 => setTimeout(r2, 150));
-              r.tiltReset = !tile.style.transform;
-            }
-            // rings
-            const qc = document.getElementById("quizCard");
-            r.ring = !!(qc && qc.classList.contains("boost-ring"));
-            const bg = qc ? getComputedStyle(qc, "::before").backgroundImage : "";
-            r.conic = /conic-gradient/.test(bg);
-            r.overflow = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) > innerWidth;
-            return r;
+            const pill = !!document.getElementById("apexBtn");
+            const dockBtns = document.querySelectorAll("#homeDock .hd-btn").length;
+            // v28 dock repair: shows on scroll, buttons navigate
+            document.documentElement.style.scrollBehavior = "auto";
+            window.scrollTo(0, 900);
+            window.dispatchEvent(new Event("scroll"));
+            await new Promise(r => setTimeout(r, 150));
+            const dockShown = document.getElementById("homeDock").classList.contains("show");
+            const dbg = { fix: window.__dockFix || 0, y: window.scrollY };
+            const y0 = window.scrollY;
+            document.querySelector('.hd-btn[data-hd="coach"]').click();
+            let dockNav = false, navDbg = {};
+            for (let k = 0; k < 12 && !dockNav; k++) { await new Promise(r => setTimeout(r, 200)); const yv = window.scrollY; navDbg = { y0, yv, d: yv - y0 }; dockNav = Math.abs(yv - y0) > 40; }
+            window.scrollTo(0, 0);
+            window.dispatchEvent(new Event("scroll"));
+            await new Promise(r => setTimeout(r, 200));
+            document.getElementById("apexBtn").click();
+            await new Promise(r => setTimeout(r, 350));
+            const cards = document.querySelectorAll("#apexOv .tro-card").length;
+            const ovEl = document.getElementById("apexOv");
+            const ovCs = getComputedStyle(ovEl);
+            const ovFixed = ovCs.position === "fixed" && ovCs.zIndex !== "auto";
+            const vis = !ovEl.classList.contains("hidden") && ovCs.display !== "none";
+            document.querySelectorAll("#apexOv .apex-tab")[1].click();
+            await new Promise(r => setTimeout(r, 300));
+            const rows = document.querySelectorAll("#apexOv .pl-row").length;
+            const examTxt = document.getElementById("apexBody").textContent.indexOf("WAEC") >= 0 || document.getElementById("apexBody").textContent.indexOf("NECO") >= 0 || document.getElementById("apexBody").textContent.indexOf("JAMB") >= 0;
+            const first = document.querySelector("#apexOv .pl-chk");
+            const wasDone = first ? first.closest(".pl-row").classList.contains("done") : false;
+            if (first) first.click();
+            await new Promise(r => setTimeout(r, 250));
+            const done = document.querySelectorAll("#apexOv .pl-row.done").length;
+            const st = JSON.parse(localStorage.getItem("nssc_apex") || "{}");
+            const persisted = !!(st.plan && st.plan.items && st.plan.items[0] && st.plan.items[0].done === !wasDone);
+            document.getElementById("apexX").click();
+            await new Promise(r => setTimeout(r, 250));
+            const closed = document.getElementById("apexOv").classList.contains("hidden");
+            return { pill, dockBtns, dockShown, dockNav, dbg, navDbg, cards, vis, ovFixed, rows, examTxt, done, persisted, closed,
+              overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) > innerWidth };
           });
-          if (!m.chip) throw "sprint chip missing";
-          if (!m.ov) throw "sprint overlay missing";
-          if (m.score < 1) throw "sprint score=" + m.score;
-          if (!m.res) throw "no sprint result";
-          if (!m.saved) throw "best not persisted";
-          if (!m.scOv) throw "scape overlay missing";
-          if (!m.scOn) throw "soundscape did not start (__scapeOn)";
-          if (!m.scCtx) throw "no audio context";
-          if (!m.scOff) throw "soundscape did not stop";
-          if (!m.tilt || !/rotate/.test(m.tilt)) throw "tilt transform missing: " + m.tilt;
-          if (!m.tiltReset) throw "tilt did not reset";
-          if (!m.ring) throw "quizCard ring missing";
-          if (!m.conic) throw "no conic gradient on ring";
+          if (!m.pill) throw "no dock pill";
+          if (m.dockBtns !== 6) throw "dock buttons=" + m.dockBtns;
+          if (!m.dockShown) throw "dock does not show on scroll " + JSON.stringify(m.dbg);
+          if (!m.dockNav) throw "dock button does not navigate " + JSON.stringify(m.navDbg);
+          if (!m.vis || m.cards !== 13) throw "trophies cards=" + m.cards;
+          if (!m.ovFixed) throw "apex overlay not styled (fixed + z-index)";
+          if (m.rows < 10) throw "plan rows=" + m.rows;
+          if (!m.examTxt) throw "no exam target in plan";
+          if (m.done > 1 || !m.persisted) throw "toggle failed (done=" + m.done + ")";
+          if (!m.closed) throw "close failed";
           if (m.overflow) throw "horizontal overflow";
           if (errs.length) throw errs.length + " errors: " + errs[0];
         });
         await p.close();
+        v28i++;
       }
     } finally { await b.close(); }
   }

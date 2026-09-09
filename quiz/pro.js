@@ -162,6 +162,10 @@
   function idx() {
     var out = [];
     function add(g, icon, label, hint, run) { out.push({ g: g, icon: icon, label: label, hint: hint, run: run }); }
+    try {
+      var PAX = window.__palActions || [];
+      for (var pi = 0; pi < PAX.length; pi++) add(PAX[pi][0], PAX[pi][1], PAX[pi][2], PAX[pi][3], PAX[pi][4]);
+    } catch (e) {}
     add("Go", "🏠", "Home", "Hero and stats", function () { var b = document.querySelector('.hd-btn[data-hd="home"]'); if (b) b.click(); });
     add("Go", "✨", "AI Coach", "Suggested for you", function () { var b = document.querySelector('.hd-btn[data-hd="coach"]'); if (b) b.click(); });
     add("Go", "📚", "Practice", "Papers, timer, review", function () { var b = document.querySelector('.hd-btn[data-hd="practice"]'); if (b) b.click(); });
@@ -197,6 +201,7 @@
         }
       }
     } catch (e) {}
+    try { window.__palAdd = add; } catch (e) {}
     try {
       if (window.__proPalHooks) for (var h = 0; h < window.__proPalHooks.length; h++) window.__proPalHooks[h](add);
     } catch (e) {}
@@ -419,4 +424,19 @@
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
+  /* v28 — load the Apex HQ module (trophy room + exam sprint plan) at idle so
+     it never competes with boot or the first paint. */
+  try {
+    var ax = function () {
+      if (window.__apex || document.getElementById("apexScript")) return;
+      var s3 = document.createElement("script");
+      s3.id = "apexScript";
+      s3.src = "quiz/aura.js";
+      s3.async = !0;
+      s3.onerror = function () { try { s3.remove(); } catch (e) {} };
+      document.head.appendChild(s3);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(ax, { timeout: 4000 }); }
+    else { setTimeout(ax, 1400); }
+  } catch (e) {}
 })();

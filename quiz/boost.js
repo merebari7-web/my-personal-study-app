@@ -391,17 +391,17 @@
       if (!active()) return;
       var t = e.target && e.target.closest ? e.target.closest(TILT_SEL) : null;
       if (t !== cur) { if (cur) resetT(cur); cur = t; }
-      if (!t || t._tRaf) return;
+      if (!t) return;
+      var now = Date.now();
+      if (now - (t._tLast || 0) < 24) return;
+      t._tLast = now;
       var r = t.getBoundingClientRect();
       if (!r.width || !r.height) return;
       var px = (e.clientX - r.left) / r.width - 0.5;
       var py = (e.clientY - r.top) / r.height - 0.5;
-      t._tRaf = requestAnimationFrame(function () {
-        t._tRaf = 0;
-        t.style.transform = "perspective(700px) rotateX(" + (-py * 6).toFixed(2) + "deg) rotateY(" + (px * 7).toFixed(2) + "deg) translateY(-2px)";
-        t.style.setProperty("--gx", (px * 100 + 50) + "%");
-        t.style.setProperty("--gy", (py * 100 + 50) + "%");
-      });
+      t.style.transform = "perspective(700px) rotateX(" + (-py * 6).toFixed(2) + "deg) rotateY(" + (px * 7).toFixed(2) + "deg) translateY(-2px)";
+      t.style.setProperty("--gx", (px * 100 + 50) + "%");
+      t.style.setProperty("--gy", (py * 100 + 50) + "%");
     }, { passive: true });
     document.addEventListener("pointerout", function (e) {
       if (!active()) return;
