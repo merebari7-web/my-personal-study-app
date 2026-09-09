@@ -117,7 +117,38 @@
     "html.polished[data-theme=light] .stat span{color:#8a6a30}" +
     "html.polished[data-theme=light] .hero-chip{border-color:rgba(190,150,70,.38);background:rgba(255,252,244,.78)}" +
     "html.polished[data-theme=light] .step::after{background:linear-gradient(90deg,#c9a227,rgba(201,162,39,0))}" +
-    "@media print{html.polished #polishFx,html.polished .back-top,html.polished .hero-chip{display:none!important}}";
+    "@media print{html.polished #polishFx,html.polished .back-top,html.polished .hero-chip{display:none!important}}" +
+    /* --- v32 Aurum Gloss: glass sheen on every card/modal/chip --- */
+    "html.polished .card,html.polished .notes-card,html.polished .bo-box,html.polished .tk-box,html.polished .st-box,html.polished .apex-box,html.polished .zen-box,html.polished .pal-box{background-image:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 56px),radial-gradient(340px circle at 90% -12%,var(--pf-soft),transparent 62%)}" +
+    "html.polished .ex-tile,html.polished .bt-chip{background-image:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,0) 42px)}" +
+    /* --- v32: hero badge aurora ring --- */
+    "html.polished .hero-badge{position:relative}" +
+    "html.polished .hero-badge::before{content:'';position:absolute;inset:-2px;border-radius:999px;background:conic-gradient(from 0deg,transparent 0deg,rgba(238,207,126,.95) 76deg,rgba(140,110,40,.85) 148deg,transparent 220deg,transparent 360deg);z-index:-1;filter:blur(3px);opacity:.85}" +
+    /* --- v32: inputs + selects gold focus glow --- */
+    "html.polished input:not([type=checkbox]):not([type=radio]):not([type=range]),html.polished select,html.polished textarea{transition:border-color .2s,box-shadow .2s}" +
+    "html.polished input:not([type=checkbox]):not([type=radio]):not([type=range]):hover,html.polished select:hover,html.polished textarea:hover{border-color:var(--gold,#c9a227)}" +
+    "html.polished input:not([type=checkbox]):not([type=radio]):not([type=range]):focus,html.polished select:focus,html.polished textarea:focus{border-color:#c9a227;box-shadow:0 0 0 3px var(--pf-soft)}" +
+    /* --- v32: dock active pill + heatmap pop + tool buttons --- */
+    "html.polished .hm-c{transition:transform .15s,box-shadow .15s}" +
+    "html.polished .hm-c:hover{transform:scale(1.3);box-shadow:0 0 0 1px rgba(220,184,95,.4),0 4px 10px -4px rgba(0,0,0,.4);z-index:2}" +
+    "html.polished .bo-btn:not(.alt),html.polished .tk-btn:not(.alt),html.polished .st-btn.on{transition:transform .18s,filter .18s,box-shadow .18s}" +
+    "html.polished .bo-btn:not(.alt):hover,html.polished .tk-btn:not(.alt):hover,html.polished .st-btn.on:hover{transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 10px 22px -10px rgba(140,100,30,.55)}" +
+    /* --- v32: toast pill countdown bar + spring pop --- */
+    "html.polished #toast{overflow:hidden}" +
+    "html.polished #pfToastBar{position:absolute;left:16px;right:16px;bottom:5px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--pf-g2,#f4e3b2),var(--pf-g,#dcb85f));transform-origin:left;animation:pfToastBar 3.2s linear forwards;pointer-events:none}" +
+    /* --- v32: motion (reduced-motion aware) --- */
+    "@media (prefers-reduced-motion:no-preference){" +
+    "@keyframes pfToastBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}" +
+    "html.polished .hero-badge::before{animation:pfRingSpin 6.5s linear infinite}" +
+    "@keyframes pfRingSpin{to{transform:rotate(360deg)}}" +
+    "@media (min-width:641px){html.polished #toast.show{animation:pfToastPop .38s cubic-bezier(.2,.85,.3,1.2)}@keyframes pfToastPop{0%{transform:translateX(-50%) translateY(14px) scale(.96)}60%{transform:translateX(-50%) translateY(-2px) scale(1.015)}100%{transform:translateX(-50%) translateY(0) scale(1)}}}" +
+    "@media (max-width:640px){html.polished #toast.show{animation:pfToastPopM .38s cubic-bezier(.2,.85,.3,1.2)}@keyframes pfToastPopM{0%{transform:translateY(14px) scale(.96)}60%{transform:translateY(-2px) scale(1.015)}100%{transform:translateY(0) scale(1)}}}" +
+    "html.polished .stat b{animation:pfRise .7s cubic-bezier(.2,.7,.3,1.15) .1s both,pfBob 5.5s ease-in-out 1.5s infinite}" +
+    "@keyframes pfBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}" +
+    "html.polished #xpFill{animation:pfGlow 3.4s ease-in-out infinite}" +
+    "@keyframes pfGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.14) saturate(1.1)}}" +
+    "}" +
+    "@media (max-width:640px){html.polished #pfToastBar{left:10px;right:10px;bottom:4px}}";
 
   function apply() {
     try {
@@ -139,6 +170,7 @@
       hourAmb();
       dockFix();
       setTimeout(function () { try { countUp(); } catch (e) {} }, 1400);
+    try { toastBar(); } catch (e) {}
     } catch (e) { /* decorative only — never break the app */ }
   }
 
@@ -265,6 +297,30 @@
     try { if (typeof streakDays === "function") { var s = streakDays(); if (s > 0) streak = ' · <b>🔥 ' + s + '-day streak</b>'; } } catch (e) {}
     chip.innerHTML = '<span class="hr-dot"></span> ' + dateTxt + " · " + term + streak;
     hero.parentNode.insertBefore(chip, hero.nextSibling);
+  }
+
+  /* v32 — gold countdown bar + restart hook for the toast pill */
+  function toastBar() {
+    var t = document.getElementById("toast");
+    if (!t || window.__pfToast) return;
+    window.__pfToast = 1;
+    var bar = function () {
+      var b = document.getElementById("pfToastBar");
+      if (!b || !b.isConnected) {
+        b = document.createElement("i");
+        b.id = "pfToastBar";
+        t.appendChild(b);
+      }
+      b.style.animation = "none";
+      void b.offsetWidth;
+      b.style.animation = "";
+    };
+    bar();
+    try {
+      new MutationObserver(function () {
+        if (t.classList.contains("show")) bar();
+      }).observe(t, { attributes: true, attributeFilter: ["class"] });
+    } catch (e) {}
   }
 
   function backTop() {

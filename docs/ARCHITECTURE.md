@@ -123,7 +123,7 @@ and an approval queue in the UI; 4) keep the SW cache as an offline fallback.
   `node quiz/_live_sw.js`.
 
 ## Lazy experience modules (v24→v29)
-- `quiz/polish.js` — Aurum UI library (v24→v26) + v28 visual layer; idle-loads `pro.js` (v27) and `boost.js` (v29).
+- `quiz/polish.js` — Aurum UI library (v24→v26) + v28 visual layer + v32 Aurum Gloss (toast countdown bar/pop, hero-badge aurora ring, glass sheen on cards/modals/chips, input focus glow, heatmap pop, XP glow, stat bob); idle-loads `pro.js` (v27), `boost.js` (v29) and `toolkit.js` (v30)/`studio.js` (v31).
 - `quiz/pro.js` — Pro Tools (v27): Ctrl+K palette (exposes `window.__proPalHooks`), exam countdowns, Zen focus, heatmap, ripple; idle-loads `aura.js` (v28).
 - `quiz/aura.js` — Apex HQ (v28): Trophy Room gallery + Exam Sprint Plan generator + dock pill.
 - `quiz/studio.js` (v31) — Study Studio: mind map studio (SVG canvas, connect/drag/export/persist), unit & rate converter, Theme Studio accents (CSS variable recolor), Daily Spark word+quote card, hero comets; idle-loaded by `polish.js`; palette entries via `__proPalHooks`.
