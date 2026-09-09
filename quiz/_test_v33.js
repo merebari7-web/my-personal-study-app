@@ -72,7 +72,7 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (!doc.getElementById("hoCss")) throw "no holo css";
     if (!doc.getElementById("holoLaunch")) throw "no chip";
     if (!w.__holo || !w.__holo.counts) throw "no exposed state";
-    if (w.__holo.counts.mol !== 8 || w.__holo.counts.surf !== 6 || w.__holo.counts.orb !== 8)
+    if (w.__holo.counts.mol !== 10 || w.__holo.counts.surf !== 8 || w.__holo.counts.orb !== 8)
       throw "counts " + JSON.stringify(w.__holo.counts);
     // palette hook
     doc.dispatchEvent(new w.KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true }));
@@ -94,7 +94,7 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (!ov) throw "overlay missing";
     if (!doc.getElementById("hoCv")) throw "no canvas";
     if (ov.querySelectorAll(".ho-tab").length !== 3) throw "tabs";
-    if (ov.querySelectorAll(".ho-chip").length !== 8) throw "mol preset chips=" + ov.querySelectorAll(".ho-chip").length;
+    if (ov.querySelectorAll(".ho-chip").length !== 10) throw "mol preset chips=" + ov.querySelectorAll(".ho-chip").length;
     const st = () => (w.__holo && w.__holo.M) || {};
     // wheel zoom
     const y0 = w.__holo.M.zoom;
@@ -129,7 +129,7 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     // surface tab
     Array.prototype.forEach.call(ov.querySelectorAll(".ho-tab"), t => { if (t.getAttribute("data-t") === "surf") t.click(); });
     await new Promise(r => setTimeout(r, 100));
-    if (ov.querySelectorAll(".ho-chip").length !== 6) throw "surf chips=" + ov.querySelectorAll(".ho-chip").length;
+    if (ov.querySelectorAll(".ho-chip").length !== 8) throw "surf chips=" + ov.querySelectorAll(".ho-chip").length;
     ov.querySelectorAll(".ho-chip")[1].click();
     await new Promise(r => setTimeout(r, 60));
     if (w.__holo.S.idx !== 1) throw "surf idx";
@@ -203,14 +203,14 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
             r.zoom = window.__holo.M.zoom > z0;
             // benzene preset
             const chips = document.querySelectorAll(".ho-chip");
-            chips[7].click();
+            chips[9].click();
             let lbl = "";
             for (let i = 0; i < 12; i++) {
               await new Promise(r2 => setTimeout(r2, 90));
               lbl = document.getElementById("hoMola").textContent;
-              if (window.__holo.M.idx === 7 && /Benzene/.test(lbl)) break;
+              if (window.__holo.M.idx === 9 && /Benzene/.test(lbl)) break;
             }
-            r.benzene = window.__holo.M.idx === 7 && /Benzene/.test(lbl);
+            r.benzene = window.__holo.M.idx === 9 && /Benzene/.test(lbl);
             // auto-rotate tick
             const yawA = window.__holo.M.yaw;
             await new Promise(r2 => setTimeout(r2, 500));

@@ -471,7 +471,16 @@
       s9.onerror = function () { try { s9.remove(); } catch (e) {} };
       document.head.appendChild(s9);
     };
-    if ("requestIdleCallback" in window) { window.requestIdleCallback(cr, { timeout: 9000 }); window.requestIdleCallback(ar, { timeout: 9500 }); }
-    else { setTimeout(cr, 2900); setTimeout(ar, 3200); }
+    var qr = function () {
+      if (window.__curicApi || document.getElementById("curicScript")) return;
+      var s0 = document.createElement("script");
+      s0.id = "curicScript";
+      s0.src = "quiz/curriculum.js";
+      s0.async = !0;
+      s0.onerror = function () { try { s0.remove(); } catch (e) {} };
+      document.head.appendChild(s0);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(cr, { timeout: 9000 }); window.requestIdleCallback(ar, { timeout: 9500 }); window.requestIdleCallback(qr, { timeout: 10000 }); }
+    else { setTimeout(cr, 2900); setTimeout(ar, 3200); setTimeout(qr, 3600); }
   } catch (e) {}
 })();

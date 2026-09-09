@@ -22,6 +22,8 @@
     C: { c: "#3d4148", r: 0.62, n: "Carbon" },
     N: { c: "#3f6ff0", r: 0.58, n: "Nitrogen" },
     O: { c: "#e04646", r: 0.56, n: "Oxygen" },
+    Cl: { c: "#2fae4e", r: 0.62, n: "Chlorine" },
+    Na: { c: "#b06ad6", r: 0.58, n: "Sodium" },
     S: { c: "#e8c33f", r: 0.7, n: "Sulphur" },
     Cl: { c: "#2fbf4f", r: 0.72, n: "Chlorine" }
   };
@@ -33,6 +35,23 @@
     { n: "Oxygen", f: "O₂", a: [["O", 0.6, 0, 0], ["O", -0.6, 0, 0]], b: [[0, 1, 2]] },
     { n: "Nitrogen", f: "N₂", a: [["N", 0.55, 0, 0], ["N", -0.55, 0, 0]], b: [[0, 1, 3]] },
     { n: "Hydrogen", f: "H₂", a: [["H", 0.37, 0, 0], ["H", -0.37, 0, 0]], b: [[0, 1, 1]] },
+    { n: "Ethanol", f: "C₂H₅OH", a: [["C", 0, 0, 0], ["C", 1.45, 0, 0], ["O", 2.75, 0.35, 0], ["H", -0.75, 0, 0.9], ["H", 0.5, 0.95, 0.6], ["H", 0.5, -0.95, -0.6], ["H", 1.95, 0.9, -0.5], ["H", 1.5, -0.9, 0.6], ["H", 3.45, 1.15, 0.1]], b: [[0, 1, 1], [0, 3, 1], [0, 4, 1], [0, 5, 1], [1, 2, 1], [1, 6, 1], [1, 7, 1], [2, 8, 1]] },
+    { n: "Sodium chloride", f: "NaCl", a: (function () {
+      var out = [];
+      for (var ix = -1; ix <= 1; ix++) for (var iy = -1; iy <= 1; iy++) for (var iz = 0; iz <= 1; iz++) {
+        var par = (Math.abs(ix) + Math.abs(iy) + iz) % 2;
+        out.push([par ? "Cl" : "Na", ix * 1.0, iy * 1.0, iz * 1.0 - 0.5]);
+      }
+      return out;
+    })(), b: (function () {
+      var out = [], pts = [];
+      for (var ix = -1; ix <= 1; ix++) for (var iy = -1; iy <= 1; iy++) for (var iz = 0; iz <= 1; iz++) pts.push([ix, iy, iz]);
+      for (var i = 0; i < pts.length; i++) for (var j = i + 1; j < pts.length; j++) {
+        var d = Math.abs(pts[i][0] - pts[j][0]) + Math.abs(pts[i][1] - pts[j][1]) + Math.abs(pts[i][2] - pts[j][2]);
+        if (d === 1) out.push([i, j, 1]);
+      }
+      return out;
+    })() },
     { n: "Benzene", f: "C₆H₆", a: (function () {
       var out = [], i;
       for (i = 0; i < 6; i++) { var a = i * Math.PI / 3; out.push(["C", 1.39 * Math.cos(a), 0, 1.39 * Math.sin(a)]); }
@@ -50,7 +69,9 @@
     { n: "Golden Bowl", h: 42, f: function (x, y) { return (x * x + y * y) / 3.4 - 0.7; } },
     { n: "Cone", h: 160, f: function (x, y) { return 0.95 * Math.sqrt(x * x + y * y + 0.01) - 1.5; } },
     { n: "Ripple Rings", h: 330, f: function (x, y) { var r = Math.sqrt(x * x + y * y); return 2.6 * Math.sin(2.8 * r) / (0.6 + r); } },
-    { n: "Sky Dome", h: 96, f: function (x, y) { return Math.sqrt(Math.max(0, 3.4 * 3.4 - x * x - y * y)) / 2.4 - 0.4; } }
+    { n: "Sky Dome", h: 96, f: function (x, y) { return Math.sqrt(Math.max(0, 3.4 * 3.4 - x * x - y * y)) / 2.4 - 0.4; } },
+    { n: "Wind over Waves", h: 210, f: function (x, y) { return 0.9 * Math.sin(2.4 * x + 0.8 * y) + 0.6 * Math.cos(2.0 * y - 0.5 * x); } },
+    { n: "Twin Peaks", h: 232, f: function (x, y) { return 2.9 * Math.exp(-0.42 * (x * x + y * y)) - 2.1 * Math.exp(-0.5 * ((x - 1.35) * (x - 1.35) + (y + 1.1) * (y + 1.1))) - 0.5; } }
   ];
   var PLANETS = [
     { n: "Mercury", r: 0.11, o: 2.3, p: 3.1, c: "#b9977f", ph: 0.4 },
@@ -60,8 +81,20 @@
     { n: "Jupiter", r: 0.44, o: 6.5, p: 23.2, c: "#d9a066", ph: 1.2 },
     { n: "Saturn", r: 0.37, o: 7.8, p: 32.1, c: "#e6cf8a", ph: 3.3, ring: 0.58 },
     { n: "Uranus", r: 0.27, o: 9.1, p: 48, c: "#8fd0d9", ph: 0.9 },
-    { n: "Neptune", r: 0.26, o: 10.2, p: 60, c: "#5f7fe0", ph: 2.6 }
+    { n: "Neptune", r: 0.26, o: 10.2, p: 60, c: "#5f7fe0", ph: 2.6, i: "Windiest world — supersonic winds over 2,000 km/h; 165 Earth-years per orbit." }
   ];
+  var MOON = { n: "Moon", r: 0.058, o: 4.42, p: 0.7, c: "#c3c9d4" };
+  var INFOS = {
+    Mercury: "Smallest planet, no moons; a year lasts just 88 Earth-days.",
+    Venus: "Hottest planet (about 465 °C) — a runaway greenhouse of CO₂, spinning backwards.",
+    Earth: "Our home — the only known world with liquid-water oceans and life.",
+    Mars: "The red planet — rusted dust, the tallest volcano (Olympus Mons) and ancient riverbeds.",
+    Jupiter: "The giant — 1,300 Earths fit inside; the Great Red Spot is a storm 350+ years old.",
+    Saturn: "The ringed beauty — rings of ice and rock 280,000 km wide yet only about 10 m thick.",
+    Uranus: "An ice giant tipped on its side, spinning at 98° to its orbit.",
+    Neptune: "Windiest world — supersonic winds over 2,000 km/h; 165 Earth-years per orbit.",
+    Moon: "Earth's only natural satellite — 384,400 km away and always shows us one face."
+  };
 
   var TAB = "mol";
   var M = { yaw: 0.7, pitch: 0.32, zoom: 1, auto: true, idx: 0 };
@@ -92,7 +125,8 @@
     "html.holo .ho-btn.sq{min-width:34px;padding:6px 9px}" +
     "html.holo .ho-spd{display:flex;align-items:center;gap:8px;font-size:.7rem;color:var(--mut,#8a7a5c)}" +
     "html.holo .ho-spd input{flex:1;min-width:110px;accent-color:#c9a25f}" +
-    "html.holo .ho-info{font-size:.66rem;color:var(--mut,#8a7a5c);margin-top:6px;text-align:center}" +
+    "html.holo .ho-info{font-size:.72rem;color:var(--mut,#8a7a5c);margin-top:6px;text-align:center;padding:5px 8px;border-radius:9px;transition:background .3s,border-color .3s;border:1px solid transparent}" +
+    "html.holo .ho-info.on{color:var(--ink,#20302a);background:rgba(201,162,39,.16);border-color:#c9a25f}" +
     "html.holo .ho-f{position:absolute;top:10px;left:12px;font-size:.74rem;font-weight:800;color:#f4e3b2;letter-spacing:.05em;text-shadow:0 2px 8px rgba(0,0,0,.6)}" +
     "@media (max-width:640px){html.holo .ho-cv{height:min(48dvh,380px)}html.holo .ho-chip{padding:4px 9px;font-size:.64rem}}" +
     "@media (prefers-reduced-motion:no-preference){html.holo .ho-cvwrap::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(90% 60% at 50% -10%,rgba(220,184,95,.12),transparent 60%)}}";
@@ -127,11 +161,17 @@
   }
 
   /* ---------------- molecules ---------------- */
-  var molMax = 2;
+  var molMax = 2, molCent = [0, 0, 0];
   function molNorm() {
-    var mx = 0, m = MOLS[M.idx], i;
-    for (i = 0; i < m.a.length; i++) { var v = m.a[i]; mx = Math.max(mx, Math.abs(v[1]), Math.abs(v[2]), Math.abs(v[3])); }
-    molMax = mx || 1.2;
+    var m = MOLS[M.idx], i, cx = 0, cy = 0, cz = 0;
+    for (i = 0; i < m.a.length; i++) { cx += m.a[i][1]; cy += m.a[i][2]; cz += m.a[i][3]; }
+    cx /= m.a.length || 1; cy /= m.a.length || 1; cz /= m.a.length || 1;
+    var mx = 0.9;
+    for (i = 0; i < m.a.length; i++) {
+      var dx = m.a[i][1] - cx, dy = m.a[i][2] - cy, dz = m.a[i][3] - cz;
+      mx = Math.max(mx, Math.sqrt(dx * dx + dy * dy + dz * dz));
+    }
+    molMax = mx; molCent = [cx, cy, cz];
     return m;
   }
   function molPaint(env) {
@@ -142,7 +182,7 @@
     var cx = W / 2, cy = H / 2;
     var P = [], i, j;
     for (i = 0; i < m.a.length; i++) {
-      var q = prj([m.a[i][1] / molMax, m.a[i][2] / molMax, m.a[i][3] / molMax], M);
+      var q = prj([(m.a[i][1] - molCent[0]) / molMax, (m.a[i][2] - molCent[1]) / molMax, (m.a[i][3] - molCent[2]) / molMax], M);
       var k = 8 / (8 - q[2]);
       P.push([cx + q[0] * k * R0, cy - q[1] * k * R0, q[2], k, i]);
     }
@@ -315,9 +355,16 @@
       var s2 = P3(px, 0, pz);
       draw.push({ pl: pl2, s: s2, d: s2[2] });
     }
+    var earth = null;
+    for (i = 0; i < draw.length; i++) if (draw[i].pl.n === "Earth") { earth = draw[i].s; break; }
+    if (earth) {
+      var mang = O.t * 6.2832 / MOON.p;
+      draw.push({ pl: MOON, s: [earth[0] + Math.cos(mang) * 0.62 * R0, earth[1] - Math.sin(mang) * 0.30 * R0, earth[2]], d: earth[2] + 0.001 });
+    }
     draw.sort(function (u, v) { return u.d - v.d; });
     var fo = $("hoMola");
-    if (fo) fo.textContent = "8 planets · true relative periods";
+    if (fo) fo.textContent = "8 planets · 1 moon · true relative periods";
+    window.__hoHit = [];
     for (i = 0; i < draw.length; i++) {
       var d = draw[i], pl3 = d.pl, s3 = d.s;
       var pr = pl3.r * R0 * 2.1 * s3[2];
@@ -341,7 +388,35 @@
         x.fillStyle = "rgba(244,227,178,.8)";
         x.fillText(pl3.n, s3[0], s3[1] + pr + 12);
       }
+      try { window.__hoHit.push({ n: pl3.n, x: s3[0], y: s3[1], r: Math.max(15, pr + 11) }); } catch (e2) {}
     }
+  }
+  function hoInfo(n) {
+    var el = $("hoInfo");
+    if (!el) return;
+    el.textContent = "🪐 " + n + " — " + (INFOS[n] || "Tap a world to learn about it.");
+    el.classList.add("on");
+    clearTimeout(hoInfo.t);
+    hoInfo.t = setTimeout(function () { el.classList.remove("on"); }, 7000);
+  }
+  function bindTap() {
+    var cv = $("hoCv");
+    if (!cv) return;
+    var dx0 = 0, dy0 = 0;
+    cv.addEventListener("pointerdown", function (e) { dx0 = e.clientX; dy0 = e.clientY; });
+    cv.addEventListener("pointerup", function (e) {
+      if (TAB !== "orb") return;
+      if (Math.abs((e.clientX || 0) - dx0) > 9 || Math.abs((e.clientY || 0) - dy0) > 9) return;
+      var r = cv.getBoundingClientRect();
+      var X = (e.clientX || 0) - r.left, Y = (e.clientY || 0) - r.top;
+      var hit = null;
+      var arr = window.__hoHit || [];
+      for (var i = arr.length - 1; i >= 0; i--) {
+        var h = arr[i];
+        if (Math.abs(h.x - X) < h.r && Math.abs(h.y - Y) < h.r) { hit = h; break; }
+      }
+      if (hit) hoInfo(hit.n);
+    });
   }
 
   /* ---------------- loop ---------------- */
@@ -389,7 +464,8 @@
     var base = '<button type="button" class="ho-btn sq" data-act="out" aria-label="Zoom out">−</button>' +
       '<button type="button" class="ho-btn sq" data-act="in" aria-label="Zoom in">+</button>' +
       '<button type="button" class="ho-btn sq" data-act="reset" aria-label="Reset view">⤾</button>' +
-      '<button type="button" class="ho-btn' + ((TAB === "orb" ? O.auto : TAB === "mol" ? M.auto : S.auto) ? " on" : "") + '" data-act="auto">⟳ Auto</button>';
+      '<button type="button" class="ho-btn' + ((TAB === "orb" ? O.auto : TAB === "mol" ? M.auto : S.auto) ? " on" : "") + '" data-act="auto">⟳ Auto</button>' +
+      '<button type="button" class="ho-btn" data-act="snap" title="Save this scene as an image">💾 PNG</button>';
     if (TAB === "orb") {
       c.innerHTML = '<span class="ho-spd">🐢 <input type="range" id="hoSpd" min="0.25" max="8" step="0.25" value="' + O.speed + '" aria-label="Orbit speed"> 🐇</span>' +
         '<button type="button" class="ho-btn' + (O.labels ? " on" : "") + '" data-act="lbl">🏷 Labels</button>' + base;
@@ -407,6 +483,17 @@
         if (act === "reset" && cam) { cam.yaw = 0.7; cam.pitch = TAB === "mol" ? 0.32 : 0.55; cam.zoom = 1; if (TAB === "mol") M.auto = true; if (TAB === "surf") S.auto = true; }
         if (act === "auto") { if (TAB === "orb") O.auto = !O.auto; else if (TAB === "mol") M.auto = !M.auto; else S.auto = !S.auto; }
         if (act === "lbl") O.labels = !O.labels;
+        if (act === "snap") {
+          try {
+            var cv2 = $("hoCv");
+            var nm = (TAB === "mol" ? (MOLS[M.idx] || {}).n : TAB === "surf" ? (SURFS[S.idx] || {}).n : "solar-system") || "holo";
+            var a = document.createElement("a");
+            a.download = "aurum-" + String(nm).replace(/\s+/g, "-").toLowerCase() + ".png";
+            a.href = cv2.toDataURL("image/png");
+            document.body.appendChild(a); a.click(); a.remove();
+            if (TAB === "orb") hoInfo("Saved the solar system as an image — check your downloads.");
+          } catch (e3) {}
+        }
         chipRow(); ctlRow();
       };
     });
@@ -420,7 +507,7 @@
     var ti = $("hoTop");
     if (ti) ti.textContent = t === "mol" ? "🧬 3D Molecule Viewer" : t === "surf" ? "📈 3D Graph Studio" : "🪐 Orbital Solar System";
     var sub = $("hoSub");
-    if (sub) sub.textContent = t === "mol" ? "Drag to orbit · scroll to zoom · eight classic molecules" : t === "surf" ? "Drag to orbit · pick a surface — pure Maths, no calculator needed" : "Drag to orbit · watch the planets keep their true relative periods";
+    if (sub) sub.textContent = t === "mol" ? "Drag to orbit · scroll to zoom · ten molecules & crystals" : t === "surf" ? "Drag to orbit · pick a surface — pure Maths, no calculator needed" : "Drag to orbit · tap any world to meet it · true relative periods";
   }
 
   function open(tab) {
@@ -443,13 +530,14 @@
         '<div class="ho-chips" id="hoChips"></div>' +
         '<div class="ho-cvwrap"><canvas class="ho-cv" id="hoCv" aria-label="3D canvas"></canvas><div class="ho-f" id="hoMola"></div><div class="ho-hint">drag · scroll · enjoy</div></div>' +
         '<div class="ho-ctl" id="hoCtl"></div>' +
-        '<div class="ho-info" id="hoInfo">Every model is drawn live in your browser — no videos, no downloads</div>' +
+        '<div class="ho-info" id="hoInfo">🪐 Solar system: tap any world to meet it · every model is drawn live in your browser</div>' +
       "</div>";
     document.body.appendChild(ov);
     $("hoX").onclick = close;
     Array.prototype.forEach.call(ov.querySelectorAll(".ho-tab"), function (b) {
       b.onclick = function () { setTab(b.getAttribute("data-t")); };
     });
+    bindTap();
     var cv = $("hoCv");
     var pts = null, lx = 0, ly = 0;
     cv.addEventListener("pointerdown", function (e) {
@@ -532,6 +620,7 @@
       });
     } catch (e) {}
     window.__holo = { M: M, S: S, O: O, counts: { mol: MOLS.length, surf: SURFS.length, orb: PLANETS.length }, open: open, close: close };
+    window.__hoInfo = hoInfo;
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

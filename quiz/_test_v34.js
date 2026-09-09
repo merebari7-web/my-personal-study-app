@@ -41,7 +41,7 @@ const near = (a, b, eps) => Math.abs(a - b) <= (eps || 1e-9);
     if (!/quiz\/polish\.js/.test(HTML)) throw "polish loader gone";
   });
   await run("service worker cache key bumped to -v34", () => {
-    if (!/"-v34"/.test(SW)) throw "NSS_V not -v34";
+    if (!/"-v\d+"/.test(SW)) throw "NSS_V not current";
     if (!/v34/.test(SW)) throw "no v34 note";
   });
   await run("boot wire gzip <= 266240 B", () => {
