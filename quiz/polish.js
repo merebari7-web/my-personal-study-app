@@ -435,4 +435,19 @@
     if ("requestIdleCallback" in window) { window.requestIdleCallback(sr, { timeout: 7000 }); }
     else { setTimeout(sr, 2300); }
   } catch (e) {}
+  /* v33 — load the Holo 3D Lab (molecule viewer, surface plotter, orbits) at
+     idle too, so it never competes with boot. */
+  try {
+    var hr = function () {
+      if (window.__holo || document.getElementById("holoScript")) return;
+      var s7 = document.createElement("script");
+      s7.id = "holoScript";
+      s7.src = "quiz/holo.js";
+      s7.async = !0;
+      s7.onerror = function () { try { s7.remove(); } catch (e) {} };
+      document.head.appendChild(s7);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(hr, { timeout: 8000 }); }
+    else { setTimeout(hr, 2600); }
+  } catch (e) {}
 })();
