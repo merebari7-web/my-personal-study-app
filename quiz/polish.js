@@ -204,4 +204,19 @@
   } else {
     apply();
   }
+  /* v27 — load the Pro Tools module (command palette, exam countdowns, zen
+     focus, heatmap) at idle so it never competes with boot. */
+  try {
+    var pr = function () {
+      if (window.__pro || document.getElementById("proScript")) return;
+      var s2 = document.createElement("script");
+      s2.id = "proScript";
+      s2.src = "quiz/pro.js";
+      s2.async = !0;
+      s2.onerror = function () { try { s2.remove(); } catch (e) {} };
+      document.head.appendChild(s2);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(pr, { timeout: 4000 }); }
+    else { setTimeout(pr, 1400); }
+  } catch (e) {}
 })();

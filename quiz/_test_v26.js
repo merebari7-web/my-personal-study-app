@@ -35,8 +35,8 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (!/quiz\/polish\.js/.test(HTML)) throw "polish loader gone";
     if (!/window\.notes=function/.test(HTML)) throw "notes loader gone";
   });
-  await run("service worker cache key bumped to -v26", () => {
-    if (!/"-v26"/.test(SW)) throw "NSS_V not -v26";
+  await run("service worker cache key is current (>= -v26)", () => {
+    if (!/"-v2[6-9]"/.test(SW)) throw "NSS_V not current";
     if (!/v26/.test(SW)) throw "no v26 note";
   });
   await run("boot wire gzip <= 266240 B (unchanged)", () => {
