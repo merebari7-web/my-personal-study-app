@@ -126,5 +126,6 @@ and an approval queue in the UI; 4) keep the SW cache as an offline fallback.
 - `quiz/polish.js` — Aurum UI library (v24→v26) + v28 visual layer; idle-loads `pro.js` (v27) and `boost.js` (v29).
 - `quiz/pro.js` — Pro Tools (v27): Ctrl+K palette (exposes `window.__proPalHooks`), exam countdowns, Zen focus, heatmap, ripple; idle-loads `aura.js` (v28).
 - `quiz/aura.js` — Apex HQ (v28): Trophy Room gallery + Exam Sprint Plan generator + dock pill.
+- `quiz/studio.js` (v31) — Study Studio: mind map studio (SVG canvas, connect/drag/export/persist), unit & rate converter, Theme Studio accents (CSS variable recolor), Daily Spark word+quote card, hero comets; idle-loaded by `polish.js`; palette entries via `__proPalHooks`.
 - `quiz/toolkit.js` (v30) — Scholar Toolkit: periodic table explorer + Element Detective quiz, Formula Vault (search/bookmark/copy), scroll-progress bar, overlay entrance + option stagger motion; data built from `quiz/tk_elements.py` + `quiz/tk_formulas.py` via `quiz/_tk_build.py`; idle-loaded by `polish.js`; palette entries via `__proPalHooks`.
 - `quiz/boost.js` — Pro Boost (v29): Math Sprint arcade, WebAudio Soundscapes, 3D tile tilt/glare, gold aura rings; palette entries via `__proPalHooks`.

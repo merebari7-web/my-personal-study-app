@@ -364,4 +364,19 @@
     if ("requestIdleCallback" in window) { window.requestIdleCallback(tr, { timeout: 6000 }); }
     else { setTimeout(tr, 2000); }
   } catch (e) {}
+  /* v31 — load the Study Studio module (mind map, converter, theme studio,
+     daily spark, comets) at idle too, so it never competes with boot. */
+  try {
+    var sr = function () {
+      if (window.__st || document.getElementById("stScript")) return;
+      var s6 = document.createElement("script");
+      s6.id = "stScript";
+      s6.src = "quiz/studio.js";
+      s6.async = !0;
+      s6.onerror = function () { try { s6.remove(); } catch (e) {} };
+      document.head.appendChild(s6);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(sr, { timeout: 7000 }); }
+    else { setTimeout(sr, 2300); }
+  } catch (e) {}
 })();
