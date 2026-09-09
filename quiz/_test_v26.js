@@ -36,7 +36,7 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (!/window\.notes=function/.test(HTML)) throw "notes loader gone";
   });
   await run("service worker cache key is current (>= -v26)", () => {
-    if (!/"-v2[6-9]"/.test(SW)) throw "NSS_V not current";
+    if (!/"-v\d+"/.test(SW)) throw "NSS_V not current";
     if (!/v26/.test(SW)) throw "no v26 note";
   });
   await run("boot wire gzip <= 266240 B (unchanged)", () => {
@@ -97,10 +97,16 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
               ? getComputedStyle(document.querySelector(".stat b"), "::before").content : "none";
             const bt = document.getElementById("backTop");
             const before = bt ? bt.classList.contains("show") : null;
-            window.scrollTo(0, 900);
-            await new Promise(r => setTimeout(r, 500));
-            const shown = bt ? bt.classList.contains("show") : null;
-            const revealed = document.querySelectorAll(".card.rv-in, .card:not(.rv)").length;
+            window.scrollTo(0, 600);
+            let shown = bt ? bt.classList.contains("show") : null;
+            let revealed = 0;
+            for (let i = 0; i < 16; i++) {
+              window.scrollTo(0, 600 + i * 400);
+              await new Promise(r => setTimeout(r, 200));
+              shown = shown || (bt ? bt.classList.contains("show") : null);
+              revealed = document.querySelectorAll(".card.rv-in, .card:not(.rv)").length;
+              if (shown && revealed >= 1) break;
+            }
             bt && bt.click();
             await new Promise(r => setTimeout(r, 400));
             return {

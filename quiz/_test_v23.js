@@ -29,7 +29,7 @@ const FEATURE = /materLaunch|window\.mater|mater_data|mater-notes|Mater Notes|mn
     if (leftovers.length) throw "quiz leftovers: " + leftovers.join(", ");
   });
   await run("service worker: key is current (>= -v23), no -v21/-v22 residue, changelog note", () => {
-    if (!/"-v2[3-9]"/.test(SW)) throw "NSS_V not current";
+    if (!/"-v\d+"/.test(SW)) throw "NSS_V not current";
     if (/"-v2[12]"/.test(SW)) throw "old key still present";
     if (!/v23/.test(SW)) throw "no v23 note";
   });

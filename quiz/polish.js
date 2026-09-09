@@ -349,4 +349,19 @@
     if ("requestIdleCallback" in window) { window.requestIdleCallback(br, { timeout: 5000 }); }
     else { setTimeout(br, 1700); }
   } catch (e) {}
+  /* v30 — load the Scholar Toolkit (periodic table, formula vault, scroll
+     progress, motion) at idle too, so it never competes with boot. */
+  try {
+    var tr = function () {
+      if (window.__tk || document.getElementById("tkScript")) return;
+      var s5 = document.createElement("script");
+      s5.id = "tkScript";
+      s5.src = "quiz/toolkit.js";
+      s5.async = !0;
+      s5.onerror = function () { try { s5.remove(); } catch (e) {} };
+      document.head.appendChild(s5);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(tr, { timeout: 6000 }); }
+    else { setTimeout(tr, 2000); }
+  } catch (e) {}
 })();

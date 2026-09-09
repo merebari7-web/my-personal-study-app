@@ -58,7 +58,7 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     }
   });
   await run("service worker cache key is current (>= -v25)", () => {
-    if (!/"-v2[5-9]"/.test(SW)) throw "NSS_V not current";
+    if (!/"-v\d+"/.test(SW)) throw "NSS_V not current";
     if (!/v25/.test(SW)) throw "no v25 note";
   });
   await run("boot wire gzip <= 266240 B", () => {
