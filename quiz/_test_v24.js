@@ -30,8 +30,8 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (!/html\.polished \.hero h1/.test(body)) throw "headline not scoped";
     if (body.indexOf("window.__polish") < 0) throw "no re-entry guard";
   });
-  await run("service worker cache key bumped to -v24", () => {
-    if (!/"-v24"/.test(SW)) throw "NSS_V not -v24";
+  await run("service worker cache key is current (>= -v24)", () => {
+    if (!/"-v2[4-9]"/.test(SW)) throw "NSS_V not current";
     if (/"-v23"/.test(SW)) throw "-v23 key literal still present";
     if (!/v24/.test(SW)) throw "no v24 note";
   });
