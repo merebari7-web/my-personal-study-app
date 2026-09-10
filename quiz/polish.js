@@ -148,7 +148,13 @@
     "html.polished #xpFill{animation:pfGlow 3.4s ease-in-out infinite}" +
     "@keyframes pfGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.14) saturate(1.1)}}" +
     "}" +
-    "@media (max-width:640px){html.polished #pfToastBar{left:10px;right:10px;bottom:4px}}";
+    "@media (max-width:640px){html.polished #pfToastBar{left:10px;right:10px;bottom:4px}}" +
+    /* --- v36 Atlas Shine: launcher-chip glow + nav scroll shadow --- */
+    "html.polished .ex-tile,html.polished .bt-chip{transition:transform .2s,border-color .2s,box-shadow .2s}" +
+    "html.polished .ex-tile:hover,html.polished .bt-chip:hover{transform:translateY(-2px);border-color:var(--pf-g,#dcb85f);box-shadow:0 14px 30px -14px rgba(140,100,30,.55),0 0 0 1px var(--pf-soft)}" +
+    "html.polished .ex-tile:active,html.polished .bt-chip:active{transform:translateY(0) scale(.98)}" +
+    "html.polished.pf-scrolled .nav{box-shadow:0 10px 30px -18px rgba(0,0,0,.45)}" +
+    "@media (prefers-reduced-motion:reduce){html.polished .ex-tile:hover,html.polished .bt-chip:hover{transform:none}}";
 
   function apply() {
     try {
@@ -169,6 +175,7 @@
       countUp();
       hourAmb();
       dockFix();
+      navShadow();
       setTimeout(function () { try { countUp(); } catch (e) {} }, 1400);
     try { toastBar(); } catch (e) {}
     } catch (e) { /* decorative only — never break the app */ }
@@ -268,6 +275,20 @@
       var h = new Date().getHours();
       var k = h >= 5 && h < 12 ? "hour-m" : h >= 12 && h < 17 ? "hour-a" : h >= 17 && h < 21 ? "hour-e" : "hour-n";
       document.documentElement.setAttribute("data-aura-hour", k);
+    } catch (e) {}
+  }
+
+  /* v36 — shadow under the nav once the page scrolls */
+  function navShadow() {
+    try {
+      if (window.__pfNav) return;
+      window.__pfNav = 1;
+      var onScroll = function () {
+        var y = window.scrollY || document.documentElement.scrollTop || 0;
+        document.documentElement.classList.toggle("pf-scrolled", y > 8);
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
     } catch (e) {}
   }
 
@@ -482,5 +503,20 @@
     };
     if ("requestIdleCallback" in window) { window.requestIdleCallback(cr, { timeout: 9000 }); window.requestIdleCallback(ar, { timeout: 9500 }); window.requestIdleCallback(qr, { timeout: 10000 }); }
     else { setTimeout(cr, 2900); setTimeout(ar, 3200); setTimeout(qr, 3600); }
+  } catch (e) {}
+  /* v36 — load the Curriculum Atlas (subject/topic explorer + drills) at
+     idle too, so it never competes with boot. */
+  try {
+    var lr = function () {
+      if (window.__atlas || document.getElementById("atlasScript")) return;
+      var sL = document.createElement("script");
+      sL.id = "atlasScript";
+      sL.src = "quiz/atlas.js";
+      sL.async = !0;
+      sL.onerror = function () { try { sL.remove(); } catch (e) {} };
+      document.head.appendChild(sL);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(lr, { timeout: 10500 }); }
+    else { setTimeout(lr, 3900); }
   } catch (e) {}
 })();

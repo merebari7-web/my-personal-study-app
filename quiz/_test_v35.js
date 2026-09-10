@@ -44,7 +44,7 @@ const near = (a, b, eps) => Math.abs(a - b) <= (eps || 1e-9);
     if (s.indexOf('lang="en"') < 0) throw "no lang";
   });
   await run("sw.js: -v35 + polish loads curriculum at idle", () => {
-    if (!/"-v35"/.test(SW)) throw "NSS_V not -v35";
+    if (!/"-v\d+"/.test(SW)) throw "NSS_V not versioned";
     if (SW.indexOf("curriculum.js") < 0) throw "sw note missing";
     if (POLISH.indexOf("quiz/curriculum.js") < 0) throw "polish loader missing";
   });

@@ -1,4 +1,7 @@
-/* v34.0 — AI Study Tutor (lazy, boot-safe, loaded by polish.js at idle).
+/* v36.0 — AI Study Tutor (lazy, boot-safe, loaded by polish.js at idle).
+   v36 adds the curriculum brain (currFor): answers drawn from the lazy
+   window.CURR topic library across all 27 subjects, with a self-test
+   question and a pointer to the Curriculum Atlas. v34.0 core below:
    A real, honest study-assistant layer:
    💬 Ask — a built-in knowledge engine answers from your study library
    (60+ curriculum facts, the Formula Vault, topic maps) — 100% offline.
@@ -192,6 +195,47 @@
     return bestScore >= 2 ? best : null;
   }
 
+  /* v36 — curriculum brain: answer from the lazy window.CURR topic
+     library (summaries + keywords for all 27 subjects), so questions
+     the fact engine never covered still get a real answer. Anchored
+     scoring: a topic-name or keyword hit is required, summaries only
+     add weak support — gibberish still falls through to fallback. */
+  function currFor(q) {
+    var C = null;
+    try { C = window.CURR || null; } catch (e) {}
+    if (!C) return null;
+    var norm = " " + String(q || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim() + " ";
+    if (norm.length < 6) return null;
+    var toks = norm.split(" ").filter(function (t) { return t.length >= 3; });
+    if (!toks.length) return null;
+    var best = null, bestScore = 0, keys = Object.keys(C);
+    for (var si = 0; si < keys.length; si++) {
+      var sub = keys[si], arr = C[sub];
+      if (!arr || !arr.length) continue;
+      var slow = sub.toLowerCase();
+      var subjHit = slow.indexOf(" ") >= 0 ? norm.indexOf(slow) >= 0 : toks.indexOf(slow) >= 0;
+      for (var i = 0; i < arr.length; i++) {
+        var tp = arr[i];
+        if (!tp || !tp[0]) continue;
+        var name = String(tp[0]).toLowerCase();
+        var kws = Array.isArray(tp[1]) ? tp[1].join(" ").toLowerCase() : String(tp[1] || "").toLowerCase();
+        var sum = String(tp[2] || "").toLowerCase();
+        var score = 0, anchored = false, weak = 0;
+        if (subjHit) { score += 2.5; anchored = true; }
+        if (name.length > 4 && norm.indexOf(name) >= 0) { score += 6; anchored = true; }
+        for (var j = 0; j < toks.length; j++) {
+          var t = toks[j];
+          if (name.indexOf(t) >= 0) { score += 2; anchored = true; }
+          else if (kws.indexOf(t) >= 0) { score += 2; anchored = true; }
+          else if (t.length >= 5 && sum.indexOf(t) >= 0) weak += 0.5;
+        }
+        score += Math.min(1.5, weak);
+        if (anchored && score > bestScore) { bestScore = score; best = { s: sub, tp: tp }; }
+      }
+    }
+    return bestScore >= 2.5 ? best : null;
+  }
+
   /* ---------------- INSIGHTS ---------------- */
   function normalize(recs) {
     var out = [];
@@ -325,6 +369,14 @@
     var fo = formulaFor(q);
     if (fo) {
       return { kind: "lib", title: fo[0] + " · " + fo[1], text: "**" + fo[2] + "**: " + fo[3] + "\n" + fo[4] + "\n\nLook it up any time in the 📐 Formula Vault.", src: "formula" };
+    }
+    var cu = currFor(q);
+    if (cu) {
+      var ctp = cu.tp, csm = Array.isArray(ctp[3]) ? ctp[3] : [];
+      var ctxt = "**" + cu.s + " · " + ctp[0] + "** — " + (ctp[2] || "See your topic notes for the full breakdown.");
+      if (csm.length && csm[0].q) ctxt += "\n\n✍️ Self-test: " + csm[0].q;
+      ctxt += "\n\nOpen 🗺 Curriculum Atlas to drill this topic.";
+      return { kind: "lib", title: cu.s + " · " + ctp[0], text: ctxt, src: "curriculum" };
     }
     return { kind: "lib", title: "Hmm", text: "I couldn't find that in your study library yet. Try one of these, or open 📐 Formula Vault if you're after a formula:\n• " + SUGGEST.slice(0, 4).join("\n• "), src: "fallback" };
   }
@@ -577,7 +629,7 @@
         if (e.key === "Escape" && document.getElementById("aiOv")) close();
       });
     } catch (e) {}
-    window.__aiApi = { ask: ask, reply: replies, analyze: analyze, open: open, close: close, FACTS: FACTS.length };
+    window.__aiApi = { ask: ask, reply: replies, analyze: analyze, curr: currFor, open: open, close: close, FACTS: FACTS.length };
   }
   function chips() {
     var w = document.getElementById("examChip");
