@@ -52,7 +52,7 @@ function seedWindow(window) {
     }
   });
   await run("sw.js: -v37 + reels note; live list covers reels", () => {
-    if (!/"-v37"/.test(SW)) throw "NSS_V not -v37";
+    if (!/"-v\d+"/.test(SW)) throw "NSS_V not versioned";
     if (SW.indexOf("quiz/reels.js") < 0) throw "sw note missing";
     const vl = fs.readFileSync("quiz/_verify_live.js", "utf8");
     if (vl.indexOf("quiz/reels.js") < 0) throw "_verify_live missing reels";

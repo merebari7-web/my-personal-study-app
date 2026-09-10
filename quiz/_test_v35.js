@@ -23,14 +23,14 @@ const near = (a, b, eps) => Math.abs(a - b) <= (eps || 1e-9);
     console.log("   (authored questions in data: " + nq + ")");
     if (nq < 250) throw "too few authored questions: " + nq;
   });
-  await run("index.html: scroll fix (no auto scroll-to-top on quiz nav/review)", () => {
+  await run("index.html: scroll fix (no auto scroll-to-top anywhere — v38 removed the last one)", () => {
     const s = HTML;
     if (s.indexOf('function jumpTo(t){t<0||t>=state.quiz.length||(state.idx=t,renderQ())}') < 0) throw "jumpTo still scrolls";
     if (s.indexOf('$("reviewCard").classList.remove("hidden")}') < 0) throw "showReview still scrolls";
-    if (s.indexOf('"class"===t||"subject"===t||"length"===t||"quiz"===t)&&window.scrollTo') < 0) throw "setCard guard missing";
+    if (s.indexOf('function setCard(t){') < 0) throw "setCard gone";
     const n = (s.match(/scrollTo\(\{top:0,behavior:"smooth"\}\)/g) || []).length;
-    console.log("   (remaining top-scrolls: " + n + " — only setup steps)");
-    if (n !== 1) throw "expected exactly 1 guarded scroll, got " + n;
+    console.log("   (remaining top-scrolls: " + n + ")");
+    if (n !== 0) throw "expected 0 auto scrolls, got " + n;
   });
   await run("index.html: worldwide-ready head (manifest, icons, canonical, JSON-LD, 27 subjects)", () => {
     const s = HTML;
