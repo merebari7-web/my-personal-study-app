@@ -546,7 +546,7 @@
   var D = window.__curicData || {};
   delete window.__curicData;
   var T = D.T || {}, META = D.META || {};
-  var done = false, added = 0;
+  var done = false, added = 0, ADDED = [];
   var NEWSUBJ = Object.keys(META);
 
   function tryBoot() {
@@ -628,9 +628,26 @@
       var dup = false;
       for (var d = 0; d < arr.length; d++) if (arr[d].q === qo.q) { dup = true; break; }
       if (dup) continue;
-      arr.push({ s: sub, q: qo.q, o: qo.o.slice(0, 4), a: qo.a, e: qo.e || "" });
+      var fresh = { s: sub, q: qo.q, o: qo.o.slice(0, 4), a: qo.a, e: qo.e || "" };
+      arr.push(fresh);
+      ADDED.push({ c: cls, q: fresh });
       added++;
     }
+
+    /* --- 3b. reinjector (defined BEFORE the dispatch: boot() rebuilds CLASSES
+       synchronously during the event and must be able to restore these) --- */
+    try {
+      window.__curicReinject = function () {
+        if (!ADDED.length || typeof CLASSES === "undefined" || !CLASSES.length) return;
+        for (var i = 0; i < ADDED.length; i++) {
+          var a = ADDED[i];
+          if (!CLASSES[a.c] || !CLASSES[a.c].questions) continue;
+          var arr = CLASSES[a.c].questions, found = false;
+          for (var d = 0; d < arr.length; d++) if (arr[d].q === a.q.q) { found = true; break; }
+          if (!found) arr.push(a.q);
+        }
+      };
+    } catch (e) {}
 
     /* --- 4. announce + expose (done first: the event may re-trigger us) --- */
     done = true;

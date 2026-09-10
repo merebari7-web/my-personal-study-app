@@ -204,9 +204,10 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
             try { r.curr = window.__aiApi.reply("Nok terracotta").src; } catch (e) { r.curr = "ERR"; }
             /* palette hook */
             try { r.pal = window.__proPalHooks.some(f => String(f).indexOf("Atlas") >= 0); } catch (e) { r.pal = false; }
-            /* nav shadow on scroll */
+            /* nav shadow on scroll (settle-poll: smooth scroll + loaded CI need slack) */
             window.scrollTo(0, 400);
-            await new Promise(r2 => setTimeout(r2, 300));
+            for (let i = 0; i < 20; i++) { await new Promise(r2 => setTimeout(r2, 100)); if (window.scrollY > 8) break; }
+            await new Promise(r2 => setTimeout(r2, 150));
             r.scrolled = document.documentElement.classList.contains("pf-scrolled");
             window.scrollTo(0, 0);
             await new Promise(r2 => setTimeout(r2, 200));

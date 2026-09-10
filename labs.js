@@ -74,7 +74,7 @@
   function subjList() {
     try {
       var q = window.QUIZ_RAW;
-      if (q && Array.isArray(q.subj) && q.subj.length === 13) return q.subj.slice();
+      if (q && Array.isArray(q.subj) && q.subj.length >= 13) return q.subj.slice();
       if (classesReady()) {
         var seen = [], out = [];
         CLASSES[0].questions.forEach(function (x) { if (seen.indexOf(x.s) < 0) { seen.push(x.s); out.push(x.s); } });

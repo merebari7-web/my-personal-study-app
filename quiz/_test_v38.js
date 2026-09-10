@@ -28,8 +28,8 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (POLISH.indexOf("top: n2") < 0) throw "polish dock scroll gone";
     if (PRO.indexOf("Back to top") < 0) throw "palette back-to-top gone";
   });
-  await run("sw.js: -v38", () => {
-    if (!/"-v38"/.test(SW)) throw "NSS_V not -v38";
+  await run("sw.js: versioned (v38+), auto-scroll note kept", () => {
+    if (!/"-v(3[89]|[49][0-9])"/.test(SW)) throw "NSS_V not versioned v38+";
     if (SW.indexOf("auto-scroll") < 0) throw "sw note missing";
   });
   await run("boot wire still <= 266240 B", () => {
@@ -149,8 +149,8 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
           for (const k of ["y1", "y2", "y3a", "y3"]) {
             if (Math.abs(m[k] - m.y0) > 100 || m[k] < 250) throw "page moved at " + k + ": " + JSON.stringify({ y0: m.y0, [k]: m[k] });
           }
-          if (m.y4 < m.yb - 60) throw "page yanked UP on answer: " + JSON.stringify({ yb: m.yb, y4: m.y4 });
-          if (m.palClicked && m.y5 < m.yb - 60) throw "page yanked UP on palette jump: " + JSON.stringify({ yb: m.yb, y5: m.y5 });
+          if (Math.abs(m.y4 - m.yb) > 8) throw "page moved on answer (v39 strict zero-jump): " + JSON.stringify({ yb: m.yb, y4: m.y4 });
+          if (m.palClicked && Math.abs(m.y5 - m.yb) > 8) throw "page moved on palette jump (v39 strict zero-jump): " + JSON.stringify({ yb: m.yb, y5: m.y5 });
           if (!m.hasBackTop) throw "no back-top button";
           if (m.backTopY > 60) throw "back-top broken (user scroll must work): y=" + m.backTopY;
           if (!m.hasDock) throw "no dock home button";

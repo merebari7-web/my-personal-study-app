@@ -435,7 +435,7 @@
     ov.addEventListener("input", function (e) {
       if (e.target && e.target.id === "ntQ") {
         st.q = e.target.value; st.subj = null; renderNotes(document.getElementById("ntBody"));
-        var q = document.getElementById("ntQ"); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
+        var q = document.getElementById("ntQ"); if (q) { try { q.focus({ preventScroll: true }); } catch (e) { try { q.focus(); } catch (e2) {} } q.setSelectionRange(q.value.length, q.value.length); }
       }
     });
     document.body.style.overflow = "hidden";

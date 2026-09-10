@@ -367,7 +367,7 @@ var EXTRA_SUBJECTS = {
   function subjectList() {
     try {
       var q = window.QUIZ_RAW;
-      if (q && Array.isArray(q.subj) && q.subj.length === 13) return extraSubjectsMerge(q.subj.slice());
+      if (q && Array.isArray(q.subj) && q.subj.length >= 13) return extraSubjectsMerge(q.subj.slice());
     } catch (e) {}
     try {
       if (Array.isArray(CLASSES) && CLASSES.length && CLASSES[0].questions) {

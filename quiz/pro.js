@@ -181,9 +181,18 @@
       if (typeof CLASSES !== "undefined" && CLASSES && CLASSES.length) {
         for (var i = 0; i < CLASSES.length; i++) {
           (function (c) {
-            add("Papers", "📝", c.c + " · " + c.s, (c.questions ? c.questions.length : 0) + " questions — start a paper", function () {
-              var b = document.querySelector('.hd-btn[data-hd="practice"]'); if (b) b.click();
-              try { toast(c.c + " · " + c.s + " — pick it in Practice below", "📝"); } catch (e) {}
+            var subs = {}, order = [];
+            (c.questions || []).forEach(function (q) {
+              if (q && q.s && !subs[q.s]) { subs[q.s] = 0; order.push(q.s); }
+              if (q && q.s) subs[q.s]++;
+            });
+            if (!order.length && c.class) order = [""];
+            order.forEach(function (sn) {
+              var label = sn ? (c.class + " · " + sn) : String(c.class || "Paper");
+              add("Papers", "📝", label, (subs[sn] || (c.questions ? c.questions.length : 0)) + " questions — start a paper", function () {
+                var b = document.querySelector('.hd-btn[data-hd="practice"]'); if (b) b.click();
+                try { toast(label + " — pick it in Practice below", "📝"); } catch (e) {}
+              });
             });
           })(CLASSES[i]);
         }
@@ -235,7 +244,7 @@
     palFocus();
   }
   var palSel = 0, palItems = [];
-  function palFocus() { var i = document.getElementById("palIn"); if (i) { i.value = i.value || ""; setTimeout(function () { i.focus(); }, 30); } }
+  function palFocus() { var i = document.getElementById("palIn"); if (i) { i.value = i.value || ""; setTimeout(function () { try { i.focus({ preventScroll: true }); } catch (e) { try { i.focus(); } catch (e2) {} } }, 30); } }
   function palFill() {
     var q = (document.getElementById("palIn").value || "").toLowerCase().trim();
     var hits = PALS.filter(function (p) { return !q || (p.label + " " + p.hint + " " + p.g).toLowerCase().indexOf(q) >= 0; }).slice(0, 14);
