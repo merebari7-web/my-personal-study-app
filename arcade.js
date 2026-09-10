@@ -1976,7 +1976,18 @@ var ESSEY = {
     + "/* v16 Lumina — Study Arcade premium refresh (appended to the arcade CSS\n   string in _arc_app.js by patch_v16.py). Vars come from the app :root. */\n#arcModal{box-shadow:inset 0 2px 0 -1px rgba(201,162,39,.95),inset 0 0 0 1px rgba(201,162,39,.16),0 44px 100px -30px rgba(4,10,20,.66)}\n#arcBody>*{animation:arcIn .34s ease backwards}\n@keyframes arcIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}\n#arcTitle{font-size:clamp(1.05rem,2.6vw,1.3rem)}\n.arc-x{transition:transform .25s ease,background .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease}\n.arc-x:hover{background:var(--grad-gold);border-color:transparent;color:#31220a;transform:rotate(90deg);box-shadow:0 8px 18px -8px rgba(201,162,39,.8)}\n.arc-tile{position:relative;overflow:hidden;border-radius:16px;background:linear-gradient(180deg,var(--card-solid),var(--panel));transition:transform .18s ease,box-shadow .25s ease,border-color .25s ease}\n.arc-tile::before{content:\"\";position:absolute;inset:0;background:radial-gradient(130% 95% at 50% -30%,rgba(201,162,39,.17),transparent 55%);opacity:0;transition:opacity .25s ease;pointer-events:none}\n.arc-tile:hover{transform:translateY(-3px);border-color:rgba(201,162,39,.62);box-shadow:0 20px 38px -20px rgba(20,35,70,.5)}\n.arc-tile:hover::before{opacity:1}\n.arc-tile span{width:44px;height:44px;display:grid;place-items:center;border-radius:13px;font-size:1.4rem;background:var(--grad-gold);box-shadow:0 12px 22px -10px rgba(201,162,39,.8),inset 0 1px 0 rgba(255,255,255,.55);margin-bottom:8px;transition:transform .18s ease}\n.arc-tile:hover span{transform:scale(1.1) rotate(-5deg)}\n.arc-tile:nth-child(4n+2) span{background:linear-gradient(135deg,#bda7f7,#8b5cf6 50%,#6d28d9);box-shadow:0 12px 22px -10px rgba(139,92,246,.72),inset 0 1px 0 rgba(255,255,255,.4)}\n.arc-tile:nth-child(4n+3) span{background:linear-gradient(135deg,#93dcb4,#2f9e63 52%,#1b6b42);box-shadow:0 12px 22px -10px rgba(47,158,99,.68),inset 0 1px 0 rgba(255,255,255,.42)}\n.arc-tile:nth-child(4n+4) span{background:linear-gradient(135deg,#f6b9b2,#d95f54 52%,#a33a30);box-shadow:0 12px 22px -10px rgba(217,95,84,.62),inset 0 1px 0 rgba(255,255,255,.42)}\n.arc-tile b{font-size:.98rem;display:block}\n.arc-tile small{color:var(--mut,#8a7a5e);font-size:.74rem;line-height:1.5}\n.arc-best{display:inline-block;margin-top:9px;padding:4px 11px;font-size:.68rem;font-weight:900;letter-spacing:.05em;color:#3a2a08;background:var(--grad-gold);border-radius:999px;box-shadow:0 8px 16px -8px rgba(201,162,39,.85)}\n.arc-chip.on{background:var(--grad-gold);border-color:transparent;color:#31220a;font-weight:900;box-shadow:0 10px 20px -10px rgba(201,162,39,.85)}\n.arc-q{border-left:3px solid rgba(201,162,39,.55)}\n@media(max-width:640px){\n  .arc-modal{border-radius:18px 18px 0 0}\n  .arc-tile span{width:40px;height:40px;border-radius:12px}\n  .arc-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}\n}\n"
     + "/* v17 Lumina II — Study Arcade deep refresh (appended to the arcade CSS\n   string by patch_v17.py). Light-theme modal; uses app :root vars. */\n/* header chrome */\n.arc-head{background:linear-gradient(180deg,rgba(201,162,39,.12),transparent);border-bottom:1px solid rgba(201,162,39,.28);border-radius:16px 16px 0 0;margin:-6px -8px 12px;padding:12px 8px 13px}\n.arc-tabs{scrollbar-width:thin}\n.arc-tab{transition:background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease}\n.arc-tab:hover{background:rgba(201,162,39,.12)}\n.arc-tab.on{background:var(--grad-gold);border-color:transparent;color:#31220a;box-shadow:0 8px 18px -8px rgba(201,162,39,.85)}\n/* tiles: in-bounds foil sheen (layered over the v16 gradient) + floating medallions */\n.arc-tile{background-image:radial-gradient(70% 52% at 100% 0,rgba(201,162,39,.16),transparent 72%),linear-gradient(180deg,var(--card-solid,#fffaf0),var(--panel,#fbf7ee))}\n.arc-tile span{animation:arcMfloat 4s ease-in-out infinite alternate}\n.arc-tile:nth-child(2n) span{animation-delay:-1.3s}\n.arc-tile:nth-child(3n) span{animation-delay:-2.6s}\n@keyframes arcMfloat{from{transform:translateY(0)}to{transform:translateY(-4px)}}\n/* HUD + pills */\n.arc-hud{background:linear-gradient(180deg,rgba(201,162,39,.14),rgba(201,162,39,.05));border:1px solid rgba(201,162,39,.35);border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.55)}\n.arc-pill,.arc-time,.arc-total{font-variant-numeric:tabular-nums}\n/* answer feedback: pop for correct, shake for wrong */\n.arc-opt{transition:transform .15s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease}\n.arc-opt:hover:not(:disabled){transform:translateY(-1px);border-color:rgba(201,162,39,.6)}\n.arc-opt.good{background:linear-gradient(135deg,rgba(47,158,99,.18),rgba(47,158,99,.08));border-color:#2f9e63;box-shadow:0 10px 22px -12px rgba(47,158,99,.65);animation:arcPop .34s ease}\n.arc-opt.bad{background:linear-gradient(135deg,rgba(217,95,84,.18),rgba(217,95,84,.08));border-color:#d95f54;box-shadow:0 10px 22px -12px rgba(217,95,84,.55);animation:arcShake .4s ease}\n@keyframes arcPop{50%{transform:scale(1.035)}}\n@keyframes arcShake{20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}\n/* UTME grid + calculator */\n.arc-cell{transition:transform .14s ease,border-color .18s ease,background .18s ease}\n.arc-cell:not(.on):hover{transform:translateY(-1px);border-color:rgba(201,162,39,.55)}\n.arc-cell.on{background:var(--grad-gold);border-color:transparent;color:#31220a;box-shadow:0 8px 16px -8px rgba(201,162,39,.85)}\n.arc-calc{border:1px solid rgba(201,162,39,.35)}\n.arc-calcd{background:linear-gradient(180deg,#1a2440,#0e1524);color:#ffd98a;border-color:rgba(201,162,39,.4);box-shadow:inset 0 3px 10px rgba(0,0,0,.45);text-shadow:0 1px 2px rgba(0,0,0,.6)}\n/* cards, flash, pairs, video */\n.arc-fcard{transition:transform .2s ease,box-shadow .25s ease,border-color .2s ease}\n.arc-fcard:hover{transform:translateY(-2px);border-color:rgba(201,162,39,.55);box-shadow:0 16px 30px -18px rgba(20,35,70,.5)}\n.arc-pair{transition:transform .15s ease,border-color .18s ease,box-shadow .2s ease}\n.arc-pair:hover{transform:translateY(-2px);border-color:rgba(201,162,39,.55)}\n.arc-vid{transition:transform .18s ease,box-shadow .25s ease,border-color .2s ease}\n.arc-vid:hover{transform:translateY(-2px);border-color:rgba(201,162,39,.6);box-shadow:0 18px 34px -20px rgba(20,35,70,.5)}\n/* study stats */\n.arc-kpi{border:1px solid rgba(201,162,39,.35);background:linear-gradient(180deg,#fff8e6,var(--panel,#fbf7ee));box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}\n.arc-week{color:#8a6d1f}\n.arc-wbar{background:linear-gradient(180deg,rgba(201,162,39,.22),rgba(201,162,39,.1));border:1px solid rgba(201,162,39,.3)}\n/* essay sheet */\n.arc-sheet{border-left:3px solid rgba(201,162,39,.55)}\n@media(max-width:640px){\n  .arc-head{margin:-6px -4px 10px;padding:10px 4px 11px}\n  .arc-tile span{animation:none}\n}\n"
     + "/* v18 Aurum — Study Arcade first-class: ambient modal gold mist, flowing\n   shimmer on progress fills, gold pill chips, gradient KPIs, corner glow\n   on question plates. Motion-gated, variable-based (dark-aware). */\n#arcModal{box-shadow:inset 0 2px 0 -1px rgba(201,162,39,.95),inset 0 0 0 1px rgba(201,162,39,.16),0 0 100px -32px rgba(201,162,39,.5),0 44px 100px -30px rgba(4,10,20,.7)}\n/* progress fills: liquid gold shimmer */\n.arc-bar{position:relative;overflow:hidden}\n.arc-bar i,.arc-wbar i{position:relative;overflow:hidden}\n.arc-bar i::after,.arc-wbar i::after{content:\"\";position:absolute;inset:-20% -60%;background:linear-gradient(100deg,transparent 38%,rgba(255,255,255,.55) 50%,transparent 62%);transform:translateX(-70%);pointer-events:none}\n.arc-wbar{border:1px solid rgba(201,162,39,.28)}\n/* pills */\n.arc-pill{border:1px solid rgba(201,162,39,.5);background:linear-gradient(180deg,rgba(255,252,244,.95),rgba(249,240,219,.85));box-shadow:inset 0 1px 0 rgba(255,255,255,.7);border-radius:999px}\n.arc-hud .arc-pill{font-weight:900;color:#7a5c1a}\n[data-theme=dark] .arc-pill{background:linear-gradient(180deg,rgba(35,46,74,.95),rgba(22,31,52,.9));color:#e6c47a}\n/* KPI numerals: gold gradient */\n.arc-kpi{border:1px solid rgba(201,162,39,.42);background:linear-gradient(180deg,#fffaf0,var(--panel,#fbf7ee));box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 14px 28px -18px rgba(20,35,70,.4)}\n.arc-kpi b{font-size:1.45rem}\n@supports ((-webkit-background-clip:text) or (background-clip:text)){\n  .arc-kpi b{-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;background-image:linear-gradient(135deg,#a97b2a,#e7c46a 55%,#9c742c)}\n}\n/* question plate corner glow */\n.arc-q{position:relative}\n.arc-q::before{content:\"\";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(58% 88% at 100% 0,rgba(201,162,39,.1),transparent 62%);pointer-events:none}\n.arc-q>*{position:relative}\n/* flash card plate */\n.arc-fcard{border:1px solid rgba(201,162,39,.5);background:linear-gradient(180deg,var(--card-solid,#fffaf0),var(--panel,#fbf7ee));box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 14px 30px -20px rgba(20,35,70,.5)}\n/* selection chips + focus rings */\n.arc-chip:focus-visible,.arc-opt:focus-visible,.arc-cell:focus-visible,.arc-tab:focus-visible{outline:2px solid var(--gold,#c9a227);outline-offset:2px}\n@media (prefers-reduced-motion: no-preference){\n  html:not(.rmotion) .arc-bar i::after,html:not(.rmotion) .arc-wbar i::after{animation:auFlow 2.4s linear infinite}\n  html:not(.rmotion) .arc-tile span{animation:arcMfloat 4s ease-in-out infinite alternate}\n  html:not(.rmotion) .arc-tile:nth-child(2n) span{animation-delay:-1.3s}\n  html:not(.rmotion) .arc-tile:nth-child(3n) span{animation-delay:-2.6s}\n  @keyframes auFlow{to{transform:translateX(230%)}}\n}\n"
-    + "/* v19 — Responsiveness across all devices (Study Arcade): landscape phones,\n   ultra-narrow, safe-area, sticky header while scrolling tall screens. */\n#arcModal{padding-bottom:calc(16px + env(safe-area-inset-bottom))}\n@media(max-height:560px){\n  .arc-modal{max-height:100dvh;border-radius:0}\n  .arc-head{position:sticky;top:0;z-index:6;background:var(--card-solid,#fffaf0)}\n}\n@media(max-width:319px){\n  .arc-tile{padding:12px 10px}\n  .arc-tile b{font-size:.86rem}\n  .arc-tile small{font-size:.68rem}\n  .arc-hud{flex-wrap:wrap}\n  .arc-actions{flex-wrap:wrap}\n  .arc-calc{padding:6px;gap:4px}\n}\n@media(pointer:coarse){\n  .arc-btn,.arc-x,.arc-tab{min-height:38px}\n}\n";
+    + "/* v19 — Responsiveness across all devices (Study Arcade): landscape phones,\n   ultra-narrow, safe-area, sticky header while scrolling tall screens. */\n#arcModal{padding-bottom:calc(16px + env(safe-area-inset-bottom))}\n@media(max-height:560px){\n  .arc-modal{max-height:100dvh;border-radius:0}\n  .arc-head{position:sticky;top:0;z-index:6;background:var(--card-solid,#fffaf0)}\n}\n@media(max-width:319px){\n  .arc-tile{padding:12px 10px}\n  .arc-tile b{font-size:.86rem}\n  .arc-tile small{font-size:.68rem}\n  .arc-hud{flex-wrap:wrap}\n  .arc-actions{flex-wrap:wrap}\n  .arc-calc{padding:6px;gap:4px}\n}\n@media(pointer:coarse){\n  .arc-btn,.arc-x,.arc-tab{min-height:38px}\n}\n"
+    + "/* v37 Video Studio Pro: reels banner, thumbs, seen badges */"
+    + ".arc-reelban{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid rgba(201,162,39,.5);background:linear-gradient(135deg,rgba(201,162,39,.16),rgba(201,162,39,.05));border-radius:14px;padding:11px 13px;margin-bottom:10px}"
+    + ".arc-reelban-t{font-size:.78rem;line-height:1.5;color:var(--ink,#1c1626)}"
+    + ".arc-vidrow{display:flex;gap:12px;align-items:flex-start}"
+    + ".arc-vidth{position:relative;flex:none;width:208px;aspect-ratio:16/9;border:1px solid var(--card-border,#ddd2b8);border-radius:10px;overflow:hidden;cursor:pointer;padding:0;background:linear-gradient(135deg,#1d2444,#2b2113);font-family:inherit}"
+    + ".arc-vidth img{width:100%;height:100%;object-fit:cover;display:block}"
+    + ".arc-vidth-p{position:absolute;inset:0;display:grid;place-items:center;font-size:1.5rem;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.7);pointer-events:none}"
+    + ".arc-seen{position:absolute;left:6px;bottom:6px;font-size:.6rem;font-weight:900;background:rgba(43,138,62,.92);color:#fff;border-radius:99px;padding:2px 8px}"
+    + ".arc-vidmeta{flex:1;min-width:0}"
+    + ".arc-vidmeta h4{margin:0 0 2px;font-size:.9rem}"
+    + "@media(max-width:560px){.arc-vidrow{flex-direction:column}.arc-vidth{width:100%}}";
 
   function body() { return $("arcBody"); }
   function shell(title, inner, wide) {
@@ -2039,7 +2050,7 @@ var ESSEY = {
       tile("rapid", "⚡", "Rapid Fire 60s", "Answer as many real questions as you can in 60 seconds", bs.rapid && bs.rapid.best ? bs.rapid.best.best + " pts best" : "") +
       tile("memo", "🃏", "Memory Pairs", "Flip cards and match term–definition pairs in as few moves as possible", bs.memo && bs.memo.best ? bs.memo.best.best + " moves best" : "") +
       tile("ladder", "🪜", "Ladder Challenge", "10 rungs, 3 lives, ever-tighter timing — climb for the top", bs.ladder && bs.ladder.best ? bs.ladder.best.best + " rungs best" : "") +
-      tile("videos", "🎬", "Video Studio", "Curated Nigerian lesson videos + add your own links", "") +
+      tile("videos", "🎬", "Video Studio", "Lesson videos + \u2728 AI explainers for every subject", "") +
       tile("hub", "🗺", "Curriculum Hub", "Every SS1–SS3 subject with lesson notes in one place", "") +
       "</div>");
   }
@@ -2894,6 +2905,14 @@ var ESSEY = {
   function statsReset() { statsSet({ s: {}, d: {} }); toast("Study stats cleared", "📊"); statsRoute(); }
 
   /* ---------- Video Studio ---------- */
+  var SEEN_VID = "nssc_vidseen_a";
+  function vidSeen() { var v = store(SEEN_VID); return Array.isArray(v) ? v : []; }
+  function vidMark(id) {
+    try {
+      var v = vidSeen();
+      if (v.indexOf(id) < 0) { v.push(id); store(SEEN_VID, v); }
+    } catch (e) {}
+  }
   function vidRoute() {
     M.mode = "videos";
     var custom = store(CUSTOM_VID); if (!Array.isArray(custom)) custom = [];
@@ -2901,42 +2920,88 @@ var ESSEY = {
     var subs = [];
     all.forEach(function (v) { if (v.s && subs.indexOf(v.s) < 0) subs.push(v.s); });
     subs.sort();
-    var chips = ['<button type="button" class="arc-chip on" id="vidAll">All subjects</button>']
-      .concat(subs.map(function (s) { return '<button type="button" class="arc-chip" data-s="' + esc(s) + '">' + esc(s) + "</button>"; })).join("");
+    M.vidS = M.vidS || ""; M.vidC = M.vidC || ""; M.vidQ = M.vidQ || "";
+    var chips = ['<button type="button" class="arc-chip' + (!M.vidS ? " on" : "") + '" id="vidAll">All subjects</button>']
+      .concat(subs.map(function (x) { return '<button type="button" class="arc-chip' + (M.vidS === x ? " on" : "") + '" data-s="' + esc(x) + '">' + esc(x) + "</button>"; })).join("");
+    var cls = ["", "SS1", "SS2", "SS3"].map(function (c) {
+      return '<button type="button" class="arc-chip' + (M.vidC === c ? " on" : "") + '" data-c="' + c + '">' + (c || "All classes") + "</button>";
+    }).join("");
+    var seenN = vidSeen().length;
     shell("🎬 Video Studio — lessons on demand", "" +
+      '<div class="arc-reelban"><span class="arc-reelban-t">✨ <b>AI Explainer Reels</b> — auto-generated video lessons for all 27 subjects × SS1–SS3, playable offline.</span><button type="button" class="arc-btn gold" onclick="(window.__reelsApi?window.__reelsApi.open():toast(\'AI Reels is still loading — try again in a moment\',\'✨\'))">▶ Open reels</button></div>' +
       '<div class="arc-sub" id="vidChips">' + chips + "</div>" +
+      '<div class="arc-sub" id="vidCls">' + cls + "</div>" +
+      '<div class="arc-add" style="margin-top:0"><input id="vidSearch" placeholder="🔎 Search videos — try \u2018maths\u2019, \u2018chemistry practical\u2019…" aria-label="Search videos" value="' + esc(M.vidQ) + '"></div>' +
       '<div class="arc-add"><input id="vidUrl" placeholder="Paste a YouTube link (watch?v=…, youtu.be/…)" aria-label="Video link"><input id="vidTitle" placeholder="Video title" aria-label="Video title"><button type="button" class="arc-btn" onclick="ARC.addVideo()" id="vidAdd">＋ Add video</button></div>' +
-      '<p class="arc-note">Videos stream online (the app saves your list but not the video). Offline? The quiz games and lesson notes still work — videos need internet. Miss your class\'s videos? Paste a link above and they are saved on this device.</p>' +
-      '<div id="vidList">' + vidList(all, "") + "</div>" +
+      '<p class="arc-note">Videos stream online (the app saves your list but not the video). Offline? The quiz games, lesson notes and ✨ AI Reels still work — YouTube videos need internet. Miss your class\'s videos? Paste a link above and they are saved on this device.</p>' +
+      '<p class="arc-note" id="vidSeen">✓ Watched ' + seenN + " of " + all.length + "</p>" +
+      '<div id="vidList">' + vidList(all, M.vidS, M.vidC, M.vidQ) + "</div>" +
       '<h4 style="margin:16px 0 8px;font-size:.95rem">📺 Trusted Nigerian lesson channels</h4>' +
       '<div class="arc-pairs">' + CHANNELS.map(function (c) {
         return '<div class="arc-pair"><b>' + esc(c.t) + "</b> — " + esc(c.d) + ' <a href="' + esc(c.u) + '" target="_blank" rel="noopener" style="color:#8a6d1f;font-weight:800">Open channel ↗</a></div>';
       }).join("") + "</div>");
+    function refresh() {
+      var L = $("vidList");
+      if (L) L.innerHTML = vidList(all, M.vidS, M.vidC, M.vidQ);
+    }
     var chipsEl = $("vidChips");
     if (chipsEl) {
       Array.prototype.forEach.call(chipsEl.querySelectorAll(".arc-chip"), function (b) {
         b.onclick = function () {
           Array.prototype.forEach.call(chipsEl.querySelectorAll(".arc-chip"), function (x) { x.classList.remove("on"); });
           b.classList.add("on");
-          var s = b.getAttribute("data-s") || "";
-          $("vidList").innerHTML = vidList(all, s);
+          M.vidS = b.getAttribute("data-s") || "";
+          refresh();
         };
       });
     }
+    var clsEl = $("vidCls");
+    if (clsEl) {
+      Array.prototype.forEach.call(clsEl.querySelectorAll(".arc-chip"), function (b) {
+        b.onclick = function () {
+          Array.prototype.forEach.call(clsEl.querySelectorAll(".arc-chip"), function (x) { x.classList.remove("on"); });
+          b.classList.add("on");
+          M.vidC = b.getAttribute("data-c") || "";
+          refresh();
+        };
+      });
+    }
+    var sq = $("vidSearch");
+    if (sq) {
+      sq.oninput = function () { M.vidQ = sq.value; refresh(); };
+    }
   }
-  function vidList(all, s) {
-    var list = all.filter(function (v) { return !s || v.s === s; });
-    if (!list.length) return '<p class="arc-note">No videos in this subject yet — add one above or choose another subject.</p>';
-    return list.map(function (v) {
+  function vidList(all, s, c, q) {
+    q = (q || "").toLowerCase().trim();
+    var seen = vidSeen();
+    var list = all.filter(function (v) {
+      if (s && v.s !== s) return false;
+      if (c && String(v.c || "").indexOf(c) < 0) return false;
+      if (q && (String(v.t || "") + " " + String(v.s || "") + " " + String(v.ch || "")).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    if (!list.length) return '<p class="arc-note">No videos match — try another search, or add one above.</p>';
+    return list.map(function (v, ix) {
+      var playing = M.nowPlaying === v.id;
+      var isSeen = seen.indexOf(v.id) >= 0;
+      var nx = list[ix + 1];
       return '<div class="arc-vid">' +
-        (M.nowPlaying === v.id ? '<iframe src="https://www.youtube-nocookie.com/embed/' + esc(v.id) + '?autoplay=1" title="' + esc(v.t) + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' : "") +
-        '<h4>' + esc(v.t) + "</h4><small>" + esc(v.s) + " · " + esc(v.c) + " · " + esc(v.ch || "You") + "</small><div style=\"margin-top:8px\">" +
-        '<button type="button" class="arc-play" onclick="ARC.watch(\'' + esc(v.id) + '\')">▶ Watch</button>' +
+        (playing ? '<iframe src="https://www.youtube-nocookie.com/embed/' + esc(v.id) + '?autoplay=1" title="' + esc(v.t) + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' : "") +
+        ((playing && nx) ? '<div style="margin:8px 0 2px"><button type="button" class="arc-play arc-upnext" onclick="ARC.watch(\'' + esc(nx.id) + '\')">⏭ Up next: ' + esc(nx.t).slice(0, 60) + "</button></div>" : "") +
+        '<div class="arc-vidrow">' +
+        '<button type="button" class="arc-vidth" onclick="ARC.watch(\'' + esc(v.id) + '\')" aria-label="Watch ' + esc(v.t) + '">' +
+        '<img loading="lazy" src="https://i.ytimg.com/vi/' + esc(v.id) + '/mqdefault.jpg" alt="" onerror="this.style.display=\'none\'">' +
+        '<span class="arc-vidth-p">▶</span>' +
+        (isSeen ? '<span class="arc-seen">✓ Watched</span>' : "") +
+        "</button>" +
+        '<div class="arc-vidmeta"><h4>' + esc(v.t) + "</h4><small>" + esc(v.s) + " · " + esc(v.c) + " · " + esc(v.ch || "You") + "</small>" +
+        '<div style="margin-top:8px">' +
+        '<button type="button" class="arc-play" onclick="ARC.watch(\'' + esc(v.id) + '\')">' + (playing ? "⏸ Playing" : "▶ Watch") + "</button>" +
         (v.user ? '<button type="button" class="arc-btn" style="min-height:34px;padding:4px 12px" onclick="ARC.delVideo(\'' + esc(v.id) + '\')">Remove</button>' : "") +
-        "</div></div>";
+        "</div></div></div></div>";
     }).join("");
   }
-  function watch(id) { M.nowPlaying = id; vidRoute(); }
+  function watch(id) { vidMark(id); M.nowPlaying = id; vidRoute(); }
   function youtubeId(url) {
     var m = String(url || "").match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,20})/);
     return m ? m[1] : null;

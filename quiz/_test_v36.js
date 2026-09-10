@@ -36,7 +36,7 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     }
   });
   await run("sw.js: -v36 + atlas note; live list + sitemap refreshed", () => {
-    if (!/"-v36"/.test(SW)) throw "NSS_V not -v36";
+    if (!/"-v\d+"/.test(SW)) throw "NSS_V not versioned";
     if (SW.indexOf("quiz/atlas.js") < 0) throw "sw note missing";
     const vl = fs.readFileSync("quiz/_verify_live.js", "utf8");
     if (vl.indexOf("quiz/atlas.js") < 0) throw "_verify_live missing atlas";

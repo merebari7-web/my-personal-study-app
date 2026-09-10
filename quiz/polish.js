@@ -154,7 +154,10 @@
     "html.polished .ex-tile:hover,html.polished .bt-chip:hover{transform:translateY(-2px);border-color:var(--pf-g,#dcb85f);box-shadow:0 14px 30px -14px rgba(140,100,30,.55),0 0 0 1px var(--pf-soft)}" +
     "html.polished .ex-tile:active,html.polished .bt-chip:active{transform:translateY(0) scale(.98)}" +
     "html.polished.pf-scrolled .nav{box-shadow:0 10px 30px -18px rgba(0,0,0,.45)}" +
-    "@media (prefers-reduced-motion:reduce){html.polished .ex-tile:hover,html.polished .bt-chip:hover{transform:none}}";
+    "@media (prefers-reduced-motion:reduce){html.polished .ex-tile:hover,html.polished .bt-chip:hover{transform:none}}" +
+    /* --- v37 Find button: nav glow + teach pulse --- */
+    "html.polished #findBtn{box-shadow:0 0 0 1px var(--pf-ga),0 8px 20px -10px rgba(220,184,95,.7)}" +
+    "@media (prefers-reduced-motion:no-preference){html.polished #findBtn{animation:pfFindPulse 3.2s ease-in-out 2}@keyframes pfFindPulse{0%,100%{box-shadow:0 0 0 1px var(--pf-ga)}50%{box-shadow:0 0 0 6px rgba(220,184,95,.3)}}}";
 
   function apply() {
     try {
@@ -176,6 +179,7 @@
       hourAmb();
       dockFix();
       navShadow();
+      findBtn();
       setTimeout(function () { try { countUp(); } catch (e) {} }, 1400);
     try { toastBar(); } catch (e) {}
     } catch (e) { /* decorative only — never break the app */ }
@@ -275,6 +279,45 @@
       var h = new Date().getHours();
       var k = h >= 5 && h < 12 ? "hour-m" : h >= 12 && h < 17 ? "hour-a" : h >= 17 && h < 21 ? "hour-e" : "hour-n";
       document.documentElement.setAttribute("data-aura-hour", k);
+    } catch (e) {}
+  }
+
+  /* v37 — visible Find button in the nav (opens the Ctrl+K palette).
+     If Pro Tools have not idle-loaded yet, fetch them on demand. */
+  function findOpen() {
+    try {
+      if (typeof window.__palOpen === "function") { window.__palOpen(); return; }
+      if (!document.getElementById("proScript") && !window.__pro) {
+        var s = document.createElement("script");
+        s.id = "proScript"; s.src = "quiz/pro.js"; s.async = !0;
+        document.head.appendChild(s);
+      }
+      if (typeof toast === "function") { try { toast("Search is loading\u2026", "\uD83D\uDD0E"); } catch (e) {} }
+      var n = 0;
+      var iv = setInterval(function () {
+        n++;
+        try { if (typeof window.__palOpen === "function") { clearInterval(iv); window.__palOpen(); } } catch (e) {}
+        if (n > 40) clearInterval(iv);
+      }, 150);
+    } catch (e) {}
+  }
+  function findBtn() {
+    try {
+      if (document.getElementById("findBtn")) return;
+      var nav = document.querySelector(".nav");
+      if (!nav) return;
+      var b = document.createElement("button");
+      b.id = "findBtn";
+      b.type = "button";
+      b.className = "icon-btn";
+      b.title = "Find anything (Ctrl+K)";
+      b.setAttribute("aria-label", "Find anything");
+      b.textContent = "\uD83D\uDD0E";
+      b.addEventListener("click", findOpen);
+      var first = nav.querySelector(".icon-btn");
+      if (first) nav.insertBefore(b, first);
+      else nav.appendChild(b);
+      try { window.__findOpen = findOpen; } catch (e) {}
     } catch (e) {}
   }
 
@@ -518,5 +561,20 @@
     };
     if ("requestIdleCallback" in window) { window.requestIdleCallback(lr, { timeout: 10500 }); }
     else { setTimeout(lr, 3900); }
+  } catch (e) {}
+  /* v37 — load the AI Explainer Reels (auto-generated video lessons for
+     every subject x class) at idle too, so it never competes with boot. */
+  try {
+    var rr = function () {
+      if (window.__reels || document.getElementById("reelsScript")) return;
+      var sR = document.createElement("script");
+      sR.id = "reelsScript";
+      sR.src = "quiz/reels.js";
+      sR.async = !0;
+      sR.onerror = function () { try { sR.remove(); } catch (e) {} };
+      document.head.appendChild(sR);
+    };
+    if ("requestIdleCallback" in window) { window.requestIdleCallback(rr, { timeout: 11000 }); }
+    else { setTimeout(rr, 4200); }
   } catch (e) {}
 })();

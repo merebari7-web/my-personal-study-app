@@ -410,6 +410,7 @@
 
   /* ---------- boot ---------- */
   function boot() {
+    try { window.__palOpen = palOpen; } catch (e) {}
     css();
     try { document.documentElement.classList.add("pro"); } catch (e) {}
     try { greet(); } catch (e) {}
