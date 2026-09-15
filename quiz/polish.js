@@ -157,7 +157,133 @@
     "@media (prefers-reduced-motion:reduce){html.polished .ex-tile:hover,html.polished .bt-chip:hover{transform:none}}" +
     /* --- v37 Find button: nav glow + teach pulse --- */
     "html.polished #findBtn{box-shadow:0 0 0 1px var(--pf-ga),0 8px 20px -10px rgba(220,184,95,.7)}" +
-    "@media (prefers-reduced-motion:no-preference){html.polished #findBtn{animation:pfFindPulse 3.2s ease-in-out 2}@keyframes pfFindPulse{0%,100%{box-shadow:0 0 0 1px var(--pf-ga)}50%{box-shadow:0 0 0 6px rgba(220,184,95,.3)}}}";
+    "@media (prefers-reduced-motion:no-preference){html.polished #findBtn{animation:pfFindPulse 3.2s ease-in-out 2}@keyframes pfFindPulse{0%,100%{box-shadow:0 0 0 1px var(--pf-ga)}50%{box-shadow:0 0 0 6px rgba(220,184,95,.3)}}}" +
+    /* --- v40 3D scroll journey: depth elements + depth rail --- */
+    "html.polished .s3d-el{will-change:transform}" +
+    "html.polished #s3dRail{position:fixed;right:10px;top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}" +
+    "html.polished #s3dRail .s3d-track{width:5px;height:130px;border-radius:99px;background:rgba(220,184,95,.16);position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(220,184,95,.25)}" +
+    "html.polished #s3dRail .s3d-fill{position:absolute;inset:0;border-radius:99px;background:linear-gradient(0deg,#8a6d1f,#eecf7e);transform-origin:50% 100%;transform:scaleY(0)}" +
+    "html.polished #s3dRail .s3d-lab{font-size:.6rem;font-weight:800;color:#a8842f;letter-spacing:.04em;text-shadow:0 1px 0 rgba(255,255,255,.5)}" +
+    "@media (max-width:899px){html.polished #s3dRail{display:none}}" +
+    "html.rmotion #s3dRail{display:none!important}" +
+    "html.rmotion .s3d-el{transform:none!important}";
+
+  /* v40 — 3D scroll journey: hero stage layers + cards glide through depth as you scroll.
+     Per-element perspective() transforms only (never on ancestors, so fixed
+     overlays/nav/dock are untouched); rAF-throttled; self-disables under
+     reduced motion. Exposes window.__s3d = { on, n }. */
+  function scroll3d() {
+    if (window.__s3d) return;
+    var api = window.__s3d = { on: false, n: 0 };
+    /* Small layers only: giant containers (.hero, #step-class) stay flat for
+       compositor safety + readability; their inner layers + small cards fly. */
+    var SEL = ".hero [data-depth],#step-subject,#step-length,#main .card,#gameDash,#labGrid,#planCard,#aiGrid,#cdBanner";
+    var rail = null, fill = null, lab = null;
+    try {
+      rail = document.createElement("div");
+      rail.id = "s3dRail";
+      rail.setAttribute("aria-hidden", "true");
+      rail.innerHTML = '<div class="s3d-track"><div class="s3d-fill" id="s3dFill"></div></div><div class="s3d-lab" id="s3dLab">3D</div>';
+      document.body.appendChild(rail);
+      fill = document.getElementById("s3dFill");
+      lab = document.getElementById("s3dLab");
+    } catch (e) { rail = null; }
+    var els = [];
+    function collect() {
+      els = [];
+      try {
+        var q = document.querySelectorAll(SEL);
+        for (var i = 0; i < q.length; i++) {
+          if (q[i].id === "polishFx") continue;
+          q[i].classList.add("s3d-el");
+          els.push(q[i]);
+        }
+      } catch (e) {}
+      api.n = els.length;
+      lastY = -1;
+    }
+    function motionOK() {
+      try {
+        if (document.documentElement.classList.contains("rmotion")) return false;
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+      } catch (e) {}
+      return true;
+    }
+    var ticking = false, lastY = -1;
+    function frame() {
+      ticking = false;
+      if (api.freeze) return;
+      var on = motionOK();
+      api.on = on;
+      try {
+        if (rail) rail.style.display = on ? "" : "none";
+        if (!on) {
+          for (var i = 0; i < els.length; i++) {
+            if (els[i]._s3d) { els[i]._s3d = 0; els[i].style.transform = ""; }
+          }
+          lastY = -1;
+          return;
+        }
+        var y = window.scrollY || document.documentElement.scrollTop || 0;
+        var vh = window.innerHeight || 800;
+        var doc = Math.max(document.documentElement.scrollHeight || 0, document.body.scrollHeight || 0) - vh;
+        var prog = doc > 0 ? Math.min(1, Math.max(0, y / doc)) : 0;
+        if (fill) fill.style.transform = "scaleY(" + prog.toFixed(3) + ")";
+        if (lab) { var pc = Math.round(prog * 100); if (lab._p !== pc) { lab._p = pc; lab.textContent = pc + "%"; } }
+        if (y === lastY) return;
+        lastY = y;
+        var heroEl = null, heroProg = 0;
+        try {
+          heroEl = document.querySelector(".hero");
+          if (heroEl) {
+            var hr = heroEl.getBoundingClientRect();
+            if (hr.height > 0) heroProg = Math.max(0, Math.min(1.2, -hr.top / (hr.height * 0.9)));
+          }
+        } catch (e) {}
+        for (var j = 0; j < els.length; j++) {
+          var el = els[j];
+          if (!el.isConnected) continue;
+          var r = el.getBoundingClientRect();
+          var depth = 0;
+          try { depth = parseFloat(el.getAttribute("data-depth") || "0") || 0; } catch (e) {}
+          if (r.height < 4 || r.height > 800 || r.bottom < -200 || r.top > vh + 200) {
+            if (el._s3d) { el._s3d = 0; el.style.transform = ""; }
+            continue;
+          }
+          if (depth > 0 && heroEl) {
+            /* hero stage layer: drift + sink with scroll, scaled by depth */
+            var dy = depth * 70 * heroProg;
+            var dz = -depth * 80 * heroProg;
+            var rx = -3 * depth * heroProg;
+            el.style.transform = "perspective(1100px) translateY(" + dy.toFixed(1) + "px) translateZ(" + dz.toFixed(1) + "px) rotateX(" + rx.toFixed(2) + "deg)";
+          } else {
+            var p = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / (vh * 0.55)));
+            var tilt = -5 * p;
+            var z = -60 * Math.abs(p);
+            var sc = 1 - 0.025 * Math.abs(p);
+            el.style.transform = "perspective(1100px) rotateX(" + tilt.toFixed(2) + "deg) translateZ(" + z.toFixed(1) + "px) scale(" + sc.toFixed(3) + ")";
+          }
+          el._s3d = 1;
+        }
+      } catch (e) {}
+    }
+    function kick() { if (!ticking) { ticking = true; if ("requestAnimationFrame" in window) requestAnimationFrame(frame); else setTimeout(frame, 16); } }
+    try {
+      collect();
+      window.addEventListener("scroll", kick, { passive: true });
+      window.addEventListener("resize", kick, { passive: true });
+      if ("MutationObserver" in window) {
+        var mT = 0;
+        var mo = new MutationObserver(function () {
+          var n = Date.now();
+          if (n - mT > 600) { mT = n; collect(); kick(); }
+        });
+        try { mo.observe(document.getElementById("main") || document.body, { childList: true, subtree: true }); } catch (e) {}
+      }
+      try { api.kick = kick; } catch (e) {}
+      kick();
+    } catch (e) {}
+  }
 
   function apply() {
     try {
@@ -180,6 +306,7 @@
       dockFix();
       navShadow();
       findBtn();
+      scroll3d();
       setTimeout(function () { try { countUp(); } catch (e) {} }, 1400);
     try { toastBar(); } catch (e) {}
     } catch (e) { /* decorative only — never break the app */ }

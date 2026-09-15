@@ -57,8 +57,8 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (PRO.indexOf('c.c + " · " + c.s') >= 0) throw "undefined-label rows still present";
     if (PRO.indexOf('c.class + " · " + sn') < 0) throw "fixed labels missing";
   });
-  await run("sw.js: -v39", () => {
-    if (!/"-v39"/.test(SW)) throw "NSS_V not -v39";
+  await run("sw.js: versioned (v39+)", () => {
+    if (!/"-v(39|[4-9][0-9])"/.test(SW)) throw "NSS_V not versioned v39+";
   });
   await run("boot wire still <= 266240 B", () => {
     const w = zlib.gzipSync(HTML, { level: 9 }).length + zlib.gzipSync(BANK, { level: 9 }).length;
