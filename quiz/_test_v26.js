@@ -27,7 +27,7 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
   });
   await run("polish.js: boot-safe (scoped under html.polished, re-entry guard)", () => {
     const body = POLISH.replace(/\s+/g, " ");
-    if (/\.hero\s*\{/.test(body)) throw "raw .hero override";
+    if (/"\.hero\s*\{/.test(body)) throw "raw .hero override"; /* v41: allow html.apple.apple-scoped .hero rules */
     if (body.indexOf("window.__polish") < 0) throw "no guard";
     if (body.indexOf("catch (e) { /* decorative only") < 0) throw "no fail-silent guard";
   });

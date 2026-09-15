@@ -34,8 +34,9 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (body.indexOf(".focus(") >= 0) throw "engine focuses";
     if (body.indexOf("perspective(1100px)") < 0) throw "no perspective transform";
   });
-  await run("sw.js: -v40", () => {
-    if (!/"-v40"/.test(SW)) throw "NSS_V not -v40";
+  await run("sw.js: -v40+", () => {
+    const m = SW.match(/"-v(\d+)"/);
+    if (!m || +m[1] < 40) throw "NSS_V not -v40+";
   });
   await run("boot wire still <= 266240 B (3D ships lazy, wire untouched)", () => {
     const w = zlib.gzipSync(HTML, { level: 9 }).length + zlib.gzipSync(BANK, { level: 9 }).length;
