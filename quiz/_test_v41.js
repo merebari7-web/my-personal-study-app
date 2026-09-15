@@ -37,8 +37,9 @@ const run = async (label, fn) => { try { await fn(); console.log("PASS:", label)
     if (POLISH.indexOf("window.__s3d") < 0) throw "__s3d missing";
     if (POLISH.indexOf('html.rmotion .s3d-el{transform:none!important}') < 0) throw "rmotion kill missing";
   });
-  await run("sw.js: -v41", () => {
-    if (!/"-v41"/.test(SW)) throw "NSS_V not -v41";
+  await run("sw.js: -v41+", () => {
+    const m = SW.match(/"-v(\d+)"/);
+    if (!m || +m[1] < 41) throw "NSS_V not -v41+";
   });
   await run("boot wire still <= 266240 B (Apple theme ships lazy, wire untouched)", () => {
     const w = zlib.gzipSync(HTML, { level: 9 }).length + zlib.gzipSync(BANK, { level: 9 }).length;

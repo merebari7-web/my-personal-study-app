@@ -1,4 +1,4 @@
-/* v41.0 — Apple design language (lazy, boot-safe). Applies the Apple look (lazy, boot-safe). Loaded by the existing tiny
+/* v42.0 — Apple design language, continued (lazy, boot-safe). Applies the Apple look (lazy, boot-safe). Loaded by the existing tiny
    async loader in index.html; appends a scoped stylesheet (html.polished) and
    a decoration layer. Upgrades EVERY surface: hero (shimmer, particles, live
    date/term/streak chip, numbered stat icons), nav glass, buttons, cards in
@@ -420,6 +420,40 @@
     "html.apple.apple[data-theme='dark'] .m-hi,html.apple.apple[data-theme='dark'] .map-chip.m-hi,html.apple.apple[data-theme='dark'] .mp.m-hi{background:rgba(48,209,88,.14);border-color:rgba(48,209,88,.55);color:#30d158}" +
     "html.apple.apple[data-theme='dark'] .m-mid,html.apple.apple[data-theme='dark'] .map-chip.m-mid,html.apple.apple[data-theme='dark'] .mp.m-mid{background:rgba(255,214,10,.12);border-color:rgba(255,214,10,.5);color:#ffd60a}" +
     "html.apple.apple[data-theme='dark'] .m-lo,html.apple.apple[data-theme='dark'] .map-chip.m-lo,html.apple.apple[data-theme='dark'] .mp.m-lo{background:rgba(255,69,58,.14);border-color:rgba(255,69,58,.55);color:#ff6961}" +
+    "html.apple.apple h2,html.apple.apple h3,html.apple.apple h4,html.apple.apple .opt,html.apple.apple .qtext,html.apple.apple .review .rq,html.apple.apple .review .rex,html.apple.apple .qmedal,html.apple.apple .mascot .m-bubble,html.apple.apple .explain,html.apple.apple .rep-card,html.apple.apple .grade,html.apple.apple .tab .cls,html.apple.apple .cert-ribbon,html.apple.apple .card h3,html.apple.apple .modal h3,html.apple.apple #curtain .ct-name{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Helvetica,Arial,sans-serif}" +
+    "html.apple.apple .hq-sec h4,html.apple.apple .edu-sec h4,html.apple.apple .rep-sec h4,html.apple.apple .ps-notes h3,html.apple.apple .cert-ribbon{color:#6e6e73}" +
+    "html.apple.apple .rep-sec h4{border-color:#e5e5ea}" +
+    "html.apple.apple .ps-notes h3{border-color:#d2d2d7}" +
+    "html.apple.apple .rep-head{border-color:#d2d2d7}" +
+    "html.apple.apple .arc-tab.on,html.apple.apple .arc-chip.on,html.apple.apple .edu-chip.on,html.apple.apple .nt-tab.on,html.apple.apple .nt-chip.on{background:var(--green);border-color:var(--green);color:#fff;box-shadow:none}" +
+    "html.apple.apple .arc-head h3,html.apple.apple .nt-pp{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Helvetica Neue',Helvetica,Arial,sans-serif}" +
+    "html.apple.apple ::selection{background:#0071e3;color:#fff}" +
+    "html.apple.apple ::-webkit-scrollbar-thumb{background:#c7c7cc;border:2px solid transparent;background-clip:padding-box;border-radius:99px}" +
+    "html.apple.apple .btn:active,html.apple.apple .opt:active,html.apple.apple .chip:active{transform:scale(.97)}" +
+    "html.apple.apple .card:hover,html.apple.apple .ai-card:hover{box-shadow:0 8px 32px -12px rgba(0,0,0,.18)}" +
+    "html.apple.apple #appleCtas{display:flex;gap:20px;align-items:center;justify-content:center;margin-top:28px;flex-wrap:wrap}" +
+    "html.apple.apple #appleCtas .ac-go{background:#0071e3;color:#fff;border:0;border-radius:980px;padding:12px 30px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit}" +
+    "html.apple.apple #appleCtas .ac-go:hover{background:#0077ed}" +
+    "html.apple.apple #appleCtas .ac-more{color:#2997ff;font-size:19px;text-decoration:none;white-space:nowrap}" +
+    "html.apple.apple #appleCtas .ac-more:hover{text-decoration:underline}" +
+    "html.apple.apple #appleCtas .ac-more::after{content:' ›'}" +
+    "html.apple.apple #applePromo{background:#fff;border-bottom:1px solid #e5e5ea;color:#1d1d1f;font-size:13px;text-align:center;padding:12px 16px}" +
+    "html.apple.apple #applePromo b{font-weight:700}" +
+    "html.apple.apple #applePromo a{color:#0066cc;text-decoration:none;white-space:nowrap;margin-left:10px}" +
+    "html.apple.apple #applePromo a:hover{text-decoration:underline}" +
+    "html.apple.apple #applePromo a::after{content:' ›'}" +
+    "html.apple.apple[data-theme='dark'] #applePromo{background:#161617;border-color:rgba(255,255,255,.12);color:#f5f5f7}" +
+    "html.apple.apple .rep-doc,html.apple.apple .rep-stat small,html.apple.apple .rep-note{color:#6e6e73}" +
+    "html.apple.apple .rep-card{background:#fff;border-color:#e4e4e9}" +
+    "html.apple.apple .rep-stat{border-color:#e4e4e9}" +
+    "html.apple.apple .edu-sel{border-color:#d2d2d7;background:#fff}" +
+    "html.apple.apple .edu-q{border-left-color:rgba(0,113,227,.45)}" +
+    "html.apple.apple .edu-pill{background:rgba(0,113,227,.08);border-color:rgba(0,113,227,.3)}" +
+    "html.apple.apple .edu-head{background:#fff;border-color:#e5e5ea}" +
+    "html.apple.apple[data-theme='dark'] .edu-sel{background:#1d1d1f;border-color:rgba(255,255,255,.2)}" +
+    "html.apple.apple[data-theme='dark'] .edu-head{background:transparent;border-color:rgba(255,255,255,.12)}" +
+    "html.apple.apple[data-theme='dark'] .rep-card{background:#1d1d1f;border-color:rgba(255,255,255,.14)}" +
+    "html.apple.apple[data-theme='dark'] .rep-stat{border-color:rgba(255,255,255,.14)}" +
     "html.apple.apple.rmotion *,html.apple.apple.rmotion *::before,html.apple.apple.rmotion *::after{transition:none!important}";
 
   function appleNav() {
@@ -455,6 +489,34 @@
     } catch (e) {}
   }
 
+  function appleCtas() {
+    try {
+      if (document.getElementById("appleCtas")) return;
+      var tag = document.querySelector(".hero p.tag");
+      if (!tag || !tag.parentNode) return;
+      var d = document.createElement("div");
+      d.id = "appleCtas";
+      d.innerHTML = '<button type="button" class="ac-go">Start practicing</button><a href="#" class="ac-more">Explore the Study Hall</a>';
+      if (d.children[0]) d.children[0].addEventListener("click", function () { try { document.querySelector('[data-hd="practice"]').click(); } catch (e) {} });
+      if (d.children[1]) d.children[1].addEventListener("click", function (e) { try { e.preventDefault(); } catch (x) {} try { document.querySelector('[data-hd="lab"]').click(); } catch (x) {} });
+      tag.parentNode.insertBefore(d, tag.nextSibling);
+    } catch (e) {}
+  }
+
+  function applePromo() {
+    try {
+      if (document.getElementById("applePromo")) return;
+      var hero = document.querySelector("header.hero");
+      if (!hero || !hero.parentNode) return;
+      var d = document.createElement("div");
+      d.id = "applePromo";
+      d.innerHTML = "<span>Exam-Room Labs — Records Hall, Exam Planner, Recall Blitz, Quiz Me.</span><a href=\"#\">Open the Study Hall</a>";
+      var a = d.querySelector("a");
+      if (a) a.addEventListener("click", function (e) { try { e.preventDefault(); } catch (x) {} try { document.querySelector('[data-hd="lab"]').click(); } catch (x) {} });
+      hero.parentNode.insertBefore(d, hero);
+    } catch (e) {}
+  }
+
   function appleTheme() {
     try {
       if (!document.getElementById("appleCss")) {
@@ -467,6 +529,8 @@
         document.documentElement.classList.add("apple");
       }
       appleNav();
+      appleCtas();
+      applePromo();
     } catch (e) {}
   }
 
